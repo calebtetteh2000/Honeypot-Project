@@ -17,6 +17,7 @@ creds_logger.setLevel(logging.INFO)
 creds_handler = RotatingFileHandler('cmd_audits.log', maxBytes=2000, backupCount=5)
 creds_handler.setFormatter(logging_format)
 creds_logger.addHandler(creds_handler)
+
 #SSH Server + Sockets
 
 #Provision SSH-based honeypot
