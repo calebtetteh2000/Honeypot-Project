@@ -5,9 +5,6 @@ import paramiko
 
 #Constants
 logging_format = logging.Formatter('%(message)s')
-SSH_BANNER = "SSH-2.0-MySSHServer_1.0"
-
-
 
 #Loggers & Logging Files
 funnel_logger = logging.getLogger('FunnelLogger')
@@ -66,7 +63,7 @@ class Server(paramiko.ServerInterface):
             return paramiko.OPEN_SUCCEEDED
         
     def get_allowed_auths(self):
-        return "password"
+        return 'password'
     
     def check_auth_password(self, username, password):
         
@@ -86,31 +83,6 @@ class Server(paramiko.ServerInterface):
     def check_channel_exec_request(self, channel, command):
         command = str(command)
         return True
-
-def client_handle(client, addr, username, password):
-    client_ip = addr[0]
-    print(f"{client_ip} has connected to the server.")
-
-    try:
-        transport = paramiko.Transport()
-        transport.local_version = SSH_BANNER
-        server = Server(client_ip=client_ip, input_username=username, input_password=password)
-
-        transport.add_server_key(host_key)
-
-        transport.start_server(server = server)
-
-        channel = transport.accept(100)
-        if channel is None:
-            print("No channel was opened.")
-
-        standard_banner = "Welcome to Ubuntu 22.04 LTS \r\n\r\n"
-
-    
-    except:
-        pass
-    finally:
-        pass
 
 
 
