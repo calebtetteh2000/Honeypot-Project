@@ -1,1 +1,4 @@
 venv/
+server.key
+server.key.pub
+.env

@@ -2,9 +2,17 @@
 import logging
 from logging.handlers import RotatingFileHandler
 import paramiko
+import socket
+from dotenv import load_dotenv
+import os
+
+load_dotenv() #loading environment variables from .env file
 
 #Constants
 logging_format = logging.Formatter('%(message)s')
+SSH_BANNER = "SSH-2.0-MySSHServer_1.0"
+
+host_key =os.getenv('SERVER_KEY_PATH')
 
 #Loggers & Logging Files
 funnel_logger = logging.getLogger('FunnelLogger')
@@ -83,7 +91,46 @@ class Server(paramiko.ServerInterface):
     def check_channel_exec_request(self, channel, command):
         command = str(command)
         return True
+    
+def client_hanler(client, addr, username, password):
+    client_ip = addr[0]
+    print(f"{client_ip} has connected to the server.")
+
+
+    try:
+        transport = paramiko.Transport()
+        transport.local_version = SSH_BANNER
+        server = Server(client_ip=client_ip, input_username=username, input_password=password)
+
+        transport.add_server_key(host_key)
+
+        transport.start_server(server=server)
+
+        channel = transport.accept(100)
+        if channel is None:
+            print("No channel was opened.")
+            
+        standard_banner = "Welcome to Ubuntu 22.04 LTS \r\n\r\n"
+        channel.send(standard_banner)
+        emulated_shell(channel, client_ip=client_ip)
+
+    except Exception as error:
+        print(error)
+        print("!!! Error !!!")
+    finally:
+        try:
+            transport.close()
+        except Exception as error:
+            print(error)
+            print("!!! Error !!!")
 
 
 
 #Provision SSH-based honeypot
+def honeypot(address, port, username, password):
+    socks = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    socks.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    socks.bind((address, port))
+
+    socks.listen(100)
+    print(f"SSH server is listening on port {port}.")
