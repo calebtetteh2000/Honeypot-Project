@@ -1,0 +1,23 @@
+Client 127.0.0.1 attempted connection with username: username, password: password
+127.0.0.1, username, password
+Command b'ls'executed by 127.0.0.1
+Command b'pwd'executed by 127.0.0.1
+Command b'hi'executed by 127.0.0.1
+Command b'hi'executed by 127.0.0.1
+Command b'whoami'executed by 127.0.0.1
+Command b'cat jumpbox \x7f\x7f\x7f\x1b[D.conf'executed by 127.0.0.1
+Client 127.0.0.1 attempted connection with username: username, password: jonkiddie
+127.0.0.1, username, jonkiddie
+Client 127.0.0.1 attempted connection with username: username, password: password
+127.0.0.1, username, password
+Client 127.0.0.1 attempted connection with username: username, password: jonkiddie
+127.0.0.1, username, jonkiddie
+Client 127.0.0.1 attempted connection with username: username, password: password
+127.0.0.1, username, password
+Client 127.0.0.1 attempted connection with username: username, password: holeinone
+127.0.0.1, username, holeinone
+Client 127.0.0.1 attempted connection with username: username, password: jonkiddie
+127.0.0.1, username, jonkiddie
+Client 127.0.0.1 attempted connection with username: username, password: password
+127.0.0.1, username, password
+Command b'exity\x7f\x7f\x7f\x1b[D\x7f'executed by 127.0.0.1
