@@ -3,3 +3,7 @@ server.key
 server.key.pub
 .env
 *.log
+audits.log
+audits.log.1
+cmd_audits.log
+cmd_audits.log.1
