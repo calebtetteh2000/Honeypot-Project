@@ -3,6 +3,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 import paramiko
 import socket
+import platform
 import threading
 from dotenv import load_dotenv
 import os
@@ -104,7 +105,8 @@ class Server(paramiko.ServerInterface):
     
 def client_handle(client, addr, username, password):
     client_ip = addr[0]
-    print(f"{client_ip} has connected to the server.")
+    device_type = platform.system() #Capture device type
+    print(f"{client_ip} has connected to the server using device: {device_type}.")
 
 
     try:
