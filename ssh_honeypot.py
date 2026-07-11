@@ -1,5 +1,6 @@
 #Libraries
 import logging
+from datetime import datetime
 from logging.handlers import RotatingFileHandler
 import paramiko
 import socket
@@ -24,7 +25,7 @@ funnel_handler = RotatingFileHandler('audits.log', maxBytes=2000, backupCount=5)
 funnel_handler.setFormatter(logging_format)
 funnel_logger.addHandler(funnel_handler)
 
-creds_logger = logging.getLogger('FunnelLogger')
+creds_logger = logging.getLogger('CredsLogger')
 creds_logger.setLevel(logging.INFO)
 creds_handler = RotatingFileHandler('cmd_audits.log', maxBytes=2000, backupCount=5)
 creds_handler.setFormatter(logging_format)
@@ -32,7 +33,7 @@ creds_logger.addHandler(creds_handler)
 
 #Emulated Shell
 def emulated_shell(channel, client_ip):
-    channel.send(b'corporate-jumpbox2$')
+    channel.send(b'corporate-jumpbox2$ ')
     command = b""
     while True:
         char = channel.recv(1)
@@ -47,22 +48,40 @@ def emulated_shell(channel, client_ip):
                 response = b'\n Goodbye! \n'
                 channel.close()
             elif command.strip() == b'pwd':
-                response = b"\n" + b'\n\\usr\\local' + b'\r\n'
-                creds_logger.info(f'Command {command.strip()}' + 'executed by ' + f'{client_ip}')
+                response = b"\n/usr/local\r\n"
+                creds_logger.info(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} | {client_ip} | {command.strip()}')
             elif command.strip() == b'whoami':
-                response = b"\n" + b"corpuser1" + b"\r\n"
-                creds_logger.info(f'Command {command.strip()}' + 'executed by ' + f'{client_ip}')
+                response = b"\ncorpuser1\r\n"
+                creds_logger.info(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} | {client_ip} | {command.strip()}')
             elif command.strip() == b'ls':
-                response = b'\n' + b"jumpbox1.conf" + b"\r\n"
-                creds_logger.info(f'Command {command.strip()}' + 'executed by ' + f'{client_ip}')
+                response = b"\njumpbox1.conf  backup.sh  logs\r\n"
+                creds_logger.info(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} | {client_ip} | {command.strip()}')
             elif command.strip() == b'cat jumpbox1.conf':
-                response = b'\n' + b"Go to deebodah.com. " + b"\r\n"
-                creds_logger.info(f'Command {command.strip()}' + 'executed by ' + f'{client_ip}')
+                response = b"\nhost=deebodah.com\nport=22\nuser=admin\r\n"
+                creds_logger.info(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} | {client_ip} | {command.strip()}')
+            elif command.strip() == b'uname -a':
+                response = b"\nLinux corporate-jumpbox2 5.15.0-91-generic #101-Ubuntu SMP x86_64 GNU/Linux\r\n"
+                creds_logger.info(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} | {client_ip} | {command.strip()}')
+            elif command.strip() == b'cat /etc/passwd':
+                response = b"\nroot:x:0:0:root:/root:/bin/bash\ndaemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin\ncorpuser1:x:1001:1001::/home/corpuser1:/bin/bash\r\n"
+                creds_logger.info(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} | {client_ip} | {command.strip()}')
+            elif command.strip() == b'ifconfig' or command.strip() == b'ip a':
+                response = b"\neth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST> inet 192.168.1.105\r\n"
+                creds_logger.info(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} | {client_ip} | {command.strip()}')
+            elif command.strip() == b'id':
+                response = b"\nuid=1001(corpuser1) gid=1001(corpuser1) groups=1001(corpuser1)\r\n"
+                creds_logger.info(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} | {client_ip} | {command.strip()}')
+            elif command.strip().startswith(b'wget') or command.strip().startswith(b'curl'):
+                response = b"\nbash: permission denied\r\n"
+                creds_logger.info(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} | {client_ip} | {command.strip()}')
+            elif command.strip() == b'ps aux':
+                response = b"\nUSER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND\nroot         1  0.0  0.1  16952  1084 ?        Ss   08:00   0:00 /sbin/init\ncorpuser1  512  0.0  0.1  13456   980 pts/0    Ss   09:00   0:00 -bash\r\n"
+                creds_logger.info(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} | {client_ip} | {command.strip()}')
             else:
-                response = b"\n" + bytes(command.strip()) + b"\r\n"
-                creds_logger.info(f'Command {command.strip()}' + 'executed by ' + f'{client_ip}')
+                response = b"\n" + bytes(command.strip()) + b": command not found\r\n"
+                creds_logger.info(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} | {client_ip} | {command.strip()}')
             channel.send(response)
-            channel.send(b'corporate-jumpbox2$')
+            channel.send(b'corporate-jumpbox2$ ')
             command = b""
 
 #SSH Server + Sockets
@@ -82,8 +101,8 @@ class Server(paramiko.ServerInterface):
         return 'password'
     
     def check_auth_password(self, username, password):
-        funnel_logger.info(f'Client {self.client_ip} attempted connection with ' + f'username: {username}, ' + f'password: {password}')
-        creds_logger.info(f'{self.client_ip}, {username}, {password}')
+        funnel_logger.info(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} | {self.client_ip} | {username} | {password}')
+        creds_logger.info(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} | {self.client_ip} | {username} | {password}')
         if self.input_username is not None and self.input_password is not None:
             if username == self.input_username and password == self.input_password:
                 return paramiko.AUTH_SUCCESSFUL
@@ -155,4 +174,5 @@ def honeypot(address, port, username, password):
         except Exception as error:
             print(error)
 
-honeypot('127.0.0.1', 2223, username = None, password = None)
+if __name__ == '__main__':
+    honeypot('127.0.0.1', 2223, username = None, password = None)

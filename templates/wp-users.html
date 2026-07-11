@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Users ‹ Deebodah Corp — WordPress</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f0f0f1; color: #3c434a; }
+#wpadminbar { background: #1d2327; height: 32px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; position: fixed; top: 0; width: 100%; z-index: 9999; }
+#wpadminbar a { color: #c3c4c7; font-size: 13px; text-decoration: none; }
+#wpadminbar a:hover { color: #72aee6; }
+#wpadminbar .left { display: flex; align-items: center; gap: 20px; }
+#wpadminbar .site-name { color: #fff; font-weight: 600; }
+#adminmenuback { background: #1d2327; width: 160px; position: fixed; top: 32px; left: 0; bottom: 0; overflow-y: auto; }
+#adminmenu { list-style: none; padding-top: 8px; }
+#adminmenu li a { display: flex; align-items: center; gap: 10px; color: #c3c4c7; text-decoration: none; font-size: 13px; padding: 8px 12px; border-left: 3px solid transparent; transition: all 0.15s; }
+#adminmenu li a:hover { background: #2c3338; color: #fff; }
+#adminmenu li.current > a { background: #2c3338; border-left-color: #2271b1; color: #fff; }
+#adminmenu .sep { border-top: 1px solid #2c3338; margin: 6px 0; }
+#wpcontent { margin-left: 160px; margin-top: 32px; padding: 20px; min-height: calc(100vh - 64px); }
+.wrap { max-width: 1200px; }
+h1.wph { font-size: 23px; font-weight: 400; color: #1d2327; margin-bottom: 16px; display: inline-block; }
+.btn { display: inline-block; padding: 4px 10px; background: #f6f7f7; border: 1px solid #c3c4c7; border-radius: 2px; font-size: 13px; color: #2271b1; text-decoration: none; cursor: pointer; margin-left: 8px; }
+.btn:hover { background: #f0f0f1; }
+.btn-primary { background: #2271b1; color: #fff; border-color: #2271b1; }
+.btn-primary:hover { background: #135e96; }
+.btn-danger { background: #d63638; color: #fff; border-color: #d63638; }
+.card { background: #fff; border: 1px solid #c3c4c7; border-radius: 2px; margin-bottom: 20px; overflow: hidden; }
+.card-header { background: #f6f7f7; border-bottom: 1px solid #c3c4c7; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; }
+.card-header h3 { font-size: 13px; font-weight: 600; color: #1d2327; }
+.card-body { padding: 16px; }
+.tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
+.tbl th { background: #f6f7f7; border-bottom: 1px solid #c3c4c7; padding: 8px 10px; text-align: left; font-weight: 600; color: #1d2327; }
+.tbl td { padding: 10px; border-bottom: 1px solid #f0f0f1; vertical-align: middle; }
+.tbl tr:hover td { background: #f6f7f7; }
+.tbl a { color: #2271b1; text-decoration: none; }
+.tbl a:hover { text-decoration: underline; }
+.badge { font-size: 11px; padding: 2px 7px; border-radius: 10px; }
+.badge-green { background: #edfaef; color: #00a32a; border: 1px solid #b8e6bf; }
+.badge-blue { background: #f0f6fc; color: #2271b1; border: 1px solid #c3d9ed; }
+.badge-red { background: #fcf0f1; color: #d63638; border: 1px solid #f5c0c2; }
+.badge-yellow { background: #fef8ee; color: #dba617; border: 1px solid #f5d57a; }
+.notice { background: #fff; border-left: 4px solid #2271b1; padding: 10px 14px; margin-bottom: 16px; font-size: 13px; display: flex; align-items: center; justify-content: space-between; }
+.notice.warn { border-left-color: #dba617; }
+.notice.err { border-left-color: #d63638; }
+.notice p { color: #3c434a; }
+.dismiss { color: #646970; cursor: pointer; font-size: 20px; background: none; border: none; }
+.dismiss:hover { color: #d63638; }
+#wpfooter { margin-left: 160px; padding: 10px 20px; border-top: 1px solid #c3c4c7; font-size: 12px; color: #646970; display: flex; justify-content: space-between; }
+.modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 99999; align-items: center; justify-content: center; }
+.modal-bg.open { display: flex; }
+.modal { background: #fff; width: 800px; max-width: 96vw; max-height: 88vh; border-radius: 3px; display: flex; flex-direction: column; overflow: hidden; }
+.modal-hdr { background: #1d2327; color: #fff; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+.modal-hdr h2 { font-size: 15px; font-weight: 600; }
+.modal-x { color: #c3c4c7; font-size: 24px; cursor: pointer; background: none; border: none; line-height: 1; }
+.modal-x:hover { color: #fff; }
+.modal-body { padding: 24px; overflow-y: auto; flex: 1; }
+.modal-body h3 { font-size: 20px; color: #1d2327; margin-bottom: 8px; }
+.modal-meta { color: #646970; font-size: 13px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #f0f0f1; }
+.modal-body p { font-size: 14px; line-height: 1.8; color: #3c434a; margin-bottom: 12px; }
+.conf-banner { background: #fcf0f1; border: 1px solid #f5c0c2; border-radius: 3px; padding: 10px 14px; margin-bottom: 14px; color: #d63638; font-size: 13px; font-weight: 600; }
+.form-row { display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px; }
+.form-row label { font-size: 13px; font-weight: 600; color: #1d2327; }
+.form-row input, .form-row select, .form-row textarea { padding: 8px; border: 1px solid #c3c4c7; border-radius: 2px; font-size: 13px; font-family: inherit; }
+.form-row input:focus, .form-row select:focus, .form-row textarea:focus { outline: none; border-color: #2271b1; box-shadow: 0 0 0 1px #2271b1; }
+.row-actions { font-size: 12px; color: #646970; margin-top: 4px; display: none; }
+.tbl tr:hover .row-actions { display: block; }
+.row-actions a { color: #2271b1; text-decoration: none; margin-right: 8px; }
+.row-actions .del a { color: #d63638; }
+</style>
+</head>
+<body>
+<div id="wpadminbar">
+  <div class="left">
+    <a href="/wp-dashboard" onclick="track('bar_logo')" style="font-weight:700;font-size:15px;">🔵 W</a>
+    <a href="/wp-dashboard" class="site-name" onclick="track('bar_site')">Deebodah Corp</a>
+    <a href="/wp-dashboard" onclick="track('bar_visit')" target="_blank">Visit Site</a>
+    <a href="/wp-posts" onclick="track('bar_new_post')">✚ New Post</a>
+    <a href="#" onclick="track('bar_new_media')">✚ Media</a>
+    <a href="#" onclick="track('bar_new_page')">✚ Page</a>
+    <a href="#" onclick="track('bar_new_user')">✚ User</a>
+  </div>
+  <div style="color:#c3c4c7;font-size:13px;display:flex;align-items:center;gap:12px;">
+    <a href="#" onclick="track('bar_updates')" style="color:#ffb900;">🔔 5 updates</a>
+    <span>Howdy, <a href="/wp-dashboard" onclick="track('bar_profile')" style="color:#72aee6;">admin</a></span>
+    <a href="/logout" onclick="track('click_logout')">Log Out</a>
+  </div>
+</div>
+<div id="adminmenuback"><ul id="adminmenu"><li class=""><a href="/wp-dashboard" onclick="track('menu_dashboard')" style=""><span style="font-size:15px;width:20px;text-align:center;">🏠</span> Dashboard</a></li><li class="sep"></li><li class=""><a href="/wp-posts" onclick="track('menu_posts')" style=""><span style="font-size:15px;width:20px;text-align:center;">📝</span> Posts</a></li><li class=""><a href="/wp-media" onclick="track('menu_media')" style=""><span style="font-size:15px;width:20px;text-align:center;">🖼️</span> Media</a></li><li class=""><a href="/wp-dashboard" onclick="track('menu_pages')" style=""><span style="font-size:15px;width:20px;text-align:center;">📄</span> Pages</a></li><li class=""><a href="/wp-dashboard" onclick="track('menu_comments')" style=""><span style="font-size:15px;width:20px;text-align:center;">💬</span> Comments</a></li><li class="sep"></li><li class=""><a href="/wp-appearance" onclick="track('menu_appearance')" style=""><span style="font-size:15px;width:20px;text-align:center;">🎨</span> Appearance</a></li><li class=""><a href="/wp-plugins" onclick="track('menu_plugins')" style=""><span style="font-size:15px;width:20px;text-align:center;">🔌</span> Plugins</a></li><li class="current"><a href="/wp-users" onclick="track('menu_users')" style=""><span style="font-size:15px;width:20px;text-align:center;">👥</span> Users</a></li><li class=""><a href="/wp-dashboard" onclick="track('menu_tools')" style=""><span style="font-size:15px;width:20px;text-align:center;">🔧</span> Tools</a></li><li class=""><a href="/wp-settings" onclick="track('menu_settings')" style=""><span style="font-size:15px;width:20px;text-align:center;">⚙️</span> Settings</a></li><li class="sep"></li><li class=""><a href="/wp-dashboard" onclick="track('menu_export')" style="color:#d63638;"><span style="font-size:15px;width:20px;text-align:center;">📦</span> Export Data</a></li><li class=""><a href="/wp-dashboard" onclick="track('menu_backup')" style="color:#d63638;"><span style="font-size:15px;width:20px;text-align:center;">💾</span> Backup</a></li></ul></div>
+<div id="wpcontent"><div class="wrap">
+
+<h1 class="wph">Users</h1>
+<a href="#" onclick="openModal('adduser')" class="btn">Add New User</a>
+<ul style="list-style:none;display:flex;gap:0;margin:16px 0;font-size:13px;">
+  <li><a href="#" onclick="track('filter_all_users')" style="color:#3c434a;font-weight:600;padding:4px 6px;">All (12)</a> |</li>
+  <li><a href="#" onclick="track('filter_admins')" style="color:#2271b1;padding:4px 6px;">Administrator (2)</a> |</li>
+  <li><a href="#" onclick="track('filter_editors')" style="color:#2271b1;padding:4px 6px;">Editor (3)</a> |</li>
+  <li><a href="#" onclick="track('filter_subscribers')" style="color:#2271b1;padding:4px 6px;">Subscriber (7)</a></li>
+</ul>
+<div class="card">
+<table class="tbl">
+<thead><tr><th><input type="checkbox" onclick="track('sel_all_users')"></th><th>Username</th><th>Name</th><th>Email</th><th>Role</th><th>Last Login</th><th>Posts</th></tr></thead>
+<tbody>
+  <tr><td><input type="checkbox" onclick="track('sel_admin')"></td><td><strong><a onclick="openModal('edit_admin')">admin</a></strong> <span style="font-size:11px;color:#646970;">— It's you</span></td><td>Administrator</td><td>admin@deebodah.com</td><td><span class="badge badge-red">Administrator</span></td><td>Jun 10, 2026</td><td>47</td></tr>
+  <tr><td><input type="checkbox" onclick="track('sel_jsmith')"></td><td><a onclick="openModal('edit_jsmith')">j.smith</a></td><td>John Smith</td><td>j.smith@deebodah.com</td><td><span class="badge badge-blue">Editor</span></td><td>Jun 8, 2026</td><td>12</td></tr>
+  <tr><td><input type="checkbox" onclick="track('sel_finance')"></td><td><a onclick="openModal('edit_finance')">finance</a></td><td>Finance Dept</td><td>finance@deebodah.com</td><td><span class="badge badge-yellow">Author</span></td><td>Jun 5, 2026</td><td>8</td></tr>
+  <tr><td><input type="checkbox" onclick="track('sel_ltran')"></td><td><a onclick="openModal('edit_ltran')">l.tran</a></td><td>Linda Tran</td><td>l.tran@deebodah.com</td><td><span class="badge badge-blue">Editor</span></td><td>Jun 9, 2026</td><td>3</td></tr>
+  <tr><td><input type="checkbox" onclick="track('sel_masante')"></td><td><a onclick="openModal('edit_masante')">m.asante</a></td><td>Mark Asante</td><td>m.asante@deebodah.com</td><td><span class="badge badge-yellow">Author</span></td><td>Jun 7, 2026</td><td>1</td></tr>
+  <tr><td><input type="checkbox" onclick="track('sel_backup_u')"></td><td><a onclick="openModal('edit_backup_u')" style="color:#d63638;">db_backup</a></td><td>Database Backup</td><td>backup@deebodah.com</td><td><span class="badge badge-green">Subscriber</span></td><td>Jun 10, 2026 03:12 <span style="color:#d63638;">⚠️</span></td><td>0</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="modal-bg" id="m-adduser"><div class="modal">
+  <div class="modal-hdr"><h2>Add New User</h2><button class="modal-x" onclick="closeModal('adduser')">×</button></div>
+  <div class="modal-body">
+    <div class="form-row"><label>Username</label><input type="text" onclick="track('adduser_username')" oninput="track('adduser_typing_username')"></div>
+    <div class="form-row"><label>Email</label><input type="email" onclick="track('adduser_email')" oninput="track('adduser_typing_email')"></div>
+    <div class="form-row"><label>First Name</label><input type="text" onclick="track('adduser_firstname')"></div>
+    <div class="form-row"><label>Last Name</label><input type="text" onclick="track('adduser_lastname')"></div>
+    <div class="form-row"><label>Password</label><input type="password" onclick="track('adduser_password')" oninput="track('adduser_typing_password')"></div>
+    <div class="form-row"><label>Role</label><select onclick="track('adduser_role')"><option>Subscriber</option><option>Contributor</option><option>Author</option><option>Editor</option><option>Administrator</option></select></div>
+    <button class="btn btn-primary" onclick="track('submit_add_user')">Add New User</button>
+  </div>
+</div></div>
+
+<div class="modal-bg" id="m-edit_backup_u"><div class="modal">
+  <div class="modal-hdr" style="background:#8b1a1a;"><h2>⚠️ Edit User: db_backup — Suspicious Activity</h2><button class="modal-x" onclick="closeModal('edit_backup_u')">×</button></div>
+  <div class="modal-body">
+    <div class="conf-banner">⚠️ WARNING: This account logged in from unknown IP 185.234.219.45 on Jun 10 at 03:12 UTC</div>
+    <div class="form-row"><label>Username</label><input type="text" value="db_backup" onclick="track('edit_bu_username')"></div>
+    <div class="form-row"><label>Email</label><input type="email" value="backup@deebodah.com" onclick="track('edit_bu_email')"></div>
+    <div class="form-row"><label>Role</label><select onclick="track('edit_bu_role')"><option>Subscriber</option><option>Contributor</option><option>Author</option><option>Editor</option><option selected>Administrator</option></select></div>
+    <div class="form-row"><label>New Password</label><input type="password" placeholder="Enter new password..." onclick="track('edit_bu_password')" oninput="track('edit_bu_typing_password')"></div>
+    <button class="btn btn-primary" onclick="track('save_user_bu')">Update User</button>
+    <button class="btn btn-danger" onclick="track('delete_user_bu')" style="margin-left:8px;">Delete User</button>
+  </div>
+</div></div>
+
+<div class="modal-bg" id="m-edit_admin"><div class="modal">
+  <div class="modal-hdr"><h2>Edit User: admin</h2><button class="modal-x" onclick="closeModal('edit_admin')">×</button></div>
+  <div class="modal-body">
+    <div class="form-row"><label>Username</label><input type="text" value="admin" onclick="track('edit_admin_username')"></div>
+    <div class="form-row"><label>Email</label><input type="email" value="admin@deebodah.com" onclick="track('edit_admin_email')"></div>
+    <div class="form-row"><label>New Password</label><input type="password" placeholder="Enter new password..." onclick="track('edit_admin_pass')" oninput="track('edit_admin_typing_pass')"></div>
+    <div class="form-row"><label>Role</label><select onclick="track('edit_admin_role')"><option selected>Administrator</option><option>Editor</option></select></div>
+    <button class="btn btn-primary" onclick="track('save_admin')">Update User</button>
+  </div>
+</div></div>
+
+<div class="modal-bg" id="m-edit_jsmith"><div class="modal">
+  <div class="modal-hdr"><h2>Edit User: j.smith</h2><button class="modal-x" onclick="closeModal('edit_jsmith')">×</button></div>
+  <div class="modal-body">
+    <div class="form-row"><label>Username</label><input type="text" value="j.smith" onclick="track('edit_jsmith_u')"></div>
+    <div class="form-row"><label>Email</label><input type="email" value="j.smith@deebodah.com"></div>
+    <div class="form-row"><label>Role</label><select onclick="track('edit_jsmith_role')"><option>Subscriber</option><option>Author</option><option selected>Editor</option><option>Administrator</option></select></div>
+    <div class="form-row"><label>New Password</label><input type="password" onclick="track('edit_jsmith_pass')" oninput="track('jsmith_typing_pass')"></div>
+    <button class="btn btn-primary" onclick="track('save_jsmith')">Update User</button>
+  </div>
+</div></div>
+
+</div></div>
+<div id="wpfooter"><span>Thank you for creating with <a href="#" style="color:#2271b1;">WordPress</a>. <a href="#" onclick="track('footer_docs')" style="color:#2271b1;">Documentation</a></span><span>Version 6.4.3</span></div>
+<script>
+function track(a) { fetch('/track?action='+encodeURIComponent(a)).catch(()=>{}); }
+function nav(p) { track('navigate_'+p); window.location.href=p; }
+function openModal(id) { track('open_modal_'+id); document.getElementById('m-'+id).classList.add('open'); }
+function closeModal(id) { track('close_modal_'+id); document.getElementById('m-'+id).classList.remove('open'); }
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.modal-bg').forEach(m => {
+    m.addEventListener('click', function(e) { if(e.target===this) closeModal(this.id.replace('m-','')); });
+  });
+  document.querySelectorAll('.dismiss').forEach(b => {
+    b.addEventListener('click', function() { this.closest('.notice').style.display='none'; track('dismiss_notice'); });
+  });
+});
+let _st=Date.now();
+window.addEventListener('beforeunload',()=>{ navigator.sendBeacon('/track?action=exit&sec='+Math.round((Date.now()-_st)/1000)); });
+
+document.addEventListener('DOMContentLoaded',()=>track('page_load_users'));
+</script>
+</body>
+</html>

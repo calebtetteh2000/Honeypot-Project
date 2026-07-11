@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Appearance ‹ Deebodah Corp — WordPress</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f0f0f1; color: #3c434a; }
+#wpadminbar { background: #1d2327; height: 32px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; position: fixed; top: 0; width: 100%; z-index: 9999; }
+#wpadminbar a { color: #c3c4c7; font-size: 13px; text-decoration: none; }
+#wpadminbar a:hover { color: #72aee6; }
+#wpadminbar .left { display: flex; align-items: center; gap: 20px; }
+#wpadminbar .site-name { color: #fff; font-weight: 600; }
+#adminmenuback { background: #1d2327; width: 160px; position: fixed; top: 32px; left: 0; bottom: 0; overflow-y: auto; }
+#adminmenu { list-style: none; padding-top: 8px; }
+#adminmenu li a { display: flex; align-items: center; gap: 10px; color: #c3c4c7; text-decoration: none; font-size: 13px; padding: 8px 12px; border-left: 3px solid transparent; transition: all 0.15s; }
+#adminmenu li a:hover { background: #2c3338; color: #fff; }
+#adminmenu li.current > a { background: #2c3338; border-left-color: #2271b1; color: #fff; }
+#adminmenu .sep { border-top: 1px solid #2c3338; margin: 6px 0; }
+#wpcontent { margin-left: 160px; margin-top: 32px; padding: 20px; min-height: calc(100vh - 64px); }
+.wrap { max-width: 1200px; }
+h1.wph { font-size: 23px; font-weight: 400; color: #1d2327; margin-bottom: 16px; display: inline-block; }
+.btn { display: inline-block; padding: 4px 10px; background: #f6f7f7; border: 1px solid #c3c4c7; border-radius: 2px; font-size: 13px; color: #2271b1; text-decoration: none; cursor: pointer; margin-left: 8px; }
+.btn:hover { background: #f0f0f1; }
+.btn-primary { background: #2271b1; color: #fff; border-color: #2271b1; }
+.btn-primary:hover { background: #135e96; }
+.btn-danger { background: #d63638; color: #fff; border-color: #d63638; }
+.card { background: #fff; border: 1px solid #c3c4c7; border-radius: 2px; margin-bottom: 20px; overflow: hidden; }
+.card-header { background: #f6f7f7; border-bottom: 1px solid #c3c4c7; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; }
+.card-header h3 { font-size: 13px; font-weight: 600; color: #1d2327; }
+.card-body { padding: 16px; }
+.tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
+.tbl th { background: #f6f7f7; border-bottom: 1px solid #c3c4c7; padding: 8px 10px; text-align: left; font-weight: 600; color: #1d2327; }
+.tbl td { padding: 10px; border-bottom: 1px solid #f0f0f1; vertical-align: middle; }
+.tbl tr:hover td { background: #f6f7f7; }
+.tbl a { color: #2271b1; text-decoration: none; }
+.tbl a:hover { text-decoration: underline; }
+.badge { font-size: 11px; padding: 2px 7px; border-radius: 10px; }
+.badge-green { background: #edfaef; color: #00a32a; border: 1px solid #b8e6bf; }
+.badge-blue { background: #f0f6fc; color: #2271b1; border: 1px solid #c3d9ed; }
+.badge-red { background: #fcf0f1; color: #d63638; border: 1px solid #f5c0c2; }
+.badge-yellow { background: #fef8ee; color: #dba617; border: 1px solid #f5d57a; }
+.notice { background: #fff; border-left: 4px solid #2271b1; padding: 10px 14px; margin-bottom: 16px; font-size: 13px; display: flex; align-items: center; justify-content: space-between; }
+.notice.warn { border-left-color: #dba617; }
+.notice.err { border-left-color: #d63638; }
+.notice p { color: #3c434a; }
+.dismiss { color: #646970; cursor: pointer; font-size: 20px; background: none; border: none; }
+.dismiss:hover { color: #d63638; }
+#wpfooter { margin-left: 160px; padding: 10px 20px; border-top: 1px solid #c3c4c7; font-size: 12px; color: #646970; display: flex; justify-content: space-between; }
+.modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 99999; align-items: center; justify-content: center; }
+.modal-bg.open { display: flex; }
+.modal { background: #fff; width: 800px; max-width: 96vw; max-height: 88vh; border-radius: 3px; display: flex; flex-direction: column; overflow: hidden; }
+.modal-hdr { background: #1d2327; color: #fff; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+.modal-hdr h2 { font-size: 15px; font-weight: 600; }
+.modal-x { color: #c3c4c7; font-size: 24px; cursor: pointer; background: none; border: none; line-height: 1; }
+.modal-x:hover { color: #fff; }
+.modal-body { padding: 24px; overflow-y: auto; flex: 1; }
+.modal-body h3 { font-size: 20px; color: #1d2327; margin-bottom: 8px; }
+.modal-meta { color: #646970; font-size: 13px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #f0f0f1; }
+.modal-body p { font-size: 14px; line-height: 1.8; color: #3c434a; margin-bottom: 12px; }
+.conf-banner { background: #fcf0f1; border: 1px solid #f5c0c2; border-radius: 3px; padding: 10px 14px; margin-bottom: 14px; color: #d63638; font-size: 13px; font-weight: 600; }
+.form-row { display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px; }
+.form-row label { font-size: 13px; font-weight: 600; color: #1d2327; }
+.form-row input, .form-row select, .form-row textarea { padding: 8px; border: 1px solid #c3c4c7; border-radius: 2px; font-size: 13px; font-family: inherit; }
+.form-row input:focus, .form-row select:focus, .form-row textarea:focus { outline: none; border-color: #2271b1; box-shadow: 0 0 0 1px #2271b1; }
+.row-actions { font-size: 12px; color: #646970; margin-top: 4px; display: none; }
+.tbl tr:hover .row-actions { display: block; }
+.row-actions a { color: #2271b1; text-decoration: none; margin-right: 8px; }
+.row-actions .del a { color: #d63638; }
+</style>
+</head>
+<body>
+<div id="wpadminbar">
+  <div class="left">
+    <a href="/wp-dashboard" onclick="track('bar_logo')" style="font-weight:700;font-size:15px;">🔵 W</a>
+    <a href="/wp-dashboard" class="site-name" onclick="track('bar_site')">Deebodah Corp</a>
+    <a href="/wp-dashboard" onclick="track('bar_visit')" target="_blank">Visit Site</a>
+    <a href="/wp-posts" onclick="track('bar_new_post')">✚ New Post</a>
+    <a href="#" onclick="track('bar_new_media')">✚ Media</a>
+    <a href="#" onclick="track('bar_new_page')">✚ Page</a>
+    <a href="#" onclick="track('bar_new_user')">✚ User</a>
+  </div>
+  <div style="color:#c3c4c7;font-size:13px;display:flex;align-items:center;gap:12px;">
+    <a href="#" onclick="track('bar_updates')" style="color:#ffb900;">🔔 5 updates</a>
+    <span>Howdy, <a href="/wp-dashboard" onclick="track('bar_profile')" style="color:#72aee6;">admin</a></span>
+    <a href="/logout" onclick="track('click_logout')">Log Out</a>
+  </div>
+</div>
+<div id="adminmenuback"><ul id="adminmenu"><li class=""><a href="/wp-dashboard" onclick="track('menu_dashboard')" style=""><span style="font-size:15px;width:20px;text-align:center;">🏠</span> Dashboard</a></li><li class="sep"></li><li class=""><a href="/wp-posts" onclick="track('menu_posts')" style=""><span style="font-size:15px;width:20px;text-align:center;">📝</span> Posts</a></li><li class=""><a href="/wp-media" onclick="track('menu_media')" style=""><span style="font-size:15px;width:20px;text-align:center;">🖼️</span> Media</a></li><li class=""><a href="/wp-dashboard" onclick="track('menu_pages')" style=""><span style="font-size:15px;width:20px;text-align:center;">📄</span> Pages</a></li><li class=""><a href="/wp-dashboard" onclick="track('menu_comments')" style=""><span style="font-size:15px;width:20px;text-align:center;">💬</span> Comments</a></li><li class="sep"></li><li class="current"><a href="/wp-appearance" onclick="track('menu_appearance')" style=""><span style="font-size:15px;width:20px;text-align:center;">🎨</span> Appearance</a></li><li class=""><a href="/wp-plugins" onclick="track('menu_plugins')" style=""><span style="font-size:15px;width:20px;text-align:center;">🔌</span> Plugins</a></li><li class=""><a href="/wp-users" onclick="track('menu_users')" style=""><span style="font-size:15px;width:20px;text-align:center;">👥</span> Users</a></li><li class=""><a href="/wp-dashboard" onclick="track('menu_tools')" style=""><span style="font-size:15px;width:20px;text-align:center;">🔧</span> Tools</a></li><li class=""><a href="/wp-settings" onclick="track('menu_settings')" style=""><span style="font-size:15px;width:20px;text-align:center;">⚙️</span> Settings</a></li><li class="sep"></li><li class=""><a href="/wp-dashboard" onclick="track('menu_export')" style="color:#d63638;"><span style="font-size:15px;width:20px;text-align:center;">📦</span> Export Data</a></li><li class=""><a href="/wp-dashboard" onclick="track('menu_backup')" style="color:#d63638;"><span style="font-size:15px;width:20px;text-align:center;">💾</span> Backup</a></li></ul></div>
+<div id="wpcontent"><div class="wrap">
+
+<h1 class="wph">Themes</h1>
+<a href="#" onclick="openModal('add_theme')" class="btn">Add New Theme</a>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:20px;">
+  <div style="background:#fff;border:2px solid #2271b1;border-radius:3px;overflow:hidden;">
+    <div style="height:140px;background:linear-gradient(135deg,#1d2327,#2271b1);display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;font-weight:600;">Astra</div>
+    <div style="padding:12px;"><strong style="font-size:13px;">Astra</strong> <span class="badge badge-green" style="margin-left:6px;">Active</span><p style="font-size:12px;color:#646970;margin-top:6px;">Version 4.6.2</p>
+    <div style="margin-top:8px;display:flex;gap:8px;"><a href="#" onclick="track('theme_customize')" style="font-size:12px;color:#2271b1;">Customize</a> <a href="#" onclick="track('theme_widgets')" style="font-size:12px;color:#2271b1;">Widgets</a> <a href="#" onclick="track('theme_menus')" style="font-size:12px;color:#2271b1;">Menus</a></div></div>
+  </div>
+  <div style="background:#fff;border:1px solid #c3c4c7;border-radius:3px;overflow:hidden;cursor:pointer;" onclick="track('click_theme_twentytwentyfour')">
+    <div style="height:140px;background:linear-gradient(135deg,#f9f9f9,#e8e8e8);display:flex;align-items:center;justify-content:center;color:#3c434a;font-size:18px;font-weight:600;">Twenty<br>Twenty-Four</div>
+    <div style="padding:12px;"><strong style="font-size:13px;">Twenty Twenty-Four</strong><p style="font-size:12px;color:#646970;margin-top:6px;">Version 1.2</p>
+    <a href="#" onclick="track('activate_tt4')" style="font-size:12px;color:#2271b1;display:block;margin-top:8px;">Activate</a></div>
+  </div>
+  <div style="background:#fff;border:1px solid #c3c4c7;border-radius:3px;overflow:hidden;cursor:pointer;" onclick="track('click_theme_storefront')">
+    <div style="height:140px;background:linear-gradient(135deg,#96588a,#514b8e);display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;font-weight:600;">Storefront</div>
+    <div style="padding:12px;"><strong style="font-size:13px;">Storefront</strong><p style="font-size:12px;color:#646970;margin-top:6px;">Version 4.4.0</p>
+    <a href="#" onclick="track('activate_storefront')" style="font-size:12px;color:#2271b1;display:block;margin-top:8px;">Activate</a></div>
+  </div>
+</div>
+<div class="modal-bg" id="m-add_theme"><div class="modal">
+  <div class="modal-hdr"><h2>Add New Theme</h2><button class="modal-x" onclick="closeModal('add_theme')">×</button></div>
+  <div class="modal-body">
+    <div class="form-row"><label>Search Themes</label><input type="text" placeholder="Search theme directory..." onclick="track('search_theme')" oninput="track('typing_theme_search')"></div>
+    <p style="font-size:13px;color:#646970;margin-bottom:12px;">Or upload a theme zip file:</p>
+    <div class="form-row"><input type="file" accept=".zip" onclick="track('upload_theme_click')"></div>
+    <button class="btn btn-primary" onclick="track('install_theme')">Install Theme</button>
+  </div>
+</div></div>
+
+</div></div>
+<div id="wpfooter"><span>Thank you for creating with <a href="#" style="color:#2271b1;">WordPress</a>. <a href="#" onclick="track('footer_docs')" style="color:#2271b1;">Documentation</a></span><span>Version 6.4.3</span></div>
+<script>
+function track(a) { fetch('/track?action='+encodeURIComponent(a)).catch(()=>{}); }
+function nav(p) { track('navigate_'+p); window.location.href=p; }
+function openModal(id) { track('open_modal_'+id); document.getElementById('m-'+id).classList.add('open'); }
+function closeModal(id) { track('close_modal_'+id); document.getElementById('m-'+id).classList.remove('open'); }
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.modal-bg').forEach(m => {
+    m.addEventListener('click', function(e) { if(e.target===this) closeModal(this.id.replace('m-','')); });
+  });
+  document.querySelectorAll('.dismiss').forEach(b => {
+    b.addEventListener('click', function() { this.closest('.notice').style.display='none'; track('dismiss_notice'); });
+  });
+});
+let _st=Date.now();
+window.addEventListener('beforeunload',()=>{ navigator.sendBeacon('/track?action=exit&sec='+Math.round((Date.now()-_st)/1000)); });
+
+document.addEventListener('DOMContentLoaded',()=>track('page_load_appearance'));
+</script>
+</body>
+</html>

@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SSH HONEYPOT // THREAT MAP</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#020c02;color:#00ff41;font-family:'Share Tech Mono',monospace;overflow:hidden;height:100vh;display:flex;flex-direction:column;}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:9000;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,255,65,0.007) 3px,rgba(0,255,65,0.007) 4px);}
+::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-thumb{background:#00ff41;}
+.blink{animation:blink 1s step-end infinite;}
+@keyframes blink{50%{opacity:0;}}
+@keyframes scanline{0%{transform:translateX(-100%);}100%{transform:translateX(100%);}}
+#tooltip{position:fixed;background:#010801f0;border:1px solid #00ff41;color:#00ff41;
+  font-family:'Share Tech Mono',monospace;font-size:11px;padding:10px 14px;
+  pointer-events:none;display:none;z-index:9999;line-height:1.9;min-width:200px;
+  box-shadow:0 0 20px #00ff4122;}
+#tooltip b{color:#ff0040;font-size:12px;}
+.ptitle{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:#00ff41;
+  border-bottom:1px solid #051205;padding-bottom:6px;margin-bottom:10px;}
+</style>
+</head>
+<body>
+<div id="tooltip"></div>
+
+<!-- HEADER -->
+<div style="background:linear-gradient(90deg,#000,#001800,#000);border-bottom:1px solid #00ff41;
+  padding:10px 20px;display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;position:relative;overflow:hidden;">
+  <div style="position:absolute;bottom:0;left:0;width:50%;height:1px;
+    background:linear-gradient(90deg,transparent,#00ff41,transparent);animation:scanline 4s linear infinite;"></div>
+  <div>
+    <div style="font-family:'Orbitron',monospace;font-size:18px;font-weight:900;letter-spacing:4px;
+      color:#00ff41;text-shadow:0 0 15px #00ff41;">
+      SSH<span style="color:#ff0040;text-shadow:0 0 15px #ff0040;">//</span>HONEYPOT &nbsp; THREAT MAP
+    </div>
+    <div style="font-size:9px;color:#1a5a1a;letter-spacing:2px;margin-top:3px;">
+      REAL-TIME ATTACK GEOLOCATION &amp; CREDENTIAL ANALYSIS — ACADEMIC RESEARCH
+    </div>
+  </div>
+  <div style="text-align:right;font-size:9px;color:#1a5a1a;line-height:1.9;">
+    <div>GENERATED: 2026-06-07 09:36:16</div>
+    <div style="color:#ff0040;">● <span class="blink">MONITORING ACTIVE</span></div>
+    <div style="display:flex;align-items:center;justify-content:flex-end;gap:5px;">
+      <img src="https://flagcdn.com/w20/gh.png" width="20" height="14" alt="GH" style="vertical-align:middle;margin-right:5px;border:1px solid #1a4d1a;image-rendering:pixelated;" onerror="this.style.display='none';this.nextSibling.style.display='inline';"><span style="display:none;background:#0a2a0a;color:#00ff41;font-size:9px;padding:1px 4px;border:1px solid #1a4d1a;font-family:monospace;">GH</span> SERVER: Accra, Ghana
+    </div>
+  </div>
+</div>
+
+<!-- STAT CARDS -->
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#051205;flex-shrink:0;">
+  <div style="background:#020c02;padding:12px;text-align:center;border-top:2px solid #00ff41;">
+    <div style="font-family:'Orbitron',monospace;font-size:30px;font-weight:700;color:#00ff41;text-shadow:0 0 12px #00ff41;">68</div>
+    <div style="font-size:8px;letter-spacing:3px;color:#1a4d1a;margin-top:3px;">TOTAL ATTEMPTS</div>
+  </div>
+  <div style="background:#020c02;padding:12px;text-align:center;border-top:2px solid #ff0040;">
+    <div style="font-family:'Orbitron',monospace;font-size:30px;font-weight:700;color:#ff0040;text-shadow:0 0 12px #ff0040;">18</div>
+    <div style="font-size:8px;letter-spacing:3px;color:#1a4d1a;margin-top:3px;">UNIQUE ATTACKERS</div>
+  </div>
+  <div style="background:#020c02;padding:12px;text-align:center;border-top:2px solid #ffd700;">
+    <div style="font-family:'Orbitron',monospace;font-size:30px;font-weight:700;color:#ffd700;text-shadow:0 0 12px #ffd700;">12</div>
+    <div style="font-size:8px;letter-spacing:3px;color:#1a4d1a;margin-top:3px;">COUNTRIES DETECTED</div>
+  </div>
+  <div style="background:#020c02;padding:12px;text-align:center;border-top:2px solid #00cfff;">
+    <div style="font-family:'Orbitron',monospace;font-size:30px;font-weight:700;color:#00cfff;text-shadow:0 0 12px #00cfff;">6</div>
+    <div style="font-size:8px;letter-spacing:3px;color:#1a4d1a;margin-top:3px;">CREDENTIAL VARIANTS</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div style="display:grid;grid-template-columns:285px 1fr 265px;flex:1;gap:1px;background:#051205;overflow:hidden;min-height:0;">
+
+  <!-- LEFT -->
+  <div style="background:#020c02;overflow-y:auto;padding:13px;">
+    <div class="ptitle">▶ TOP USERNAMES</div>
+    
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;gap:4px;">
+            <div style="display:flex;align-items:center;min-width:0;flex:1;gap:0;">
+              <span style="color:#1a4d1a;font-size:9px;margin-right:5px;flex-shrink:0;">#1</span>
+              
+              <span style="color:#aaffaa;font-size:11px;white-space:nowrap;overflow:hidden;
+                text-overflow:ellipsis;">root</span>
+            </div>
+            <span style="color:#ffd700;font-size:10px;flex-shrink:0;">40x</span>
+          </div>
+          <div style="background:#030d03;height:4px;border-radius:2px;overflow:hidden;">
+            <div style="width:100%;height:100%;background:#00ff41;border-radius:2px;"></div>
+          </div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;gap:4px;">
+            <div style="display:flex;align-items:center;min-width:0;flex:1;gap:0;">
+              <span style="color:#1a4d1a;font-size:9px;margin-right:5px;flex-shrink:0;">#2</span>
+              
+              <span style="color:#aaffaa;font-size:11px;white-space:nowrap;overflow:hidden;
+                text-overflow:ellipsis;">admin</span>
+            </div>
+            <span style="color:#ffd700;font-size:10px;flex-shrink:0;">14x</span>
+          </div>
+          <div style="background:#030d03;height:4px;border-radius:2px;overflow:hidden;">
+            <div style="width:35%;height:100%;background:#00ff41;border-radius:2px;"></div>
+          </div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;gap:4px;">
+            <div style="display:flex;align-items:center;min-width:0;flex:1;gap:0;">
+              <span style="color:#1a4d1a;font-size:9px;margin-right:5px;flex-shrink:0;">#3</span>
+              
+              <span style="color:#aaffaa;font-size:11px;white-space:nowrap;overflow:hidden;
+                text-overflow:ellipsis;">ubuntu</span>
+            </div>
+            <span style="color:#ffd700;font-size:10px;flex-shrink:0;">6x</span>
+          </div>
+          <div style="background:#030d03;height:4px;border-radius:2px;overflow:hidden;">
+            <div style="width:15%;height:100%;background:#00ff41;border-radius:2px;"></div>
+          </div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;gap:4px;">
+            <div style="display:flex;align-items:center;min-width:0;flex:1;gap:0;">
+              <span style="color:#1a4d1a;font-size:9px;margin-right:5px;flex-shrink:0;">#4</span>
+              
+              <span style="color:#aaffaa;font-size:11px;white-space:nowrap;overflow:hidden;
+                text-overflow:ellipsis;">pi</span>
+            </div>
+            <span style="color:#ffd700;font-size:10px;flex-shrink:0;">6x</span>
+          </div>
+          <div style="background:#030d03;height:4px;border-radius:2px;overflow:hidden;">
+            <div style="width:15%;height:100%;background:#00ff41;border-radius:2px;"></div>
+          </div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;gap:4px;">
+            <div style="display:flex;align-items:center;min-width:0;flex:1;gap:0;">
+              <span style="color:#1a4d1a;font-size:9px;margin-right:5px;flex-shrink:0;">#5</span>
+              
+              <span style="color:#aaffaa;font-size:11px;white-space:nowrap;overflow:hidden;
+                text-overflow:ellipsis;">guest</span>
+            </div>
+            <span style="color:#ffd700;font-size:10px;flex-shrink:0;">1x</span>
+          </div>
+          <div style="background:#030d03;height:4px;border-radius:2px;overflow:hidden;">
+            <div style="width:2%;height:100%;background:#00ff41;border-radius:2px;"></div>
+          </div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;gap:4px;">
+            <div style="display:flex;align-items:center;min-width:0;flex:1;gap:0;">
+              <span style="color:#1a4d1a;font-size:9px;margin-right:5px;flex-shrink:0;">#6</span>
+              
+              <span style="color:#aaffaa;font-size:11px;white-space:nowrap;overflow:hidden;
+                text-overflow:ellipsis;">oracle</span>
+            </div>
+            <span style="color:#ffd700;font-size:10px;flex-shrink:0;">1x</span>
+          </div>
+          <div style="background:#030d03;height:4px;border-radius:2px;overflow:hidden;">
+            <div style="width:2%;height:100%;background:#00ff41;border-radius:2px;"></div>
+          </div>
+        </div>
+    <div class="ptitle" style="margin-top:14px;">▶ TOP PASSWORDS</div>
+    
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;gap:4px;">
+            <div style="display:flex;align-items:center;min-width:0;flex:1;gap:0;">
+              <span style="color:#1a4d1a;font-size:9px;margin-right:5px;flex-shrink:0;">#1</span>
+              
+              <span style="color:#aaffaa;font-size:11px;white-space:nowrap;overflow:hidden;
+                text-overflow:ellipsis;">123456</span>
+            </div>
+            <span style="color:#ffd700;font-size:10px;flex-shrink:0;">12x</span>
+          </div>
+          <div style="background:#030d03;height:4px;border-radius:2px;overflow:hidden;">
+            <div style="width:100%;height:100%;background:#ff0040;border-radius:2px;"></div>
+          </div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;gap:4px;">
+            <div style="display:flex;align-items:center;min-width:0;flex:1;gap:0;">
+              <span style="color:#1a4d1a;font-size:9px;margin-right:5px;flex-shrink:0;">#2</span>
+              
+              <span style="color:#aaffaa;font-size:11px;white-space:nowrap;overflow:hidden;
+                text-overflow:ellipsis;">admin</span>
+            </div>
+            <span style="color:#ffd700;font-size:10px;flex-shrink:0;">12x</span>
+          </div>
+          <div style="background:#030d03;height:4px;border-radius:2px;overflow:hidden;">
+            <div style="width:100%;height:100%;background:#ff0040;border-radius:2px;"></div>
+          </div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;gap:4px;">
+            <div style="display:flex;align-items:center;min-width:0;flex:1;gap:0;">
+              <span style="color:#1a4d1a;font-size:9px;margin-right:5px;flex-shrink:0;">#3</span>
+              
+              <span style="color:#aaffaa;font-size:11px;white-space:nowrap;overflow:hidden;
+                text-overflow:ellipsis;">qwerty</span>
+            </div>
+            <span style="color:#ffd700;font-size:10px;flex-shrink:0;">11x</span>
+          </div>
+          <div style="background:#030d03;height:4px;border-radius:2px;overflow:hidden;">
+            <div style="width:91%;height:100%;background:#ff0040;border-radius:2px;"></div>
+          </div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;gap:4px;">
+            <div style="display:flex;align-items:center;min-width:0;flex:1;gap:0;">
+              <span style="color:#1a4d1a;font-size:9px;margin-right:5px;flex-shrink:0;">#4</span>
+              
+              <span style="color:#aaffaa;font-size:11px;white-space:nowrap;overflow:hidden;
+                text-overflow:ellipsis;">password</span>
+            </div>
+            <span style="color:#ffd700;font-size:10px;flex-shrink:0;">11x</span>
+          </div>
+          <div style="background:#030d03;height:4px;border-radius:2px;overflow:hidden;">
+            <div style="width:91%;height:100%;background:#ff0040;border-radius:2px;"></div>
+          </div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;gap:4px;">
+            <div style="display:flex;align-items:center;min-width:0;flex:1;gap:0;">
+              <span style="color:#1a4d1a;font-size:9px;margin-right:5px;flex-shrink:0;">#5</span>
+              
+              <span style="color:#aaffaa;font-size:11px;white-space:nowrap;overflow:hidden;
+                text-overflow:ellipsis;">toor</span>
+            </div>
+            <span style="color:#ffd700;font-size:10px;flex-shrink:0;">11x</span>
+          </div>
+          <div style="background:#030d03;height:4px;border-radius:2px;overflow:hidden;">
+            <div style="width:91%;height:100%;background:#ff0040;border-radius:2px;"></div>
+          </div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;gap:4px;">
+            <div style="display:flex;align-items:center;min-width:0;flex:1;gap:0;">
+              <span style="color:#1a4d1a;font-size:9px;margin-right:5px;flex-shrink:0;">#6</span>
+              
+              <span style="color:#aaffaa;font-size:11px;white-space:nowrap;overflow:hidden;
+                text-overflow:ellipsis;">root</span>
+            </div>
+            <span style="color:#ffd700;font-size:10px;flex-shrink:0;">1x</span>
+          </div>
+          <div style="background:#030d03;height:4px;border-radius:2px;overflow:hidden;">
+            <div style="width:8%;height:100%;background:#ff0040;border-radius:2px;"></div>
+          </div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;gap:4px;">
+            <div style="display:flex;align-items:center;min-width:0;flex:1;gap:0;">
+              <span style="color:#1a4d1a;font-size:9px;margin-right:5px;flex-shrink:0;">#7</span>
+              
+              <span style="color:#aaffaa;font-size:11px;white-space:nowrap;overflow:hidden;
+                text-overflow:ellipsis;">admin123</span>
+            </div>
+            <span style="color:#ffd700;font-size:10px;flex-shrink:0;">1x</span>
+          </div>
+          <div style="background:#030d03;height:4px;border-radius:2px;overflow:hidden;">
+            <div style="width:8%;height:100%;background:#ff0040;border-radius:2px;"></div>
+          </div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;gap:4px;">
+            <div style="display:flex;align-items:center;min-width:0;flex:1;gap:0;">
+              <span style="color:#1a4d1a;font-size:9px;margin-right:5px;flex-shrink:0;">#8</span>
+              
+              <span style="color:#aaffaa;font-size:11px;white-space:nowrap;overflow:hidden;
+                text-overflow:ellipsis;">ubuntu</span>
+            </div>
+            <span style="color:#ffd700;font-size:10px;flex-shrink:0;">1x</span>
+          </div>
+          <div style="background:#030d03;height:4px;border-radius:2px;overflow:hidden;">
+            <div style="width:8%;height:100%;background:#ff0040;border-radius:2px;"></div>
+          </div>
+        </div>
+  </div>
+
+  <!-- MAP -->
+  <div style="background:#010801;position:relative;overflow:hidden;">
+    <svg id="worldmap" style="width:100%;height:100%;"></svg>
+  </div>
+
+  <!-- RIGHT -->
+  <div style="background:#020c02;overflow-y:auto;padding:13px;">
+    <div class="ptitle">▶ ATTACK ORIGINS</div>
+    
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;gap:4px;">
+            <div style="display:flex;align-items:center;min-width:0;flex:1;gap:0;">
+              <span style="color:#1a4d1a;font-size:9px;margin-right:5px;flex-shrink:0;">#1</span>
+              <img src="https://flagcdn.com/w20/cn.png" width="20" height="14" alt="CN" style="vertical-align:middle;margin-right:5px;border:1px solid #1a4d1a;image-rendering:pixelated;" onerror="this.style.display='none';this.nextSibling.style.display='inline';"><span style="display:none;background:#0a2a0a;color:#00ff41;font-size:9px;padding:1px 4px;border:1px solid #1a4d1a;font-family:monospace;">CN</span>
+              <span style="color:#aaffaa;font-size:11px;white-space:nowrap;overflow:hidden;
+                text-overflow:ellipsis;">China</span>
+            </div>
+            <span style="color:#ffd700;font-size:10px;flex-shrink:0;">18x</span>
+          </div>
+          <div style="background:#030d03;height:4px;border-radius:2px;overflow:hidden;">
+            <div style="width:100%;height:100%;background:#ffd700;border-radius:2px;"></div>
+          </div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;gap:4px;">
+            <div style="display:flex;align-items:center;min-width:0;flex:1;gap:0;">
+              <span style="color:#1a4d1a;font-size:9px;margin-right:5px;flex-shrink:0;">#2</span>
+              <img src="https://flagcdn.com/w20/ru.png" width="20" height="14" alt="RU" style="vertical-align:middle;margin-right:5px;border:1px solid #1a4d1a;image-rendering:pixelated;" onerror="this.style.display='none';this.nextSibling.style.display='inline';"><span style="display:none;background:#0a2a0a;color:#00ff41;font-size:9px;padding:1px 4px;border:1px solid #1a4d1a;font-family:monospace;">RU</span>
+              <span style="color:#aaffaa;font-size:11px;white-space:nowrap;overflow:hidden;
+                text-overflow:ellipsis;">Russia</span>
+            </div>
+            <span style="color:#ffd700;font-size:10px;flex-shrink:0;">18x</span>
+          </div>
+          <div style="background:#030d03;height:4px;border-radius:2px;overflow:hidden;">
+            <div style="width:100%;height:100%;background:#ffd700;border-radius:2px;"></div>
+          </div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;gap:4px;">
+            <div style="display:flex;align-items:center;min-width:0;flex:1;gap:0;">
+              <span style="color:#1a4d1a;font-size:9px;margin-right:5px;flex-shrink:0;">#3</span>
+              <img src="https://flagcdn.com/w20/nl.png" width="20" height="14" alt="NL" style="vertical-align:middle;margin-right:5px;border:1px solid #1a4d1a;image-rendering:pixelated;" onerror="this.style.display='none';this.nextSibling.style.display='inline';"><span style="display:none;background:#0a2a0a;color:#00ff41;font-size:9px;padding:1px 4px;border:1px solid #1a4d1a;font-family:monospace;">NL</span>
+              <span style="color:#aaffaa;font-size:11px;white-space:nowrap;overflow:hidden;
+                text-overflow:ellipsis;">Netherlands</span>
+            </div>
+            <span style="color:#ffd700;font-size:10px;flex-shrink:0;">12x</span>
+          </div>
+          <div style="background:#030d03;height:4px;border-radius:2px;overflow:hidden;">
+            <div style="width:66%;height:100%;background:#ffd700;border-radius:2px;"></div>
+          </div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;gap:4px;">
+            <div style="display:flex;align-items:center;min-width:0;flex:1;gap:0;">
+              <span style="color:#1a4d1a;font-size:9px;margin-right:5px;flex-shrink:0;">#4</span>
+              <img src="https://flagcdn.com/w20/vn.png" width="20" height="14" alt="VN" style="vertical-align:middle;margin-right:5px;border:1px solid #1a4d1a;image-rendering:pixelated;" onerror="this.style.display='none';this.nextSibling.style.display='inline';"><span style="display:none;background:#0a2a0a;color:#00ff41;font-size:9px;padding:1px 4px;border:1px solid #1a4d1a;font-family:monospace;">VN</span>
+              <span style="color:#aaffaa;font-size:11px;white-space:nowrap;overflow:hidden;
+                text-overflow:ellipsis;">Vietnam</span>
+            </div>
+            <span style="color:#ffd700;font-size:10px;flex-shrink:0;">6x</span>
+          </div>
+          <div style="background:#030d03;height:4px;border-radius:2px;overflow:hidden;">
+            <div style="width:33%;height:100%;background:#ffd700;border-radius:2px;"></div>
+          </div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;gap:4px;">
+            <div style="display:flex;align-items:center;min-width:0;flex:1;gap:0;">
+              <span style="color:#1a4d1a;font-size:9px;margin-right:5px;flex-shrink:0;">#5</span>
+              <img src="https://flagcdn.com/w20/in.png" width="20" height="14" alt="IN" style="vertical-align:middle;margin-right:5px;border:1px solid #1a4d1a;image-rendering:pixelated;" onerror="this.style.display='none';this.nextSibling.style.display='inline';"><span style="display:none;background:#0a2a0a;color:#00ff41;font-size:9px;padding:1px 4px;border:1px solid #1a4d1a;font-family:monospace;">IN</span>
+              <span style="color:#aaffaa;font-size:11px;white-space:nowrap;overflow:hidden;
+                text-overflow:ellipsis;">India</span>
+            </div>
+            <span style="color:#ffd700;font-size:10px;flex-shrink:0;">6x</span>
+          </div>
+          <div style="background:#030d03;height:4px;border-radius:2px;overflow:hidden;">
+            <div style="width:33%;height:100%;background:#ffd700;border-radius:2px;"></div>
+          </div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;gap:4px;">
+            <div style="display:flex;align-items:center;min-width:0;flex:1;gap:0;">
+              <span style="color:#1a4d1a;font-size:9px;margin-right:5px;flex-shrink:0;">#6</span>
+              <img src="https://flagcdn.com/w20/us.png" width="20" height="14" alt="US" style="vertical-align:middle;margin-right:5px;border:1px solid #1a4d1a;image-rendering:pixelated;" onerror="this.style.display='none';this.nextSibling.style.display='inline';"><span style="display:none;background:#0a2a0a;color:#00ff41;font-size:9px;padding:1px 4px;border:1px solid #1a4d1a;font-family:monospace;">US</span>
+              <span style="color:#aaffaa;font-size:11px;white-space:nowrap;overflow:hidden;
+                text-overflow:ellipsis;">United States</span>
+            </div>
+            <span style="color:#ffd700;font-size:10px;flex-shrink:0;">2x</span>
+          </div>
+          <div style="background:#030d03;height:4px;border-radius:2px;overflow:hidden;">
+            <div style="width:11%;height:100%;background:#ffd700;border-radius:2px;"></div>
+          </div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;gap:4px;">
+            <div style="display:flex;align-items:center;min-width:0;flex:1;gap:0;">
+              <span style="color:#1a4d1a;font-size:9px;margin-right:5px;flex-shrink:0;">#7</span>
+              <img src="https://flagcdn.com/w20/tn.png" width="20" height="14" alt="TN" style="vertical-align:middle;margin-right:5px;border:1px solid #1a4d1a;image-rendering:pixelated;" onerror="this.style.display='none';this.nextSibling.style.display='inline';"><span style="display:none;background:#0a2a0a;color:#00ff41;font-size:9px;padding:1px 4px;border:1px solid #1a4d1a;font-family:monospace;">TN</span>
+              <span style="color:#aaffaa;font-size:11px;white-space:nowrap;overflow:hidden;
+                text-overflow:ellipsis;">Tunisia</span>
+            </div>
+            <span style="color:#ffd700;font-size:10px;flex-shrink:0;">1x</span>
+          </div>
+          <div style="background:#030d03;height:4px;border-radius:2px;overflow:hidden;">
+            <div style="width:5%;height:100%;background:#ffd700;border-radius:2px;"></div>
+          </div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;gap:4px;">
+            <div style="display:flex;align-items:center;min-width:0;flex:1;gap:0;">
+              <span style="color:#1a4d1a;font-size:9px;margin-right:5px;flex-shrink:0;">#8</span>
+              <img src="https://flagcdn.com/w20/br.png" width="20" height="14" alt="BR" style="vertical-align:middle;margin-right:5px;border:1px solid #1a4d1a;image-rendering:pixelated;" onerror="this.style.display='none';this.nextSibling.style.display='inline';"><span style="display:none;background:#0a2a0a;color:#00ff41;font-size:9px;padding:1px 4px;border:1px solid #1a4d1a;font-family:monospace;">BR</span>
+              <span style="color:#aaffaa;font-size:11px;white-space:nowrap;overflow:hidden;
+                text-overflow:ellipsis;">Brazil</span>
+            </div>
+            <span style="color:#ffd700;font-size:10px;flex-shrink:0;">1x</span>
+          </div>
+          <div style="background:#030d03;height:4px;border-radius:2px;overflow:hidden;">
+            <div style="width:5%;height:100%;background:#ffd700;border-radius:2px;"></div>
+          </div>
+        </div>
+    <div class="ptitle" style="margin-top:14px;">▶ TOP ATTACKERS</div>
+    
+        <div style="padding:6px 0;border-bottom:1px solid #061206;">
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:10px;">
+            <span style="color:#ff4060;font-family:'Courier New';">218.92.0.115</span>
+            <span style="color:#ffd700;">6×</span>
+          </div>
+          <div style="display:flex;align-items:center;margin-top:3px;font-size:10px;color:#1a5a1a;">
+            <img src="https://flagcdn.com/w20/cn.png" width="20" height="14" alt="CN" style="vertical-align:middle;margin-right:5px;border:1px solid #1a4d1a;image-rendering:pixelated;" onerror="this.style.display='none';this.nextSibling.style.display='inline';"><span style="display:none;background:#0a2a0a;color:#00ff41;font-size:9px;padding:1px 4px;border:1px solid #1a4d1a;font-family:monospace;">CN</span><span>China</span>
+          </div>
+        </div>
+        <div style="padding:6px 0;border-bottom:1px solid #061206;">
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:10px;">
+            <span style="color:#ff4060;font-family:'Courier New';">61.177.172.12</span>
+            <span style="color:#ffd700;">6×</span>
+          </div>
+          <div style="display:flex;align-items:center;margin-top:3px;font-size:10px;color:#1a5a1a;">
+            <img src="https://flagcdn.com/w20/cn.png" width="20" height="14" alt="CN" style="vertical-align:middle;margin-right:5px;border:1px solid #1a4d1a;image-rendering:pixelated;" onerror="this.style.display='none';this.nextSibling.style.display='inline';"><span style="display:none;background:#0a2a0a;color:#00ff41;font-size:9px;padding:1px 4px;border:1px solid #1a4d1a;font-family:monospace;">CN</span><span>China</span>
+          </div>
+        </div>
+        <div style="padding:6px 0;border-bottom:1px solid #061206;">
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:10px;">
+            <span style="color:#ff4060;font-family:'Courier New';">116.31.116.55</span>
+            <span style="color:#ffd700;">6×</span>
+          </div>
+          <div style="display:flex;align-items:center;margin-top:3px;font-size:10px;color:#1a5a1a;">
+            <img src="https://flagcdn.com/w20/cn.png" width="20" height="14" alt="CN" style="vertical-align:middle;margin-right:5px;border:1px solid #1a4d1a;image-rendering:pixelated;" onerror="this.style.display='none';this.nextSibling.style.display='inline';"><span style="display:none;background:#0a2a0a;color:#00ff41;font-size:9px;padding:1px 4px;border:1px solid #1a4d1a;font-family:monospace;">CN</span><span>China</span>
+          </div>
+        </div>
+        <div style="padding:6px 0;border-bottom:1px solid #061206;">
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:10px;">
+            <span style="color:#ff4060;font-family:'Courier New';">42.114.145.21</span>
+            <span style="color:#ffd700;">6×</span>
+          </div>
+          <div style="display:flex;align-items:center;margin-top:3px;font-size:10px;color:#1a5a1a;">
+            <img src="https://flagcdn.com/w20/vn.png" width="20" height="14" alt="VN" style="vertical-align:middle;margin-right:5px;border:1px solid #1a4d1a;image-rendering:pixelated;" onerror="this.style.display='none';this.nextSibling.style.display='inline';"><span style="display:none;background:#0a2a0a;color:#00ff41;font-size:9px;padding:1px 4px;border:1px solid #1a4d1a;font-family:monospace;">VN</span><span>Vietnam</span>
+          </div>
+        </div>
+        <div style="padding:6px 0;border-bottom:1px solid #061206;">
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:10px;">
+            <span style="color:#ff4060;font-family:'Courier New';">185.234.219.45</span>
+            <span style="color:#ffd700;">6×</span>
+          </div>
+          <div style="display:flex;align-items:center;margin-top:3px;font-size:10px;color:#1a5a1a;">
+            <img src="https://flagcdn.com/w20/ru.png" width="20" height="14" alt="RU" style="vertical-align:middle;margin-right:5px;border:1px solid #1a4d1a;image-rendering:pixelated;" onerror="this.style.display='none';this.nextSibling.style.display='inline';"><span style="display:none;background:#0a2a0a;color:#00ff41;font-size:9px;padding:1px 4px;border:1px solid #1a4d1a;font-family:monospace;">RU</span><span>Russia</span>
+          </div>
+        </div>
+    <div class="ptitle" style="margin-top:14px;">▶ LIVE FEED</div>
+    
+            <div style="font-size:10px;line-height:1.8;border-left:2px solid #ff0040;
+              padding-left:7px;margin-bottom:6px;">
+              <div style="display:flex;align-items:center;gap:4px;">
+                <img src="https://flagcdn.com/w20/in.png" width="20" height="14" alt="IN" style="vertical-align:middle;margin-right:5px;border:1px solid #1a4d1a;image-rendering:pixelated;" onerror="this.style.display='none';this.nextSibling.style.display='inline';"><span style="display:none;background:#0a2a0a;color:#00ff41;font-size:9px;padding:1px 4px;border:1px solid #1a4d1a;font-family:monospace;">IN</span><span style="color:#ff4060;">103.56.78.9</span>
+              </div>
+              <span style="color:#333;">user:</span><span style="color:#ffd700;"> root</span>
+              <span style="color:#333;"> pw:</span><span style="color:#ffd700;"> qwerty</span>
+            </div>
+            <div style="font-size:10px;line-height:1.8;border-left:2px solid #ff0040;
+              padding-left:7px;margin-bottom:6px;">
+              <div style="display:flex;align-items:center;gap:4px;">
+                <img src="https://flagcdn.com/w20/nl.png" width="20" height="14" alt="NL" style="vertical-align:middle;margin-right:5px;border:1px solid #1a4d1a;image-rendering:pixelated;" onerror="this.style.display='none';this.nextSibling.style.display='inline';"><span style="display:none;background:#0a2a0a;color:#00ff41;font-size:9px;padding:1px 4px;border:1px solid #1a4d1a;font-family:monospace;">NL</span><span style="color:#ff4060;">141.98.10.1</span>
+              </div>
+              <span style="color:#333;">user:</span><span style="color:#ffd700;"> pi</span>
+              <span style="color:#333;"> pw:</span><span style="color:#ffd700;"> qwerty</span>
+            </div>
+            <div style="font-size:10px;line-height:1.8;border-left:2px solid #ff0040;
+              padding-left:7px;margin-bottom:6px;">
+              <div style="display:flex;align-items:center;gap:4px;">
+                <img src="https://flagcdn.com/w20/nl.png" width="20" height="14" alt="NL" style="vertical-align:middle;margin-right:5px;border:1px solid #1a4d1a;image-rendering:pixelated;" onerror="this.style.display='none';this.nextSibling.style.display='inline';"><span style="display:none;background:#0a2a0a;color:#00ff41;font-size:9px;padding:1px 4px;border:1px solid #1a4d1a;font-family:monospace;">NL</span><span style="color:#ff4060;">77.23.145.67</span>
+              </div>
+              <span style="color:#333;">user:</span><span style="color:#ffd700;"> ubuntu</span>
+              <span style="color:#333;"> pw:</span><span style="color:#ffd700;"> qwerty</span>
+            </div>
+            <div style="font-size:10px;line-height:1.8;border-left:2px solid #ff0040;
+              padding-left:7px;margin-bottom:6px;">
+              <div style="display:flex;align-items:center;gap:4px;">
+                <img src="https://flagcdn.com/w20/ru.png" width="20" height="14" alt="RU" style="vertical-align:middle;margin-right:5px;border:1px solid #1a4d1a;image-rendering:pixelated;" onerror="this.style.display='none';this.nextSibling.style.display='inline';"><span style="display:none;background:#0a2a0a;color:#00ff41;font-size:9px;padding:1px 4px;border:1px solid #1a4d1a;font-family:monospace;">RU</span><span style="color:#ff4060;">5.188.87.22</span>
+              </div>
+              <span style="color:#333;">user:</span><span style="color:#ffd700;"> root</span>
+              <span style="color:#333;"> pw:</span><span style="color:#ffd700;"> qwerty</span>
+            </div>
+            <div style="font-size:10px;line-height:1.8;border-left:2px solid #ff0040;
+              padding-left:7px;margin-bottom:6px;">
+              <div style="display:flex;align-items:center;gap:4px;">
+                <img src="https://flagcdn.com/w20/ru.png" width="20" height="14" alt="RU" style="vertical-align:middle;margin-right:5px;border:1px solid #1a4d1a;image-rendering:pixelated;" onerror="this.style.display='none';this.nextSibling.style.display='inline';"><span style="display:none;background:#0a2a0a;color:#00ff41;font-size:9px;padding:1px 4px;border:1px solid #1a4d1a;font-family:monospace;">RU</span><span style="color:#ff4060;">193.32.162.50</span>
+              </div>
+              <span style="color:#333;">user:</span><span style="color:#ffd700;"> admin</span>
+              <span style="color:#333;"> pw:</span><span style="color:#ffd700;"> qwerty</span>
+            </div>
+            <div style="font-size:10px;line-height:1.8;border-left:2px solid #ff0040;
+              padding-left:7px;margin-bottom:6px;">
+              <div style="display:flex;align-items:center;gap:4px;">
+                <img src="https://flagcdn.com/w20/ru.png" width="20" height="14" alt="RU" style="vertical-align:middle;margin-right:5px;border:1px solid #1a4d1a;image-rendering:pixelated;" onerror="this.style.display='none';this.nextSibling.style.display='inline';"><span style="display:none;background:#0a2a0a;color:#00ff41;font-size:9px;padding:1px 4px;border:1px solid #1a4d1a;font-family:monospace;">RU</span><span style="color:#ff4060;">185.234.219.45</span>
+              </div>
+              <span style="color:#333;">user:</span><span style="color:#ffd700;"> root</span>
+              <span style="color:#333;"> pw:</span><span style="color:#ffd700;"> qwerty</span>
+            </div>
+            <div style="font-size:10px;line-height:1.8;border-left:2px solid #ff0040;
+              padding-left:7px;margin-bottom:6px;">
+              <div style="display:flex;align-items:center;gap:4px;">
+                <img src="https://flagcdn.com/w20/vn.png" width="20" height="14" alt="VN" style="vertical-align:middle;margin-right:5px;border:1px solid #1a4d1a;image-rendering:pixelated;" onerror="this.style.display='none';this.nextSibling.style.display='inline';"><span style="display:none;background:#0a2a0a;color:#00ff41;font-size:9px;padding:1px 4px;border:1px solid #1a4d1a;font-family:monospace;">VN</span><span style="color:#ff4060;">42.114.145.21</span>
+              </div>
+              <span style="color:#333;">user:</span><span style="color:#ffd700;"> admin</span>
+              <span style="color:#333;"> pw:</span><span style="color:#ffd700;"> qwerty</span>
+            </div>
+            <div style="font-size:10px;line-height:1.8;border-left:2px solid #ff0040;
+              padding-left:7px;margin-bottom:6px;">
+              <div style="display:flex;align-items:center;gap:4px;">
+                <img src="https://flagcdn.com/w20/cn.png" width="20" height="14" alt="CN" style="vertical-align:middle;margin-right:5px;border:1px solid #1a4d1a;image-rendering:pixelated;" onerror="this.style.display='none';this.nextSibling.style.display='inline';"><span style="display:none;background:#0a2a0a;color:#00ff41;font-size:9px;padding:1px 4px;border:1px solid #1a4d1a;font-family:monospace;">CN</span><span style="color:#ff4060;">116.31.116.55</span>
+              </div>
+              <span style="color:#333;">user:</span><span style="color:#ffd700;"> root</span>
+              <span style="color:#333;"> pw:</span><span style="color:#ffd700;"> qwerty</span>
+            </div>
+            <div style="font-size:10px;line-height:1.8;border-left:2px solid #ff0040;
+              padding-left:7px;margin-bottom:6px;">
+              <div style="display:flex;align-items:center;gap:4px;">
+                <img src="https://flagcdn.com/w20/cn.png" width="20" height="14" alt="CN" style="vertical-align:middle;margin-right:5px;border:1px solid #1a4d1a;image-rendering:pixelated;" onerror="this.style.display='none';this.nextSibling.style.display='inline';"><span style="display:none;background:#0a2a0a;color:#00ff41;font-size:9px;padding:1px 4px;border:1px solid #1a4d1a;font-family:monospace;">CN</span><span style="color:#ff4060;">61.177.172.12</span>
+              </div>
+              <span style="color:#333;">user:</span><span style="color:#ffd700;"> root</span>
+              <span style="color:#333;"> pw:</span><span style="color:#ffd700;"> qwerty</span>
+            </div>
+            <div style="font-size:10px;line-height:1.8;border-left:2px solid #ff0040;
+              padding-left:7px;margin-bottom:6px;">
+              <div style="display:flex;align-items:center;gap:4px;">
+                <img src="https://flagcdn.com/w20/cn.png" width="20" height="14" alt="CN" style="vertical-align:middle;margin-right:5px;border:1px solid #1a4d1a;image-rendering:pixelated;" onerror="this.style.display='none';this.nextSibling.style.display='inline';"><span style="display:none;background:#0a2a0a;color:#00ff41;font-size:9px;padding:1px 4px;border:1px solid #1a4d1a;font-family:monospace;">CN</span><span style="color:#ff4060;">218.92.0.115</span>
+              </div>
+              <span style="color:#333;">user:</span><span style="color:#ffd700;"> root</span>
+              <span style="color:#333;"> pw:</span><span style="color:#ffd700;"> qwerty</span>
+            </div>
+            <div style="font-size:10px;line-height:1.8;border-left:2px solid #ff0040;
+              padding-left:7px;margin-bottom:6px;">
+              <div style="display:flex;align-items:center;gap:4px;">
+                <img src="https://flagcdn.com/w20/in.png" width="20" height="14" alt="IN" style="vertical-align:middle;margin-right:5px;border:1px solid #1a4d1a;image-rendering:pixelated;" onerror="this.style.display='none';this.nextSibling.style.display='inline';"><span style="display:none;background:#0a2a0a;color:#00ff41;font-size:9px;padding:1px 4px;border:1px solid #1a4d1a;font-family:monospace;">IN</span><span style="color:#ff4060;">103.56.78.9</span>
+              </div>
+              <span style="color:#333;">user:</span><span style="color:#ffd700;"> root</span>
+              <span style="color:#333;"> pw:</span><span style="color:#ffd700;"> toor</span>
+            </div>
+            <div style="font-size:10px;line-height:1.8;border-left:2px solid #ff0040;
+              padding-left:7px;margin-bottom:6px;">
+              <div style="display:flex;align-items:center;gap:4px;">
+                <img src="https://flagcdn.com/w20/nl.png" width="20" height="14" alt="NL" style="vertical-align:middle;margin-right:5px;border:1px solid #1a4d1a;image-rendering:pixelated;" onerror="this.style.display='none';this.nextSibling.style.display='inline';"><span style="display:none;background:#0a2a0a;color:#00ff41;font-size:9px;padding:1px 4px;border:1px solid #1a4d1a;font-family:monospace;">NL</span><span style="color:#ff4060;">141.98.10.1</span>
+              </div>
+              <span style="color:#333;">user:</span><span style="color:#ffd700;"> pi</span>
+              <span style="color:#333;"> pw:</span><span style="color:#ffd700;"> toor</span>
+            </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div style="background:#000;border-top:1px solid #051205;padding:4px 20px;
+  display:flex;justify-content:space-between;font-size:9px;color:#1a4d1a;letter-spacing:2px;flex-shrink:0;">
+  <div>SSH HONEYPOT // FINAL YEAR CYBERSECURITY PROJECT</div>
+  <div>github.com/calebtetteh2000/Honeypot-Project</div>
+  <div>2026-06-07 09:36:16</div>
+</div>
+
+<script>
+const attackLines=[{fromLat:31.2222,fromLon:121.4581,toLat:5.6037,toLon:-0.187,country:"China",city:"Shanghai",count:18,ip:"218.92.0.115",isp:"Chinanet",color:"#ff0040",code:"CN"},{fromLat:21.0278,fromLon:105.8342,toLat:5.6037,toLon:-0.187,country:"Vietnam",city:"Hanoi",count:6,ip:"42.114.145.21",isp:"VNPT",color:"#ffff00",code:"VN"},{fromLat:55.7558,fromLon:37.6173,toLat:5.6037,toLon:-0.187,country:"Russia",city:"Moscow",count:18,ip:"185.234.219.45",isp:"SpaceNet",color:"#ff0040",code:"RU"},{fromLat:52.3676,fromLon:4.9041,toLat:5.6037,toLon:-0.187,country:"Netherlands",city:"Amsterdam",count:12,ip:"77.23.145.67",isp:"LeaseWeb",color:"#ff8800",code:"NL"},{fromLat:19.076,fromLon:72.8777,toLat:5.6037,toLon:-0.187,country:"India",city:"Mumbai",count:6,ip:"103.56.78.9",isp:"Jio",color:"#ffff00",code:"IN"},{fromLat:40.7128,fromLon:-74.006,toLat:5.6037,toLon:-0.187,country:"United States",city:"New York",count:2,ip:"45.89.123.4",isp:"DigitalOcean",color:"#ffff00",code:"US"},{fromLat:36.8065,fromLon:10.1815,toLat:5.6037,toLon:-0.187,country:"Tunisia",city:"Tunis",count:1,ip:"196.203.38.10",isp:"Tunisie Telecom",color:"#ffff00",code:"TN"},{fromLat:-23.5505,fromLon:-46.6333,toLat:5.6037,toLon:-0.187,country:"Brazil",city:"Sao Paulo",count:1,ip:"200.55.145.30",isp:"Claro",color:"#ffff00",code:"BR"},{fromLat:50.4501,fromLon:30.5234,toLat:5.6037,toLon:-0.187,country:"Ukraine",city:"Kyiv",count:1,ip:"91.240.118.172",isp:"Volia",color:"#ffff00",code:"UA"},{fromLat:6.5244,fromLon:3.3792,toLat:5.6037,toLon:-0.187,country:"Nigeria",city:"Lagos",count:1,ip:"41.203.64.10",isp:"MTN",color:"#ffff00",code:"NG"},{fromLat:25.033,fromLon:121.5654,toLat:5.6037,toLon:-0.187,country:"Taiwan",city:"Taipei",count:1,ip:"59.120.40.22",isp:"Chunghwa Telecom",color:"#ffff00",code:"TW"},{fromLat:50.1109,fromLon:8.6821,toLat:5.6037,toLon:-0.187,country:"Germany",city:"Frankfurt",count:1,ip:"80.82.77.33",isp:"Hetzner",color:"#ffff00",code:"DE"},];
+const attackDots=[{lat:31.2222,lon:121.4581,country:"China",city:"Shanghai",count:18,ip:"218.92.0.115",isp:"Chinanet",color:"#ff0040",size:11.2,code:"CN"},{lat:21.0278,lon:105.8342,country:"Vietnam",city:"Hanoi",count:6,ip:"42.114.145.21",isp:"VNPT",color:"#ffff00",size:6.4,code:"VN"},{lat:55.7558,lon:37.6173,country:"Russia",city:"Moscow",count:18,ip:"185.234.219.45",isp:"SpaceNet",color:"#ff0040",size:11.2,code:"RU"},{lat:52.3676,lon:4.9041,country:"Netherlands",city:"Amsterdam",count:12,ip:"77.23.145.67",isp:"LeaseWeb",color:"#ff8800",size:8.8,code:"NL"},{lat:19.076,lon:72.8777,country:"India",city:"Mumbai",count:6,ip:"103.56.78.9",isp:"Jio",color:"#ffff00",size:6.4,code:"IN"},{lat:40.7128,lon:-74.006,country:"United States",city:"New York",count:2,ip:"45.89.123.4",isp:"DigitalOcean",color:"#ffff00",size:4.8,code:"US"},{lat:36.8065,lon:10.1815,country:"Tunisia",city:"Tunis",count:1,ip:"196.203.38.10",isp:"Tunisie Telecom",color:"#ffff00",size:4.4,code:"TN"},{lat:-23.5505,lon:-46.6333,country:"Brazil",city:"Sao Paulo",count:1,ip:"200.55.145.30",isp:"Claro",color:"#ffff00",size:4.4,code:"BR"},{lat:50.4501,lon:30.5234,country:"Ukraine",city:"Kyiv",count:1,ip:"91.240.118.172",isp:"Volia",color:"#ffff00",size:4.4,code:"UA"},{lat:6.5244,lon:3.3792,country:"Nigeria",city:"Lagos",count:1,ip:"41.203.64.10",isp:"MTN",color:"#ffff00",size:4.4,code:"NG"},{lat:25.033,lon:121.5654,country:"Taiwan",city:"Taipei",count:1,ip:"59.120.40.22",isp:"Chunghwa Telecom",color:"#ffff00",size:4.4,code:"TW"},{lat:50.1109,lon:8.6821,country:"Germany",city:"Frankfurt",count:1,ip:"80.82.77.33",isp:"Hetzner",color:"#ffff00",size:4.4,code:"DE"},];
+const SERVER={lat:5.6037,lon:-0.187};
+
+const svg=d3.select("#worldmap");
+const getW=()=>svg.node().getBoundingClientRect().width;
+const getH=()=>svg.node().getBoundingClientRect().height;
+const proj=d3.geoNaturalEarth1();
+const path=d3.geoPath().projection(proj);
+const defs=svg.append("defs");
+
+function makeGlow(id,std){
+  const f=defs.append("filter").attr("id",id)
+    .attr("x","-100%").attr("y","-100%").attr("width","300%").attr("height","300%");
+  f.append("feGaussianBlur").attr("stdDeviation",std).attr("result","blur");
+  const m=f.append("feMerge");
+  m.append("feMergeNode").attr("in","blur");
+  m.append("feMergeNode").attr("in","SourceGraphic");
+}
+makeGlow("gG",3); makeGlow("gR",5); makeGlow("gW",2);
+
+function makeLaserGrad(id,col){
+  const lg=defs.append("linearGradient").attr("id",id).attr("gradientUnits","userSpaceOnUse");
+  lg.append("stop").attr("offset","0%").attr("stop-color",col).attr("stop-opacity","0");
+  lg.append("stop").attr("offset","50%").attr("stop-color",col).attr("stop-opacity","0.5");
+  lg.append("stop").attr("offset","88%").attr("stop-color",col).attr("stop-opacity","1");
+  lg.append("stop").attr("offset","100%").attr("stop-color","#fff").attr("stop-opacity","1");
+}
+
+const g_land=svg.append("g"),g_lines=svg.append("g"),
+      g_lasers=svg.append("g"),g_dots=svg.append("g"),g_srv=svg.append("g");
+
+function fitMap(){
+  const W=getW(),H=getH();
+  proj.scale(W/6.2).translate([W/2,H/2]);
+  path.projection(proj);
+}
+
+const tip=document.getElementById("tooltip");
+const showTip=(e,h)=>{tip.innerHTML=h;tip.style.display="block";moveTip(e);};
+const moveTip=(e)=>{
+  let x=e.clientX+16,y=e.clientY+16;
+  if(x+240>innerWidth) x=e.clientX-250;
+  if(y+210>innerHeight) y=e.clientY-220;
+  tip.style.left=x+"px";tip.style.top=y+"px";
+};
+svg.on("mousemove",moveTip);
+const hideTip=()=>tip.style.display="none";
+
+function laserBeam(pathEl,color,delay){
+  const total=pathEl.getTotalLength();
+  const BEAM=45;
+  const gid="lg"+Math.random().toString(36).substr(2,5);
+  makeLaserGrad(gid,color);
+  const lp=g_lasers.append("line").attr("stroke","url(#"+gid+")")
+    .attr("stroke-width",2.5).attr("stroke-linecap","round")
+    .attr("filter","url(#gR)").style("opacity",0);
+  const hd=g_lasers.append("circle").attr("r",2.5).attr("fill","#fff")
+    .attr("filter","url(#gW)").style("opacity",0);
+
+  function shoot(){
+    const dur=1700+Math.random()*900;
+    const st=performance.now()+delay, en=st+dur;
+    function frame(now){
+      if(now<st){requestAnimationFrame(frame);return;}
+      const t=Math.min((now-st)/(en-st),1);
+      const hDist=t*total, tDist=Math.max(0,hDist-BEAM);
+      const hp=pathEl.getPointAtLength(hDist);
+      const tp=pathEl.getPointAtLength(tDist);
+      const alpha=t<0.05?t/0.05:t>0.9?(1-t)/0.1:1;
+      defs.select("#"+gid).attr("x1",tp.x).attr("y1",tp.y).attr("x2",hp.x).attr("y2",hp.y);
+      lp.attr("x1",tp.x).attr("y1",tp.y).attr("x2",hp.x).attr("y2",hp.y).style("opacity",alpha);
+      hd.attr("cx",hp.x).attr("cy",hp.y).style("opacity",t>0.93?0:alpha*0.95);
+      if(t<1){requestAnimationFrame(frame);}
+      else{
+        lp.style("opacity",0); hd.style("opacity",0);
+        const sp=proj([SERVER.lon,SERVER.lat]);
+        const fl=g_lasers.append("circle").attr("cx",sp[0]).attr("cy",sp[1])
+          .attr("r",3).attr("fill",color).attr("filter","url(#gR)").style("opacity",1);
+        fl.transition().duration(380).attr("r",14).style("opacity",0)
+          .on("end",()=>{fl.remove();setTimeout(()=>shoot(),900+Math.random()*1400);});
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+  shoot();
+}
+
+function flagUrl(code){return "https://flagcdn.com/w20/"+code.toLowerCase()+".png";}
+
+fetch("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json")
+  .then(r=>r.json())
+  .then(world=>{
+    fitMap();
+    g_land.selectAll("path")
+      .data(topojson.feature(world,world.objects.countries).features)
+      .join("path").attr("d",path)
+      .attr("fill","#071407").attr("stroke","#00ff41")
+      .attr("stroke-width",0.35).attr("stroke-opacity",0.55).attr("filter","url(#gG)")
+      .on("mouseover",function(){d3.select(this).attr("fill","#0c200c");})
+      .on("mouseout",function(){d3.select(this).attr("fill","#071407");});
+
+    g_land.append("path").datum(d3.geoGraticule()())
+      .attr("d",path).attr("fill","none")
+      .attr("stroke","#00ff4112").attr("stroke-width",0.35);
+
+    attackLines.forEach((d,i)=>{
+      const from=proj([d.fromLon,d.fromLat]),to=proj([SERVER.lon,SERVER.lat]);
+      if(!from||!to) return;
+      const mx=(from[0]+to[0])/2,my=(from[1]+to[1])/2-50;
+      const pd=`M${from[0]},${from[1]} Q${mx},${my} ${to[0]},${to[1]}`;
+
+      g_lines.append("path").attr("d",pd).attr("fill","none")
+        .attr("stroke",d.color).attr("stroke-width",4).attr("stroke-opacity",0.06).attr("filter","url(#gR)");
+
+      const le=g_lines.append("path").attr("d",pd).attr("fill","none")
+        .attr("stroke",d.color).attr("stroke-width",0.8).attr("stroke-opacity",0.28);
+      const len=le.node().getTotalLength();
+      le.attr("stroke-dasharray",len).attr("stroke-dashoffset",len)
+        .transition().duration(1400+i*120).ease(d3.easeQuadOut).attr("stroke-dashoffset",0);
+
+      setTimeout(()=>{
+        laserBeam(le.node(),d.color,0);
+        if(d.count>8) laserBeam(le.node(),d.color,1000+Math.random()*500);
+        if(d.count>15) laserBeam(le.node(),d.color,1900+Math.random()*600);
+      },i*180+600);
+    });
+
+    attackDots.forEach((d,i)=>{
+      const pos=proj([d.lon,d.lat]);
+      if(!pos) return;
+      setTimeout(()=>{
+        for(let r=0;r<3;r++){
+          const ring=g_dots.append("circle")
+            .attr("cx",pos[0]).attr("cy",pos[1]).attr("r",d.size+2)
+            .attr("fill","none").attr("stroke",d.color)
+            .attr("stroke-width",0.8).attr("stroke-opacity",0).attr("filter","url(#gR)");
+          (function ripple(el,dl){
+            el.transition().delay(dl).duration(2000).ease(d3.easeQuadOut)
+              .attr("r",d.size+20).attr("stroke-opacity",0)
+              .on("end",()=>{el.attr("r",d.size+2).attr("stroke-opacity",0.6);ripple(el,0);});
+            el.transition().delay(dl).duration(300).attr("stroke-opacity",0.6);
+          })(ring,r*650);
+        }
+
+        g_dots.append("circle")
+          .attr("cx",pos[0]).attr("cy",pos[1]).attr("r",d.size)
+          .attr("fill",d.color).attr("stroke","#fff2").attr("stroke-width",0.5)
+          .attr("filter","url(#gR)").style("cursor","pointer")
+          .on("mouseover",(e)=>{
+            const fi=new Image(); fi.src=flagUrl(d.code);
+            showTip(e,`<b>⚠ ATTACK SOURCE</b><br>`+
+              `<img src="${flagUrl(d.code)}" width="20" height="14" style="vertical-align:middle;margin-right:5px;border:1px solid #1a4d1a;" onerror="this.style.display='none'">`+
+              `<b style="color:#ffd700">${d.country}</b><br>`+
+              `CITY: ${d.city}<br>IP: ${d.ip}<br>ISP: ${d.isp}<br>`+
+              `ATTEMPTS: <span style="color:#ffd700">${d.count}</span>`);
+          })
+          .on("mouseout",hideTip);
+
+        g_dots.append("text").attr("x",pos[0]+d.size+4).attr("y",pos[1]+4)
+          .attr("fill",d.color).attr("font-size","9px")
+          .attr("font-family","'Share Tech Mono',monospace").attr("opacity",0.85)
+          .text(d.country);
+      },i*100);
+    });
+
+    const sp=proj([SERVER.lon,SERVER.lat]);
+    if(sp){
+      for(let i=0;i<4;i++){
+        const ring=g_srv.append("circle").attr("cx",sp[0]).attr("cy",sp[1]).attr("r",8)
+          .attr("fill","none").attr("stroke","#00ff41")
+          .attr("stroke-width",0.8).attr("stroke-opacity",0).attr("filter","url(#gG)");
+        (function sRing(el,dl){
+          el.transition().delay(dl).duration(2400).ease(d3.easeQuadOut)
+            .attr("r",42).attr("stroke-opacity",0)
+            .on("end",()=>{el.attr("r",8).attr("stroke-opacity",0.7);sRing(el,0);});
+          el.transition().delay(dl).duration(300).attr("stroke-opacity",0.7);
+        })(ring,i*580);
+      }
+      g_srv.append("circle").attr("cx",sp[0]).attr("cy",sp[1]).attr("r",7)
+        .attr("fill","#00ff41").attr("stroke","#fff").attr("stroke-width",1.5)
+        .attr("filter","url(#gG)").style("cursor","pointer")
+        .on("mouseover",(e)=>showTip(e,
+          `<b>🎯 HONEYPOT SERVER</b><br>`+
+          `<img src="${flagUrl('gh')}" width="20" height="14" style="vertical-align:middle;margin-right:5px;border:1px solid #1a4d1a;" onerror="this.style.display='none'">`+
+          `<b style="color:#00ff41">Accra, Ghana</b><br>`+
+          `STATUS: <span style="color:#00ff41">ACTIVE</span><br>PORT: 22 (SSH)<br>`+
+          `TOTAL ATTACKS: <span style="color:#ffd700">68</span>`))
+        .on("mouseout",hideTip);
+      g_srv.append("text").attr("x",sp[0]+11).attr("y",sp[1]+4)
+        .attr("fill","#00ff41").attr("font-size","10px")
+        .attr("font-family","'Share Tech Mono',monospace").attr("filter","url(#gG)")
+        .text("⬤ HONEYPOT");
+    }
+  })
+  .catch(()=>svg.append("text").attr("x","50%").attr("y","50%")
+    .attr("text-anchor","middle").attr("fill","#ff0040").attr("font-size","14px")
+    .text("Requires internet to load map"));
+</script>
+</body>
+</html>
