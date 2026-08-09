@@ -1,559 +1,467 @@
 #!/usr/bin/env python3
 """
-analyse_attacks.py
-SSH Honeypot Attack Analysis Script
-Reads audits.log, looks up each IP address country via ip-api.com,
-and generates a hacker-themed HTML dashboard with real attack data.
+threat_analysis.py — SSH Honeypot Dashboard Generator
+Reads audits.log + cmd_audits.log, geocodes real IPs via ip-api.com,
+then injects live data into ssh_attack_dashboard_v15.html and opens it.
 
 Usage:
-    python analyse_attacks.py
-Output:
-    attack_dashboard.html  (open in any browser)
+    python threat_analysis.py
+
+Requirements:
+    pip install requests
+    ssh_attack_dashboard_v15.html must be in the same folder as this script.
 """
 
-import re
-import json
-import time
-import requests
-from collections import Counter
+import os, re, json, time, webbrowser
 from datetime import datetime
+from collections import Counter
 
-# ── CONFIG ──────────────────────────────────────────────────────────────────
-LOG_FILE      = 'audits.log'
+try:
+    import requests
+    HAS_REQUESTS = True
+except ImportError:
+    HAS_REQUESTS = False
+    print("[!] 'requests' not installed — GeoIP lookup disabled. Run: pip install requests")
+
+# ── CONFIG ───────────────────────────────────────────────────────────────────
+AUDITS_LOG    = 'audits.log'
+CMD_LOG       = 'cmd_audits.log'
+TEMPLATE_FILE = 'ssh_attack_dashboard_v15.html'
 OUTPUT_FILE   = 'attack_dashboard.html'
-MAX_GEO_LOOKUPS = 200   # stop after this many IP lookups (free API limit)
+MAX_GEO       = 100
 # ─────────────────────────────────────────────────────────────────────────────
 
-COUNTRY_FLAGS = {
-    'CN':'🇨🇳','RU':'🇷🇺','US':'🇺🇸','NL':'🇳🇱','DE':'🇩🇪','BR':'🇧🇷',
-    'IN':'🇮🇳','VN':'🇻🇳','TW':'🇹🇼','UA':'🇺🇦','TN':'🇹🇳','FR':'🇫🇷',
-    'GB':'🇬🇧','KR':'🇰🇷','JP':'🇯🇵','SG':'🇸🇬','HK':'🇭🇰','TR':'🇹🇷',
-    'PL':'🇵🇱','RO':'🇷🇴','IT':'🇮🇹','ES':'🇪🇸','CA':'🇨🇦','AU':'🇦🇺',
-    'NG':'🇳🇬','GH':'🇬🇭','ZA':'🇿🇦','EG':'🇪🇬','PK':'🇵🇰','ID':'🇮🇩',
-}
+DANGEROUS = {'cat /etc/passwd', 'wget', 'curl', 'id', 'uname -a',
+             'ps aux', 'ifconfig', 'ip a', 'cat jumpbox1.conf'}
 
-def flag_img(code):
-    """Return an <img> tag for a country flag."""
-    code = (code or 'XX').upper()
-    return (
-        f'<img src="https://flagcdn.com/w20/{code.lower()}.png" '
-        f'width="20" height="14" style="vertical-align:middle;margin-right:6px;'
-        f'border:1px solid #1a4d1a;image-rendering:pixelated;" '
-        f'onerror="this.style.display=\'none\'">'
-    )
+def is_dangerous(cmd):
+    cmd = cmd.lower().strip()
+    return any(d in cmd for d in DANGEROUS)
 
-def parse_log(filepath):
-    """
-    Parse lines in two formats:
-      New:  2026-06-10 09:08:45 | 127.0.0.1 | root | qwerty
-      Old:  127.0.0.1, root, qwerty
-    Returns list of dicts with keys: ip, username, password, timestamp
-    """
+# ── LOG PARSERS ───────────────────────────────────────────────────────────────
+
+def parse_audits(path):
+    """Parse audits.log → [{timestamp, ip, username, password}]"""
     entries = []
     try:
-        with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
+        with open(path, encoding='utf-8', errors='ignore') as f:
+            for line in f:
+                line = line.strip()
+                if not line or '|' not in line:
+                    continue
+                parts = [p.strip() for p in line.split('|')]
+                if len(parts) >= 4:
+                    entries.append({
+                        'timestamp': parts[0],
+                        'ip':        parts[1],
+                        'username':  parts[2],
+                        'password':  parts[3],
+                    })
+    except FileNotFoundError:
+        print(f"[!] {path} not found.")
+    return entries
+
+
+def parse_cmd_log(path):
+    """
+    Parse cmd_audits.log into sessions.
+    A session begins at each login line (4 pipe fields, username not b'...').
+    Commands appear as:
+      New:  2026-06-10 10:22:51 | 127.0.0.1 | b'pwd'
+      Old:  Command b'ls' executed by 127.0.0.1
+    """
+    sessions = []
+    current  = None
+    try:
+        with open(path, encoding='utf-8', errors='ignore') as f:
             for line in f:
                 line = line.strip()
                 if not line:
                     continue
-                # New timestamped format
+
                 if '|' in line:
                     parts = [p.strip() for p in line.split('|')]
-                    if len(parts) >= 4:
-                        entries.append({
-                            'timestamp': parts[0],
-                            'ip':        parts[1],
-                            'username':  parts[2],
-                            'password':  parts[3],
+                    # Login line: ts | ip | user | password
+                    if len(parts) == 4 and not parts[2].startswith("b'"):
+                        if current:
+                            sessions.append(current)
+                        current = {
+                            'ip':      parts[1],
+                            'start':   parts[0],
+                            'country': 'Unknown',
+                            'code':    'un',
+                            'cmds':    [],
+                        }
+                    # Command line: ts | ip | b'cmd'
+                    elif len(parts) == 3 and current:
+                        raw = parts[2].strip("b'\" ")
+                        ts  = parts[0][11:19] if len(parts[0]) > 11 else ''
+                        current['cmds'].append({
+                            'ts':     ts,
+                            'cmd':    raw,
+                            'danger': is_dangerous(raw),
                         })
-                # Old format
-                elif ',' in line and 'Command' not in line and 'Client' not in line:
-                    parts = [p.strip() for p in line.split(',')]
-                    if len(parts) >= 3:
-                        entries.append({
-                            'timestamp': '',
-                            'ip':        parts[0],
-                            'username':  parts[1],
-                            'password':  parts[2],
+                # Old format: Command b'ls' executed by 127.0.0.1
+                elif line.startswith('Command ') and 'executed by' in line:
+                    m = re.match(r"Command b'(.+?)' executed by .+", line)
+                    if m and current:
+                        cmd = m.group(1)
+                        current['cmds'].append({
+                            'ts':     '',
+                            'cmd':    cmd,
+                            'danger': is_dangerous(cmd),
                         })
+        if current:
+            sessions.append(current)
     except FileNotFoundError:
-        print(f"[!] Log file '{filepath}' not found. Using sample data.")
-    return entries
+        print(f"[!] {path} not found.")
+    return sessions
 
-def geoip_lookup(ip):
-    """Look up country/city for an IP using the free ip-api.com service."""
+
+# ── GEOIP ─────────────────────────────────────────────────────────────────────
+
+def geoip(ip):
+    if not HAS_REQUESTS:
+        return {}
     try:
-        r = requests.get(f'http://ip-api.com/json/{ip}?fields=status,country,countryCode,city,isp,lat,lon',
-                         timeout=5)
-        data = r.json()
-        if data.get('status') == 'success':
-            return data
+        r = requests.get(
+            f'http://ip-api.com/json/{ip}?fields=status,country,countryCode,city,isp,lat,lon',
+            timeout=5)
+        d = r.json()
+        if d.get('status') == 'success':
+            return d
     except Exception:
         pass
-    return {'country': 'Unknown', 'countryCode': 'XX', 'city': 'Unknown',
-            'isp': 'Unknown', 'lat': 0, 'lon': 0}
+    return {}
 
-def build_geo_data(entries):
-    """Geocode each unique IP (with rate limiting to be nice to the free API)."""
-    unique_ips = list({e['ip'] for e in entries
-                       if e['ip'] not in ('127.0.0.1', '::1', '')})
-    unique_ips = unique_ips[:MAX_GEO_LOOKUPS]
 
-    geo_cache = {}
-    total = len(unique_ips)
-    print(f"[*] Looking up {total} unique IP address(es)...")
+def geocode_all(ips):
+    cache = {}
+    ips = [ip for ip in dict.fromkeys(ips)
+           if ip not in ('127.0.0.1', '::1', 'localhost', '')][:MAX_GEO]
+    if not ips:
+        return cache
+    for i, ip in enumerate(ips, 1):
+        print(f'    [{i}/{len(ips)}] {ip}', end=' ', flush=True)
+        cache[ip] = geoip(ip)
+        print(f"→ {cache[ip].get('country', 'Unknown')}")
+        time.sleep(0.35)
+    return cache
 
-    for i, ip in enumerate(unique_ips, 1):
-        print(f"    [{i}/{total}] {ip}", end=' ')
-        geo_cache[ip] = geoip_lookup(ip)
-        print(f"→ {geo_cache[ip].get('country','?')}")
-        time.sleep(0.35)   # ip-api.com free tier: max ~45 req/min
 
-    return geo_cache
+# ── ANALYSIS ──────────────────────────────────────────────────────────────────
 
-def analyse(entries, geo_cache):
-    """Crunch the numbers."""
+COUNTRY_CODES = {
+    'China':'cn','Russia':'ru','Netherlands':'nl','Vietnam':'vn','India':'in',
+    'United States':'us','Tunisia':'tn','Brazil':'br','Ukraine':'ua','Nigeria':'ng',
+    'Taiwan':'tw','Germany':'de','United Kingdom':'gb','France':'fr','Japan':'jp',
+    'South Korea':'kr','Australia':'au','Canada':'ca','Singapore':'sg',
+    'Hong Kong':'hk','Turkey':'tr','Poland':'pl','Romania':'ro','Italy':'it',
+    'Spain':'es','Indonesia':'id','Pakistan':'pk','Egypt':'eg','Ghana':'gh',
+}
+
+def geo_of(ip, cache):
+    return cache.get(ip, {
+        'country': 'Unknown', 'countryCode': 'XX', 'city': 'Unknown',
+        'isp': 'Unknown', 'lat': 0, 'lon': 0,
+    })
+
+
+def analyse(entries, sessions, geo):
+    ip_counts  = Counter(e['ip'] for e in entries)
     usernames  = Counter(e['username'] for e in entries)
     passwords  = Counter(e['password'] for e in entries)
-    ip_counts  = Counter(e['ip'] for e in entries)
 
-    country_counts = Counter()
-    for ip, count in ip_counts.items():
-        info = geo_cache.get(ip, {})
-        country = info.get('country', 'Unknown')
-        country_counts[country] += count
+    country_cnt = Counter()
+    for ip, cnt in ip_counts.items():
+        country_cnt[geo_of(ip, geo).get('country', 'Unknown')] += cnt
 
-    # Build attacker list with geo info
+    # attackers list
     attackers = []
-    for ip, count in ip_counts.most_common(20):
-        info = geo_cache.get(ip, {})
+    for ip, cnt in ip_counts.most_common(20):
+        g = geo_of(ip, geo)
         attackers.append({
             'ip':      ip,
-            'count':   count,
-            'country': info.get('country', 'Unknown'),
-            'code':    info.get('countryCode', 'XX'),
-            'city':    info.get('city', ''),
-            'isp':     info.get('isp', ''),
-            'lat':     info.get('lat', 0),
-            'lon':     info.get('lon', 0),
+            'count':   cnt,
+            'country': g.get('country', 'Unknown'),
+            'code':    g.get('countryCode', 'XX').lower(),
+            'city':    g.get('city', ''),
+            'isp':     g.get('isp', ''),
+            'lat':     g.get('lat', 0),
+            'lon':     g.get('lon', 0),
         })
 
-    return {
-        'total':          len(entries),
-        'unique_ips':     len(ip_counts),
-        'countries':      len(country_counts),
-        'cred_variants':  len({(e['username'], e['password']) for e in entries}),
-        'top_usernames':  usernames.most_common(10),
-        'top_passwords':  passwords.most_common(10),
-        'top_countries':  country_counts.most_common(10),
-        'attackers':      attackers,
-        'recent':         entries[-20:][::-1],
-    }
-
-# ── SAMPLE DATA (used when log file is empty or missing) ────────────────────
-SAMPLE_ENTRIES = [
-    {'timestamp':'2026-06-10 09:00:01','ip':'218.92.0.115',  'username':'root',   'password':'123456'},
-    {'timestamp':'2026-06-10 09:00:05','ip':'218.92.0.115',  'username':'root',   'password':'password'},
-    {'timestamp':'2026-06-10 09:00:09','ip':'61.177.172.12', 'username':'admin',  'password':'admin'},
-    {'timestamp':'2026-06-10 09:01:00','ip':'185.234.219.45','username':'root',   'password':'toor'},
-    {'timestamp':'2026-06-10 09:01:30','ip':'77.23.145.67',  'username':'ubuntu', 'password':'ubuntu'},
-    {'timestamp':'2026-06-10 09:02:00','ip':'103.56.78.9',   'username':'pi',     'password':'raspberry'},
-    {'timestamp':'2026-06-10 09:02:45','ip':'42.114.145.21', 'username':'admin',  'password':'1234'},
-    {'timestamp':'2026-06-10 09:03:10','ip':'141.98.10.1',   'username':'root',   'password':'qwerty'},
-]
-
-SAMPLE_GEO = {
-    '218.92.0.115':   {'country':'China',       'countryCode':'CN','city':'Shanghai', 'isp':'ChinaNet','lat':31.2,'lon':121.5},
-    '61.177.172.12':  {'country':'China',       'countryCode':'CN','city':'Beijing',  'isp':'ChinaNet','lat':39.9,'lon':116.4},
-    '185.234.219.45': {'country':'Russia',      'countryCode':'RU','city':'Moscow',   'isp':'Selectel','lat':55.75,'lon':37.6},
-    '77.23.145.67':   {'country':'Netherlands', 'countryCode':'NL','city':'Amsterdam','isp':'Surfshark','lat':52.37,'lon':4.9},
-    '103.56.78.9':    {'country':'India',       'countryCode':'IN','city':'Mumbai',   'isp':'Jio',     'lat':19.07,'lon':72.88},
-    '42.114.145.21':  {'country':'Vietnam',     'countryCode':'VN','city':'Hanoi',    'isp':'VNPT',    'lat':21.03,'lon':105.85},
-    '141.98.10.1':    {'country':'Netherlands', 'countryCode':'NL','city':'Amsterdam','isp':'M247',    'lat':52.37,'lon':4.9},
-}
-# ─────────────────────────────────────────────────────────────────────────────
-
-def generate_html(stats, geo_cache):
-    now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-
-    # ── map attack data for D3 ───────────────────────────────────────────────
+    # attack dots for the map
     seen = set()
-    map_attacks = []
-    for a in stats['attackers']:
+    attack_dots = []
+    for a in attackers:
         if a['lat'] == 0 and a['lon'] == 0:
             continue
-        key = a['code']
-        if key in seen:
+        if a['code'] in seen:
             continue
-        seen.add(key)
-        map_attacks.append({
-            'country': a['country'],
-            'code':    a['code'],
-            'lat':     a['lat'],
-            'lon':     a['lon'],
-            'count':   sum(x['count'] for x in stats['attackers'] if x['code'] == a['code']),
+        seen.add(a['code'])
+        attack_dots.append({
+            'lat':     a['lat'],  'lon':     a['lon'],
+            'country': a['country'], 'city':    a['city'],
+            'count':   a['count'],   'ip':      a['ip'],
+            'isp':     a['isp'],     'code':    a['code'].upper(),
         })
 
-    map_attacks_json = json.dumps(map_attacks)
+    # enrich sessions with geo
+    for s in sessions:
+        g = geo_of(s['ip'], geo)
+        s['country'] = g.get('country', 'Unknown')
+        s['code']    = g.get('countryCode', 'XX').lower()
 
-    # ── helper: bar rows ────────────────────────────────────────────────────
-    def bar_rows(items, color):
-        if not items:
-            return '<div style="color:#1a5a1a;font-size:11px;">No data yet</div>'
-        max_v = items[0][1] or 1
-        rows = []
-        for i, (label, count) in enumerate(items, 1):
-            pct = int(count / max_v * 100)
-            rows.append(f'''
-            <div style="margin-bottom:8px;">
-              <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px;">
-                <span><span style="color:#1a5a1a;">#{i:02d}</span> {label}</span>
-                <span style="color:{color};">{count}x</span>
-              </div>
-              <div style="background:#051205;height:3px;border-radius:2px;">
-                <div style="width:{pct}%;height:3px;background:{color};border-radius:2px;
-                  box-shadow:0 0 6px {color};"></div>
-              </div>
-            </div>''')
-        return ''.join(rows)
+    # login feed (most recent 20)
+    feed = []
+    for e in entries[-20:][::-1]:
+        g = geo_of(e['ip'], geo)
+        feed.append({
+            'ts':     e['timestamp'][11:19] if len(e['timestamp']) > 11 else '',
+            'ip':     e['ip'],
+            'code':   g.get('countryCode', 'XX').lower(),
+            'user':   e['username'],
+            'pw':     e['password'],
+            'danger': e['username'] in ('root', 'admin'),
+        })
 
-    # ── helper: country rows ────────────────────────────────────────────────
-    def country_rows(items):
-        if not items:
-            return '<div style="color:#1a5a1a;font-size:11px;">No data yet</div>'
-        max_v = items[0][1] or 1
-        rows = []
-        for i, (country, count) in enumerate(items, 1):
-            code = next((a['code'] for a in stats['attackers'] if a['country'] == country), 'XX')
-            pct = int(count / max_v * 100)
-            rows.append(f'''
-            <div style="margin-bottom:8px;">
-              <div style="display:flex;justify-content:space-between;align-items:center;
-                font-size:11px;margin-bottom:3px;">
-                <span style="display:flex;align-items:center;">
-                  <span style="color:#1a5a1a;margin-right:6px;">#{i:02d}</span>
-                  {flag_img(code)}{country}
-                </span>
-                <span style="color:#ffcc00;">{count}x</span>
-              </div>
-              <div style="background:#051205;height:3px;border-radius:2px;">
-                <div style="width:{pct}%;height:3px;background:#ffcc00;border-radius:2px;
-                  box-shadow:0 0 6px #ffcc00;"></div>
-              </div>
-            </div>''')
-        return ''.join(rows)
+    # OSINT IP list
+    osint_ips = [
+        {'ip': a['ip'], 'country': a['country'], 'code': a['code'], 'count': a['count']}
+        for a in attackers[:10]
+    ]
 
-    # ── helper: attacker rows ───────────────────────────────────────────────
-    def attacker_rows():
-        rows = []
-        for a in stats['attackers'][:10]:
-            rows.append(f'''
-            <div style="margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid #051205;">
-              <div style="display:flex;align-items:center;justify-content:space-between;">
-                <span style="color:#ff4060;font-size:12px;">{a['ip']}</span>
-                <span style="color:#ff0040;font-size:11px;">{a['count']}x</span>
-              </div>
-              <div style="font-size:10px;color:#1a5a1a;margin-top:3px;display:flex;align-items:center;">
-                {flag_img(a['code'])}{a['country']}
-              </div>
-            </div>''')
-        return ''.join(rows) if rows else '<div style="color:#1a5a1a;font-size:11px;">No data yet</div>'
+    return {
+        'total':         len(entries),
+        'unique_ips':    len(ip_counts),
+        'countries':     len(country_cnt),
+        'cred_variants': len(passwords),
+        'usernames':     usernames.most_common(8),
+        'passwords':     passwords.most_common(8),
+        'countries_top': country_cnt.most_common(12),
+        'attackers':     attackers,
+        'attack_dots':   attack_dots,
+        'sessions':      sessions[:20],
+        'feed':          feed,
+        'osint_ips':     osint_ips,
+    }
 
-    # ── helper: recent feed ─────────────────────────────────────────────────
-    def feed_rows():
-        rows = []
-        for e in stats['recent'][:12]:
-            code = next((a['code'] for a in stats['attackers'] if a['ip'] == e['ip']), 'XX')
-            ts   = e['timestamp'] or '—'
-            rows.append(f'''
-            <div style="margin-bottom:6px;padding:5px 6px;background:#010d01;
-              border-left:2px solid #00ff41;font-size:10px;line-height:1.7;">
-              <span style="color:#1a5a1a;">{ts}</span><br>
-              {flag_img(code)}
-              <span style="color:#ff4060;">{e['ip']}</span> —
-              <span style="color:#00ff41;">{e['username']}</span> /
-              <span style="color:#ff9900;">{e['password']}</span>
-            </div>''')
-        return ''.join(rows) if rows else '<div style="color:#1a5a1a;font-size:11px;">No attempts logged yet</div>'
 
-    html = f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>SSH HONEYPOT // THREAT MAP</title>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
-<style>
-*{{margin:0;padding:0;box-sizing:border-box;}}
-body{{background:#020c02;color:#00ff41;font-family:'Share Tech Mono',monospace;overflow:hidden;height:100vh;display:flex;flex-direction:column;}}
-body::before{{content:"";position:fixed;inset:0;pointer-events:none;z-index:9000;
-  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,255,65,0.007) 3px,rgba(0,255,65,0.007) 4px);}}
-::-webkit-scrollbar{{width:3px;}}::-webkit-scrollbar-thumb{{background:#00ff41;}}
-.blink{{animation:blink 1s step-end infinite;}}
-@keyframes blink{{50%{{opacity:0;}}}}
-@keyframes scanline{{0%{{transform:translateX(-100%);}}100%{{transform:translateX(100%);}}}}
-#tooltip{{position:fixed;background:#010801f0;border:1px solid #00ff41;color:#00ff41;
-  font-family:'Share Tech Mono',monospace;font-size:11px;padding:10px 14px;
-  pointer-events:none;display:none;z-index:9999;line-height:1.9;min-width:200px;
-  box-shadow:0 0 20px #00ff4122;}}
-#tooltip b{{color:#ff0040;font-size:12px;}}
-.ptitle{{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:#00ff41;
-  border-bottom:1px solid #051205;padding-bottom:6px;margin-bottom:10px;}}
-</style>
-</head>
-<body>
-<div id="tooltip"></div>
+# ── JS ARRAY INJECTION ────────────────────────────────────────────────────────
 
-<!-- HEADER -->
-<div style="background:linear-gradient(90deg,#000,#001800,#000);border-bottom:1px solid #00ff41;
-  padding:10px 20px;display:flex;align-items:center;justify-content:space-between;
-  flex-shrink:0;position:relative;overflow:hidden;">
-  <div style="position:absolute;bottom:0;left:0;width:50%;height:1px;
-    background:linear-gradient(90deg,transparent,#00ff41,transparent);animation:scanline 4s linear infinite;"></div>
-  <div>
-    <div style="font-family:'Orbitron',monospace;font-size:18px;font-weight:900;letter-spacing:4px;
-      color:#00ff41;text-shadow:0 0 15px #00ff41;">
-      SSH<span style="color:#ff0040;text-shadow:0 0 15px #ff0040;">//</span>HONEYPOT &nbsp; THREAT MAP
-    </div>
-    <div style="font-size:9px;color:#1a5a1a;letter-spacing:2px;margin-top:3px;">
-      REAL-TIME ATTACK GEOLOCATION &amp; CREDENTIAL ANALYSIS — ACADEMIC RESEARCH
-    </div>
+def replace_js_array(html, var_name, new_data):
+    """Replace: const varName = [...]; with real data"""
+    new_json = json.dumps(new_data, indent=2, ensure_ascii=False)
+    pattern = rf'(const {re.escape(var_name)}\s*=\s*)\[[\s\S]*?\];'
+    replacement = rf'\g<1>{new_json};'
+    result = re.sub(pattern, replacement, html, count=1)
+    if result == html:
+        print(f"    [!] Could not find JS array: {var_name}")
+    return result
+
+
+def replace_marked_block(html, start_marker, end_marker, new_content):
+    """Replace HTML between <!-- START --> and <!-- END --> markers"""
+    pattern = rf'{re.escape(start_marker)}[\s\S]*?{re.escape(end_marker)}'
+    replacement = f'{start_marker}\n{new_content}\n{end_marker}'
+    return re.sub(pattern, replacement, html, count=1)
+
+
+def replace_js_block(html, start_marker, end_marker, new_content):
+    """Replace JS between /* START */ and /* END */ markers"""
+    pattern = rf'{re.escape(start_marker)}[\s\S]*?{re.escape(end_marker)}'
+    replacement = f'{start_marker}\n{new_content}\n{end_marker}'
+    return re.sub(pattern, replacement, html, count=1)
+
+
+def flag_img(code, size=20):
+    code = (code or 'xx').lower()
+    return (f'<img class="flagimg" src="https://flagcdn.com/w{size}/{code}.png" '
+            f'alt="{code.upper()}" onerror="this.style.display=\'none\'">')
+
+
+def inject(template, stats):
+    now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+    # 1 ── Stat cards (SSH Threat Map page)
+    def scard(v, label, sc):
+        return (f'<div class="stat-card" style="--sc:{sc}">'
+                f'<div class="num" data-count="{v}">{v}</div>'
+                f'<div class="lbl">{label}</div>'
+                f'<div class="pbar"></div></div>')
+
+    stat_html = (
+        scard(stats['total'],         'TOTAL ATTEMPTS',      'var(--c-prime)') +
+        scard(stats['unique_ips'],    'UNIQUE ATTACKERS',    'var(--c-danger)') +
+        scard(stats['countries'],     'COUNTRIES DETECTED',  'var(--c-gold)') +
+        scard(stats['cred_variants'], 'CREDENTIAL VARIANTS', 'var(--c-cyan)')
+    )
+    template = replace_marked_block(template, '<!--STATS_START-->', '<!--STATS_END-->', stat_html)
+
+    # 2 ── JS data arrays (these feed all the panels via renderBarList etc.)
+    def to_username_arr(data):
+        top = data[0][1] if data else 1
+        return [{'rank':i+1,'name':n,'count':c,'pct':round(c/top*100)}
+                for i,(n,c) in enumerate(data)]
+
+    def to_country_arr(data):
+        top = data[0][1] if data else 1
+        return [{'rank':i+1,'country':c,'code':COUNTRY_CODES.get(c,'xx'),
+                 'count':cnt,'pct':round(cnt/top*100)}
+                for i,(c,cnt) in enumerate(data)]
+
+    def to_attackers_arr(attackers):
+        return [{'ip':a['ip'],'country':a['country'],'code':a['code'],'count':a['count']}
+                for a in attackers[:8]]
+
+    def to_feed_arr(feed):
+        return [{'ts':e['ts'],'ip':e['ip'],'code':e['code'],
+                 'user':e['user'],'pw':e['pw'],'danger':e['danger']}
+                for e in feed]
+
+    template = replace_js_array(template, 'usernamesData',  to_username_arr(stats['usernames']))
+    template = replace_js_array(template, 'passwordsData',  to_username_arr(stats['passwords']))
+    template = replace_js_array(template, 'originsData',    to_country_arr(stats['countries_top']))
+    template = replace_js_array(template, 'attackersData',  to_attackers_arr(stats['attackers']))
+    template = replace_js_array(template, 'loginFeedData',  to_feed_arr(stats['feed']))
+
+    # 3 ── Attack dots (map markers)
+    dots_js = 'const attackDots=' + json.dumps(stats['attack_dots'], indent=2, ensure_ascii=False) + ';'
+    template = replace_js_block(template, '/* DATA_ATTACKDOTS_START */', '/* DATA_ATTACKDOTS_END */', dots_js)
+
+    # 4 ── Sessions (Command Log tab)
+    sess_arr = []
+    for s in stats['sessions']:
+        sess_arr.append({
+            'ip':      s['ip'],
+            'country': s['country'],
+            'code':    s['code'],
+            'start':   s['start'][11:19] if len(s['start']) > 11 else s['start'],
+            'cmds':    [{'ts':c['ts'],'cmd':c['cmd'],'danger':c.get('danger',False)}
+                        for c in s['cmds']],
+        })
+    sessions_js = 'const sessionsData = ' + json.dumps(sess_arr, indent=2, ensure_ascii=False) + ';'
+    template = replace_js_block(template, '/* DATA_SESSIONS_START */', '/* DATA_SESSIONS_END */', sessions_js)
+
+    # 5 ── OSINT IP list
+    osint_js = 'const osintIPs = ' + json.dumps(stats['osint_ips'], indent=2, ensure_ascii=False) + ';'
+    template = replace_js_block(template, '/* DATA_OSINT_START */', '/* DATA_OSINT_END */', osint_js)
+
+    # 6 ── Command Log stat cards
+    all_cmds     = [c for s in stats['sessions'] for c in s['cmds']]
+    danger_count = sum(1 for c in all_cmds if c.get('danger'))
+    cmd_counts   = Counter(c['cmd'] for c in all_cmds)
+    top_cmd      = cmd_counts.most_common(1)[0] if cmd_counts else ('—', 0)
+    cmd_stat_html = (
+        scard(len(all_cmds),         'COMMANDS LOGGED',          'var(--c-prime)') +
+        scard(len(stats['sessions']), 'SHELL SESSIONS',           'var(--c-cyan)') +
+        f'<div class="stat-card" style="--sc:var(--c-gold)">'
+        f'<div class="num" id="cmd-top-num" data-count="{top_cmd[1]}">{top_cmd[1]}</div>'
+        f'<div class="lbl" id="cmd-top-lbl">TOP: {top_cmd[0].upper()[:12]}</div>'
+        f'<div class="pbar"></div></div>' +
+        scard(danger_count, 'RECON / DANGEROUS CMDS', 'var(--c-danger)')
+    )
+    template = replace_marked_block(template, '<!--CMDSTATS_START-->', '<!--CMDSTATS_END-->', cmd_stat_html)
+
+    # 7 ── Session list HTML (Command Log left panel)
+    sess_html = ''
+    for idx, s in enumerate(stats['sessions'][:20]):
+        danger_c = sum(1 for c in s['cmds'] if c.get('danger'))
+        border   = 'var(--c-danger)' if danger_c else 'var(--c-prime-dim)'
+        ts_disp  = s['start'][11:19] if len(s['start']) > 11 else s['start']
+        sess_html += f'''<div class="sess-row" data-idx="{idx}" onclick="loadSession({idx})"
+  style="background:#020f08;border:1px solid var(--c-line);border-left:3px solid {border};
+  padding:9px 10px;cursor:pointer;margin-bottom:6px;transition:background .15s;"
+  onmouseover="this.style.background='#021a0e'" onmouseout="this.style.background='#020f08'">
+  <div style="display:flex;justify-content:space-between;align-items:center;">
+    <span style="font-family:'Share Tech Mono',monospace;font-size:10.5px;color:#ff5577;">{s['ip']}</span>
+    <span style="font-size:9px;color:var(--c-text-dim);">{ts_disp}</span>
   </div>
-  <div style="text-align:right;font-size:9px;color:#1a5a1a;line-height:1.9;">
-    <div>GENERATED: {now}</div>
-    <div style="color:#ff0040;">● <span class="blink">MONITORING ACTIVE</span></div>
-    <div style="display:flex;align-items:center;justify-content:flex-end;gap:5px;">
-      {flag_img('gh')} SERVER: Accra, Ghana
-    </div>
+  <div style="display:flex;align-items:center;gap:5px;margin-top:4px;font-size:9.5px;color:var(--c-text-dim);">
+    {flag_img(s['code'], 16)}<span>{s['country']}</span>
+    <span style="margin-left:auto;color:var(--c-gold);">{len(s['cmds'])} cmd{"s" if len(s["cmds"])!=1 else ""}</span>
   </div>
-</div>
+</div>'''
+    template = replace_marked_block(template, '<!--SESSIONS_START-->', '<!--SESSIONS_END-->', sess_html)
 
-<!-- STAT CARDS -->
-<div style="display:flex;gap:1px;background:#001800;border-bottom:1px solid #00ff41;flex-shrink:0;">
-  {"".join(f'''<div style="flex:1;text-align:center;padding:12px 5px;background:#020c02;">
-    <div style="font-family:'Orbitron',monospace;font-size:28px;font-weight:900;
-      color:{c};text-shadow:0 0 20px {c};">{v}</div>
-    <div style="font-size:8px;letter-spacing:2px;color:#1a5a1a;margin-top:4px;">{lbl}</div>
-  </div>''' for v,c,lbl in [
-      (stats['total'],       '#00ff41', 'TOTAL ATTEMPTS'),
-      (stats['unique_ips'],  '#ff0040', 'UNIQUE ATTACKERS'),
-      (stats['countries'],   '#ffcc00', 'COUNTRIES DETECTED'),
-      (stats['cred_variants'],'#00ccff','CREDENTIAL VARIANTS'),
-  ])}
-</div>
+    # 8 ── OSINT registry HTML
+    osint_html = ''
+    max_c = max((a['count'] for a in stats['attackers']), default=1)
+    for a in stats['attackers'][:8]:
+        rid   = a['ip'].replace('.', '-')
+        bars  = ''.join(
+            f'<i style="height:{3+n*1.7}px;'
+            f'{"background:var(--c-prime);box-shadow:0 0 4px var(--c-prime);" if a["count"]/max_c >= n/5 else "opacity:.25;"}'
+            f'"></i>'
+            for n in range(1, 6)
+        )
+        osint_html += f'''<div class="osint-row" id="osint-row-{rid}" onclick="investigate('{a['ip']}')">
+  <div class="oaddr mono">{flag_img(a['code'], 16)}{a['ip']}</div>
+  <div class="osint-sig">{bars}</div>
+</div>'''
+    template = replace_marked_block(template, '<!--OSINTLIST_START-->', '<!--OSINTLIST_END-->', osint_html)
 
-<!-- MAIN BODY -->
-<div style="display:flex;flex:1;overflow:hidden;gap:1px;background:#001800;">
+    # 9 ── Generation timestamp
+    template = re.sub(r'id="gen-time">[^<]+<', f'id="gen-time">{now}<', template)
 
-  <!-- LEFT PANEL -->
-  <div style="width:230px;flex-shrink:0;background:#020c02;overflow-y:auto;padding:14px 12px;border-right:1px solid #051205;">
-    <div class="ptitle">▶ TOP USERNAMES</div>
-    {bar_rows(stats['top_usernames'], '#00ff41')}
-    <div class="ptitle" style="margin-top:16px;">▶ TOP PASSWORDS</div>
-    {bar_rows(stats['top_passwords'], '#ff0040')}
-  </div>
+    return template
 
-  <!-- MAP -->
-  <div style="flex:1;position:relative;background:#010d01;overflow:hidden;">
-    <svg id="map" style="width:100%;height:100%;"></svg>
-  </div>
 
-  <!-- RIGHT PANEL -->
-  <div style="width:230px;flex-shrink:0;background:#020c02;overflow-y:auto;padding:14px 12px;border-left:1px solid #051205;">
-    <div class="ptitle">▶ ATTACK ORIGINS</div>
-    {country_rows(stats['top_countries'])}
-    <div class="ptitle" style="margin-top:16px;">▶ TOP ATTACKERS</div>
-    {attacker_rows()}
-    <div class="ptitle" style="margin-top:16px;">▶ LIVE FEED</div>
-    {feed_rows()}
-  </div>
-
-</div>
-
-<!-- FOOTER -->
-<div style="background:#000;border-top:1px solid #051205;padding:5px 20px;
-  display:flex;justify-content:space-between;font-size:9px;color:#1a5a1a;flex-shrink:0;">
-  <span>SSH HONEYPOT // FINAL YEAR CYBERSECURITY PROJECT</span>
-  <span>github.com/calebtetteh2000/Honeypot-Project</span>
-  <span>{now}</span>
-</div>
-
-<script>
-const attacks = {map_attacks_json};
-const svg = d3.select("#map");
-const width  = () => svg.node().clientWidth  || 800;
-const height = () => svg.node().clientHeight || 500;
-const SERVER = {{lat:5.6037, lon:-0.1870}};
-
-function flagUrl(code){{return "https://flagcdn.com/w20/"+code.toLowerCase()+".png";}}
-
-let path, projection;
-
-function render(){{
-  svg.selectAll("*").remove();
-  const W = width(), H = height();
-  projection = d3.geoNaturalEarth1()
-    .scale(W/6.2).translate([W/2, H/2]);
-  path = d3.geoPath().projection(projection);
-
-  const defs = svg.append("defs");
-  const glow = defs.append("filter").attr("id","glow");
-  glow.append("feGaussianBlur").attr("stdDeviation","3").attr("result","blur");
-  const merge = glow.append("feMerge");
-  merge.append("feMergeNode").attr("in","blur");
-  merge.append("feMergeNode").attr("in","SourceGraphic");
-
-  svg.append("rect").attr("width",W).attr("height",H).attr("fill","#010d01");
-
-  d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json").then(world=>{{
-    svg.append("g").selectAll("path")
-      .data(topojson.feature(world, world.objects.countries).features)
-      .join("path").attr("d",path)
-      .attr("fill","#021202").attr("stroke","#00ff4133").attr("stroke-width",0.4);
-
-    const maxCount = d3.max(attacks, d=>d.count) || 1;
-    const colour = d3.scaleLinear().domain([0,maxCount/2,maxCount])
-      .range(["#ffcc00","#ff6600","#ff0040"]);
-
-    attacks.forEach(a=>{{
-      const src = projection([a.lon, a.lat]);
-      const dst = projection([SERVER.lon, SERVER.lat]);
-      if (!src || !dst) return;
-
-      const mx = (src[0]+dst[0])/2, my = (src[1]+dst[1])/2 - 60;
-      const pathStr = `M${{src[0]}},${{src[1]}} Q${{mx}},${{my}} ${{dst[0]}},${{dst[1]}}`;
-
-      // arc
-      svg.append("path").attr("d",pathStr)
-        .attr("fill","none").attr("stroke",colour(a.count))
-        .attr("stroke-width",0.6).attr("opacity",0.35)
-        .attr("filter","url(#glow)");
-
-      // animated laser
-      const laser = svg.append("path").attr("d",pathStr)
-        .attr("fill","none").attr("stroke","white")
-        .attr("stroke-width",2).attr("opacity",0);
-      const total = laser.node().getTotalLength();
-      laser.attr("stroke-dasharray",`20 ${{total}}`)
-        .attr("stroke-dashoffset", total)
-        .attr("opacity",0.9)
-        .transition().duration(1800)
-        .delay(Math.random()*2000)
-        .ease(d3.easeLinear)
-        .attr("stroke-dashoffset",-total)
-        .on("end", function repeat(){{
-          d3.select(this).attr("stroke-dashoffset",total)
-            .transition().duration(1800)
-            .delay(Math.random()*1500)
-            .ease(d3.easeLinear)
-            .attr("stroke-dashoffset",-total)
-            .on("end",repeat);
-        }});
-
-      // attacker dot
-      svg.append("circle").attr("cx",src[0]).attr("cy",src[1])
-        .attr("r", 3 + Math.sqrt(a.count)*1.5).attr("fill",colour(a.count))
-        .attr("opacity",0.85).attr("filter","url(#glow)")
-        .on("mouseover", function(event){{
-          d3.select("#tooltip").style("display","block")
-            .html(`<b>${{a.country}}</b><br>
-              <img src="${{flagUrl(a.code)}}" width="20" height="14"
-                style="vertical-align:middle;margin-right:4px;">${{a.country}}<br>
-              Attempts: ${{a.count}}`);
-        }})
-        .on("mousemove", e=>d3.select("#tooltip")
-          .style("left",(e.pageX+12)+"px").style("top",(e.pageY-10)+"px"))
-        .on("mouseout", ()=>d3.select("#tooltip").style("display","none"));
-
-      // pulse ring
-      (function pulse(){{
-        svg.append("circle").attr("cx",src[0]).attr("cy",src[1]).attr("r",4)
-          .attr("fill","none").attr("stroke",colour(a.count)).attr("stroke-width",1.5)
-          .attr("opacity",0.8)
-          .transition().duration(1500).ease(d3.easeCubicOut)
-          .attr("r",20).attr("opacity",0)
-          .on("end", function(){{ d3.select(this).remove(); pulse(); }});
-      }})();
-    }});
-
-    // server dot (Accra)
-    const sp = projection([SERVER.lon, SERVER.lat]);
-    if (sp) {{
-      for (let i=0;i<3;i++) {{
-        (function ripple(n){{
-          svg.append("circle").attr("cx",sp[0]).attr("cy",sp[1]).attr("r",6)
-            .attr("fill","none").attr("stroke","#00ff41").attr("stroke-width",1.5)
-            .attr("opacity",0.9)
-            .transition().duration(2000).delay(n*600).ease(d3.easeCubicOut)
-            .attr("r",30).attr("opacity",0)
-            .on("end",function(){{d3.select(this).remove();ripple(0);}});
-        }})(i);
-      }}
-      svg.append("circle").attr("cx",sp[0]).attr("cy",sp[1]).attr("r",6)
-        .attr("fill","#00ff41").attr("filter","url(#glow)")
-        .on("mouseover",e=>d3.select("#tooltip").style("display","block")
-          .html(`<b>YOUR HONEYPOT</b><br>
-            <img src="${{flagUrl('gh')}}" width="20" height="14"
-              style="vertical-align:middle;margin-right:4px;">Accra, Ghana<br>
-            Total attacks received: {stats['total']}`))
-        .on("mousemove",e=>d3.select("#tooltip")
-          .style("left",(e.pageX+12)+"px").style("top",(e.pageY-10)+"px"))
-        .on("mouseout",()=>d3.select("#tooltip").style("display","none"));
-      svg.append("text").attr("x",sp[0]+9).attr("y",sp[1]+4)
-        .attr("fill","#00ff41").attr("font-size","9px")
-        .attr("font-family","Share Tech Mono,monospace").text("HONEYPOT");
-    }}
-  }}).catch(()=>{{
-    svg.append("text").attr("x","50%").attr("y","50%")
-      .attr("text-anchor","middle").attr("fill","#1a5a1a")
-      .attr("font-family","Share Tech Mono,monospace")
-      .text("Map requires internet connection");
-  }});
-}}
-
-render();
-window.addEventListener("resize", render);
-</script>
-</body>
-</html>"""
-    return html
+# ── MAIN ──────────────────────────────────────────────────────────────────────
 
 def main():
-    print("=" * 50)
-    print("  SSH HONEYPOT ATTACK ANALYSER")
-    print("=" * 50)
+    print('=' * 55)
+    print('  SSH HONEYPOT DASHBOARD GENERATOR')
+    print('=' * 55)
 
-    entries = parse_log(LOG_FILE)
+    base = os.path.dirname(os.path.abspath(__file__))
 
-    if not entries:
-        print("[!] No valid entries found in log. Using sample data for demo.")
-        entries  = SAMPLE_ENTRIES
-        geo_cache = SAMPLE_GEO
-    else:
-        print(f"[*] Parsed {len(entries)} log entries.")
-        geo_cache = build_geo_data(entries)
+    # Parse logs
+    entries  = parse_audits(os.path.join(base, AUDITS_LOG))
+    sessions = parse_cmd_log(os.path.join(base, CMD_LOG))
+    print(f'[*] Parsed {len(entries)} login attempts, {len(sessions)} shell session(s).')
 
-    print("[*] Analysing data...")
-    stats = analyse(entries, geo_cache)
+    # GeoIP
+    all_ips  = list({e['ip'] for e in entries} | {s['ip'] for s in sessions})
+    real_ips = [ip for ip in all_ips if ip not in ('127.0.0.1', '::1', '')]
+    geo = {}
+    if real_ips and HAS_REQUESTS:
+        print(f'[*] Geocoding {len(real_ips)} unique IP(s)...')
+        geo = geocode_all(real_ips)
+    elif not real_ips:
+        print('[!] All IPs are 127.0.0.1 (local test). Deploy to a server for real attacker data.')
 
-    print(f"\n[*] Results:")
-    print(f"    Total attempts  : {stats['total']}")
-    print(f"    Unique attackers: {stats['unique_ips']}")
-    print(f"    Countries       : {stats['countries']}")
-    print(f"    Top username    : {stats['top_usernames'][0][0] if stats['top_usernames'] else 'N/A'}")
-    print(f"    Top password    : {stats['top_passwords'][0][0] if stats['top_passwords'] else 'N/A'}")
+    # Analyse
+    stats = analyse(entries, sessions, geo)
+    print(f'[*] Totals → attempts:{stats["total"]}  attackers:{stats["unique_ips"]}  '
+          f'countries:{stats["countries"]}  sessions:{len(sessions)}')
 
-    print(f"\n[*] Generating dashboard → {OUTPUT_FILE}")
-    html = generate_html(stats, geo_cache)
-    with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
+    # Load template
+    tpl_path = os.path.join(base, TEMPLATE_FILE)
+    if not os.path.exists(tpl_path):
+        print(f'\n[!] ERROR: Template not found: {TEMPLATE_FILE}')
+        print(f'    Make sure ssh_attack_dashboard_v15.html is in your project folder.')
+        print(f'    Expected location: {tpl_path}')
+        return
+
+    with open(tpl_path, encoding='utf-8') as f:
+        template = f.read()
+    print(f'[*] Loaded template: {TEMPLATE_FILE}')
+
+    # Inject & write
+    print('[*] Injecting real data...')
+    html = inject(template, stats)
+
+    out_path = os.path.join(base, OUTPUT_FILE)
+    with open(out_path, 'w', encoding='utf-8') as f:
         f.write(html)
 
-    print(f"[✓] Done! Opening '{OUTPUT_FILE}' in your browser...")
-    print("=" * 50)
-    import webbrowser, os
-    webbrowser.open('file:///' + os.path.abspath(OUTPUT_FILE).replace('\\', '/'))
-    
+    print(f'[✓] Dashboard saved → {OUTPUT_FILE}')
+    print('[✓] Opening in browser...')
+    print('=' * 55)
+    webbrowser.open('file:///' + out_path.replace('\\', '/'))
+
 
 if __name__ == '__main__':
     main()
