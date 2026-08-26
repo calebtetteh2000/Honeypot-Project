@@ -243,224 +243,189 @@ header .location .pulse-dot {
 .scroll-box::-webkit-scrollbar-thumb { background: linear-gradient(180deg,#00e5ff,#1565c0); border-radius: 2px; }
 .scroll-box::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
 
-/* ─── OSINT SECTION — distinct visual language ───────────────── */
-#osint-section {
-  position: relative;
-  background: transparent;
-  margin: 0;
-  padding: 0;
-}
-#osint-edge-top {
-  width:100%; height:32px; overflow:hidden; line-height:0;
-  background: linear-gradient(135deg, transparent 49.5%, #020a18 50%),
-              linear-gradient(to right, #0a1f3a, #020a18);
-}
-#osint-edge-bottom {
-  width:100%; height:32px; overflow:hidden; line-height:0;
-  background: linear-gradient(315deg, transparent 49.5%, #020a18 50%),
-              linear-gradient(to right, #020a18, #0a1f3a);
-}
-#osint-inner { padding: 10px 30px 20px; }
+/* ══════════════════════════════════════════════════════════════
+   OSINT INVESTIGATOR — DARK OPS TERMINAL REDESIGN
+   Aesthetic: Nation-state · Zero-day · Black site · Holographic
+══════════════════════════════════════════════════════════════ */
 
-/* ── UNIFIED PAGE HEADER ── */
-#osint-page-header {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  gap: 32px;
-  padding: 22px 0 20px;
+/* ── PAGE BASE ── */
+#page-osint {
+  min-height:calc(100vh - 80px);
+  background:#000508;
+  position:relative; overflow:hidden; padding:0;
 }
-#osint-back {
-  display: flex; align-items: center; gap: 7px;
-  font-family:'Orbitron',sans-serif; font-size:9px; letter-spacing:2px;
-  color:#1e5a8a; cursor:pointer; transition:color 0.2s;
-  white-space:nowrap; padding:8px 14px;
-  border:1px solid #0e2d47; border-radius:6px;
-  background:rgba(0,20,40,0.5);
+/* Hex grid overlay */
+#page-osint::before {
+  content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='52'%3E%3Cpath d='M30 2 L58 17 L58 35 L30 50 L2 35 L2 17 Z' fill='none' stroke='rgba(0%2C229%2C255%2C0.03)' stroke-width='0.7'/%3E%3C/svg%3E");
+  background-size:60px 52px;
 }
-#osint-back:hover { color:#00e5ff; border-color:#00e5ff; box-shadow:0 0 12px rgba(0,229,255,0.12); }
-#osint-page-title-wrap { text-align:center; }
-#osint-page-eyebrow {
-  font-family:'Orbitron',sans-serif; font-size:8px; color:#1e4a66;
-  letter-spacing:3px; margin-bottom:8px; text-transform:uppercase;
+/* CRT scanlines */
+#page-osint::after {
+  content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,229,255,0.008) 3px,rgba(0,229,255,0.008) 6px);
 }
-#osint-page-title {
-  font-family:'Orbitron',sans-serif; font-size:24px; font-weight:900;
-  color:#fff; letter-spacing:5px;
-  text-shadow: 0 0 24px rgba(0,229,255,0.5), 0 0 50px rgba(0,229,255,0.2);
-  display:flex; align-items:center; justify-content:center; gap:14px;
-}
-#osint-hex {
-  font-size:28px; color:#00e5ff;
-  text-shadow: 0 0 18px #00e5ff, 0 0 40px rgba(0,229,255,0.7);
-  animation: hexPulse 3s ease-in-out infinite;
-}
-@keyframes hexPulse {
-  0%,100% { text-shadow:0 0 18px #00e5ff,0 0 40px rgba(0,229,255,0.5); }
-  50% { text-shadow:0 0 28px #00e5ff,0 0 60px rgba(0,229,255,0.9),0 0 80px rgba(0,229,255,0.3); }
-}
-#osint-page-status { text-align:right; }
-#osint-status-light {
-  font-family:'Orbitron',sans-serif; font-size:9px; color:#00e676;
-  letter-spacing:3px; text-shadow:0 0 8px #00e676;
-  display:flex; align-items:center; gap:6px; justify-content:flex-end;
-}
-#osint-header-rule {
-  width:100%; height:1px; margin-bottom:24px;
-  background:linear-gradient(90deg,transparent,rgba(0,229,255,0.4) 30%,rgba(0,229,255,0.2) 70%,transparent);
-  box-shadow:0 0 8px rgba(0,229,255,0.15);
-}
+#osint-section { position:relative; z-index:2; }
+#osint-bg-canvas { position:fixed; inset:0; z-index:0; pointer-events:none; }
 
-/* ── BODY LAYOUT ── */
-#osint-body { display:flex; gap:0; align-items:flex-start; min-height:420px; }
+/* ── TOPBAR ── */
+#osint-topbar {
+  display:flex; align-items:center; height:54px; gap:20px;
+  background:rgba(0,5,12,0.97); border-bottom:1px solid #0a1e32;
+  position:sticky; top:0; z-index:200; padding:0 32px;
+}
+#osint-topbar::after {
+  content:''; position:absolute; bottom:-1px; left:0; right:0; height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,229,255,0.6) 25%,rgba(0,229,255,0.6) 75%,transparent);
+  box-shadow:0 0 14px rgba(0,229,255,0.4);
+}
+#osint-back-btn {
+  display:flex; align-items:center; gap:7px;
+  font-family:'Orbitron',sans-serif; font-size:8px; letter-spacing:2px; color:#1e5a8a;
+  cursor:pointer; padding:6px 14px 6px 10px;
+  border:1px solid rgba(0,229,255,0.12); border-radius:2px;
+  background:rgba(0,229,255,0.02); transition:all 0.2s; flex-shrink:0;
+}
+#osint-back-btn:hover { color:#00e5ff; border-color:rgba(0,229,255,0.4); background:rgba(0,229,255,0.06); box-shadow:0 0 14px rgba(0,229,255,0.12); }
+#osint-module-label { flex-shrink:0; }
+#osint-module-eyebrow { font-family:'Share Tech Mono',monospace; font-size:8px; color:#0e2a40; letter-spacing:2px; margin-bottom:2px; }
+#osint-module-name {
+  font-family:'Orbitron',sans-serif; font-size:14px; font-weight:900; letter-spacing:5px;
+  background:linear-gradient(90deg,#00e5ff,#29b6f6,#00e5ff); background-size:200% auto;
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  animation:shimmerText 3s linear infinite;
+}
+@keyframes shimmerText { to { background-position:200% center; } }
+#osint-topbar-center { flex:1; display:flex; align-items:center; justify-content:center; gap:8px; }
+.osint-source-pill {
+  display:flex; align-items:center; gap:5px; padding:4px 11px;
+  font-family:'Orbitron',sans-serif; font-size:7px; letter-spacing:1.5px; color:#0e2a40;
+  border:1px solid #0a1828; background:rgba(0,0,0,0.4);
+  clip-path:polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%); transition:all 0.3s;
+}
+.pill-dot { width:5px; height:5px; border-radius:50%; background:#091828; flex-shrink:0; transition:all 0.3s; }
+.osint-source-pill.active { color:#ffb74d; border-color:rgba(255,183,77,0.3); background:rgba(255,152,0,0.05); }
+.osint-source-pill.active .pill-dot { background:#ff9800; box-shadow:0 0 8px #ff9800; animation:pp 0.7s ease-in-out infinite; }
+@keyframes pp{0%,100%{opacity:0.3;transform:scale(0.8)}50%{opacity:1;transform:scale(1.4)}}
+.osint-source-pill.done { color:#00e676; border-color:rgba(0,230,118,0.25); background:rgba(0,230,118,0.03); }
+.osint-source-pill.done .pill-dot { background:#00e676; box-shadow:0 0 8px #00e676; }
+.osint-source-pill.error { color:#ff5252; border-color:rgba(255,82,82,0.25); }
+.osint-source-pill.error .pill-dot { background:#ff5252; box-shadow:0 0 6px #ff5252; }
+#osint-topbar-right { display:flex; align-items:center; gap:16px; flex-shrink:0; }
+#osint-scan-tally { font-family:'Share Tech Mono',monospace; font-size:9px; color:#0a2040; letter-spacing:1px; }
+#scan-count { color:#00e5ff; font-family:'Orbitron',sans-serif; font-size:11px; }
+#osint-sys-status { display:flex; align-items:center; gap:5px; font-family:'Orbitron',sans-serif; font-size:8px; color:#00e676; letter-spacing:2px; text-shadow:0 0 8px #00e676; }
+#osint-inner { padding:0 32px 52px; }
 
-/* ── LEFT COLUMN ── */
+/* ── TARGET HEADER ── */
+#osint-target-header {
+  display:none; align-items:center; gap:20px; padding:18px 24px; margin:24px 0 0;
+  background:linear-gradient(90deg,rgba(0,229,255,0.05),rgba(0,6,14,0.5) 55%,rgba(0,229,255,0.02));
+  border:1px solid rgba(0,229,255,0.14); border-left:3px solid #00e5ff;
+  position:relative; overflow:hidden;
+}
+#osint-target-header::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,#00e5ff,transparent 65%); box-shadow:0 0 14px #00e5ff; }
+#osint-target-header::after { content:''; position:absolute; bottom:0; right:0; width:60px; height:60px; border-right:1px solid rgba(0,229,255,0.12); border-bottom:1px solid rgba(0,229,255,0.12); pointer-events:none; }
+#oth-flag { width:48px; height:32px; object-fit:cover; border-radius:2px; flex-shrink:0; box-shadow:0 0 12px rgba(0,0,0,0.7),0 0 0 1px rgba(0,229,255,0.2); }
+#oth-ip { font-family:'Orbitron',sans-serif; font-size:26px; font-weight:900; letter-spacing:5px; color:#fff; text-shadow:0 0 24px rgba(0,229,255,0.5),0 0 60px rgba(0,229,255,0.15); }
+#oth-meta { font-family:'Share Tech Mono',monospace; font-size:11px; color:#3a6080; margin-top:3px; letter-spacing:1px; }
+#oth-badge { margin-left:auto; flex-shrink:0; font-family:'Orbitron',sans-serif; font-size:10px; letter-spacing:3px; padding:10px 24px; clip-path:polygon(12px 0,100% 0,calc(100% - 12px) 100%,0 100%); }
+
+/* ── BODY ── */
+#osint-body { display:grid; grid-template-columns:268px 1fr; gap:22px; margin-top:24px; align-items:start; }
+
+/* ── LEFT ── */
 #osint-left {
-  width:240px; flex-shrink:0;
-  background:linear-gradient(180deg,rgba(0,15,30,0.5),rgba(0,10,20,0.3));
-  border:1px solid #0a1e32;
-  border-radius:10px;
-  padding:16px 14px;
-  margin-right:22px;
-  flex-shrink:0;
-  align-self:flex-start;
-  position:sticky;
-  top:20px;
+  position:sticky; top:74px;
+  background:rgba(0,5,12,0.9); backdrop-filter:blur(10px);
+  border:1px solid #0a1828; border-top:2px solid rgba(0,229,255,0.22);
 }
-.osint-section-label {
-  font-family:'Orbitron',sans-serif; font-size:8px; color:#1e5a8a;
-  letter-spacing:3px; margin-bottom:10px;
-  text-transform:uppercase;
-  position:relative; padding-left:10px;
+.ol-section-head {
+  display:flex; align-items:center; gap:8px; padding:9px 14px;
+  font-family:'Orbitron',sans-serif; font-size:7.5px; letter-spacing:3px; color:#0e2a40;
+  background:rgba(0,229,255,0.025); border-bottom:1px solid #0a1828; text-transform:uppercase;
 }
-.osint-section-label::before {
-  content:''; position:absolute; left:0; top:50%; transform:translateY(-50%);
-  width:4px; height:4px; border-radius:50%; background:#00e5ff;
-  box-shadow:0 0 6px #00e5ff;
-}
-#osint-ip-list { display:flex; flex-direction:column; gap:4px; }
+.olsh-dot { width:4px; height:4px; border-radius:50%; background:#00e5ff; box-shadow:0 0 6px #00e5ff; flex-shrink:0; }
 .osint-ip-btn {
-  display:flex; align-items:center; gap:9px; padding:9px 12px;
-  background: linear-gradient(90deg, rgba(0,18,36,0.9), rgba(0,12,24,0.6));
-  border:none; border-left:3px solid #0a1e32;
-  cursor:pointer; font-family:'Share Tech Mono',monospace; font-size:11.5px;
-  color:#4a7ba6; transition:all 0.2s; position:relative; overflow:hidden;
-  margin-bottom:2px;
+  display:grid; grid-template-columns:22px 1fr auto; align-items:center; gap:10px;
+  padding:11px 14px; cursor:pointer;
+  border:none; border-left:2px solid transparent; border-bottom:1px solid rgba(10,24,40,0.7);
+  background:transparent; transition:all 0.18s;
 }
-.osint-ip-btn::after {
-  content:''; position:absolute; right:0; top:0; bottom:0; width:3px;
-  background:transparent; transition:background 0.2s;
-}
-.osint-ip-btn:hover { border-left-color:#2a7aa8; color:#aef4ff; background:linear-gradient(90deg,rgba(0,229,255,0.07),rgba(0,18,36,0.9)); }
-.osint-ip-btn:hover::after { background:rgba(0,229,255,0.2); }
-.osint-ip-btn.active {
-  border-left-color:#00e5ff; color:#fff;
-  background:linear-gradient(90deg,rgba(0,229,255,0.12),rgba(0,18,36,0.9));
-  box-shadow:-3px 0 12px rgba(0,229,255,0.4);
-}
-.osint-ip-btn.active::after { background:rgba(0,229,255,0.35); }
-.osint-ip-btn .ip-flag { width:18px;height:12px;object-fit:cover;border-radius:2px;flex-shrink:0;box-shadow:0 0 4px rgba(0,0,0,0.5); }
-.osint-ip-btn .ip-country { font-size:9px; color:#2a5070; margin-left:auto; font-family:'Orbitron',sans-serif; letter-spacing:1px; }
-.osint-ip-btn.active .ip-country { color:#3a8ab8; }
-.osint-ip-btn .ip-attempts {
-  font-size:10px; font-family:'Orbitron',sans-serif;
-  background:rgba(0,229,255,0.07); color:#1e5a8a;
-  padding:1px 6px; border-radius:3px; flex-shrink:0;
-}
-.osint-ip-btn.active .ip-attempts { color:#00e5ff; background:rgba(0,229,255,0.15); box-shadow:0 0 6px rgba(0,229,255,0.3); }
+.osint-ip-btn:last-child { border-bottom:none; }
+.osint-ip-btn:hover { border-left-color:rgba(0,229,255,0.35); background:rgba(0,229,255,0.03); }
+.osint-ip-btn.active { border-left-color:#00e5ff; background:linear-gradient(90deg,rgba(0,229,255,0.08),transparent); box-shadow:-3px 0 18px rgba(0,229,255,0.25); }
+.ip-flag { width:20px; height:13px; object-fit:cover; border-radius:1px; box-shadow:0 1px 4px rgba(0,0,0,0.6); }
+.oib-info { min-width:0; }
+.oib-addr { font-family:'Share Tech Mono',monospace; font-size:11.5px; color:#2a5070; transition:color 0.18s; letter-spacing:0.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.osint-ip-btn:hover .oib-addr { color:#7ab8d8; }
+.osint-ip-btn.active .oib-addr { color:#00e5ff; text-shadow:0 0 12px rgba(0,229,255,0.6); }
+.oib-country { font-family:'Orbitron',sans-serif; font-size:7.5px; color:#0a2030; letter-spacing:1px; margin-top:2px; }
+.osint-ip-btn.active .oib-country { color:#1e5a8a; }
+.oib-badge { font-family:'Orbitron',sans-serif; font-size:8px; color:#0a1e30; background:rgba(0,229,255,0.04); padding:2px 7px; clip-path:polygon(4px 0,100% 0,calc(100% - 4px) 100%,0 100%); transition:all 0.18s; }
+.osint-ip-btn.active .oib-badge { color:#00e5ff; background:rgba(0,229,255,0.1); box-shadow:0 0 8px rgba(0,229,255,0.2); }
+.src-legend-item { display:flex; align-items:center; gap:9px; padding:7px 14px; border-bottom:1px solid rgba(10,24,40,0.5); font-family:'Share Tech Mono',monospace; font-size:9px; color:#0a1e30; }
+.src-legend-item:last-child { border-bottom:none; }
+.slc { width:5px; height:5px; border-radius:50%; flex-shrink:0; }
 
-#osint-sources { display:flex; flex-direction:column; gap:6px; }
-.osint-source {
-  display:flex; align-items:center; gap:8px; padding:5px 0;
-  border-bottom:1px solid rgba(14,45,71,0.4);
-}
-.src-indicator {
-  width:6px; height:6px; border-radius:50%; flex-shrink:0;
-  background:#0e2d47; border:1px solid #1e4a66; transition:all 0.4s;
-}
-.osint-source.loading .src-indicator { background:#ff9800; border-color:#ff9800; box-shadow:0 0 6px #ff9800; animation:indPulse 0.6s ease-in-out infinite; }
-.osint-source.done    .src-indicator { background:#00e676; border-color:#00e676; box-shadow:0 0 6px #00e676; }
-.osint-source.error   .src-indicator { background:#ff5252; border-color:#ff5252; box-shadow:0 0 6px #ff5252; }
-@keyframes indPulse {0%,100%{opacity:0.4} 50%{opacity:1}}
-.src-name { font-family:'Orbitron',sans-serif; font-size:9px; color:#4a7ba6; letter-spacing:1px; transition:color 0.3s; }
-.osint-source.done .src-name { color:#00e676; }
-.osint-source.loading .src-name { color:#ff9800; }
-.osint-source.error .src-name { color:#ff5252; }
-.src-desc { font-family:'Share Tech Mono',monospace; font-size:9px; color:#1e3a52; }
+/* ── RIGHT ── */
+#osint-right { min-width:0; display:flex; flex-direction:column; gap:16px; }
+#osint-idle { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:540px; gap:26px; }
+#osint-idle-radar { position:relative; width:280px; height:280px; }
+#osint-idle-label { font-family:'Orbitron',sans-serif; font-size:12px; color:#00e5ff; letter-spacing:7px; text-shadow:0 0 24px rgba(0,229,255,0.7),0 0 60px rgba(0,229,255,0.25); }
+#osint-idle-sub { font-family:'Share Tech Mono',monospace; font-size:9.5px; color:#0a1e30; text-align:center; line-height:2.2; letter-spacing:1px; }
+#osint-idle-keys { display:flex; gap:10px; }
+.idle-key { font-family:'Orbitron',sans-serif; font-size:7.5px; color:#0a1e2a; letter-spacing:2px; padding:5px 12px; border:1px solid #0a1828; clip-path:polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%); display:flex; align-items:center; gap:6px; background:rgba(0,0,0,0.4); }
+.ik-dot { width:5px; height:5px; border-radius:50%; flex-shrink:0; }
 
-#osint-hint {
-  margin-top:16px; font-family:'Share Tech Mono',monospace; font-size:9px;
-  color:#1a3d55; line-height:1.8; letter-spacing:0.5px;
-  border-top:1px solid rgba(14,45,71,0.4); padding-top:12px;
-}
+#osint-loading { display:none; flex-direction:column; align-items:center; justify-content:center; min-height:540px; gap:18px; }
+#osint-loading-ip { font-family:'Orbitron',sans-serif; font-size:22px; letter-spacing:6px; color:#00e5ff; text-shadow:0 0 28px #00e5ff,0 0 60px rgba(0,229,255,0.3); }
+#osint-scan-ring { filter:drop-shadow(0 0 10px rgba(0,229,255,0.5)); }
+#osint-status { font-family:'Orbitron',sans-serif; font-size:9px; color:#1e5a8a; letter-spacing:3px; animation:stBlink 1s ease-in-out infinite; }
+@keyframes stBlink{0%,100%{opacity:0.3}50%{opacity:1}}
+#osint-progress-track { width:340px; height:2px; background:rgba(0,229,255,0.06); overflow:hidden; }
+#osint-progress-fill { height:100%; width:0; background:linear-gradient(90deg,#0d47a1,#00e5ff); transition:width 0.5s ease; box-shadow:0 0 12px #00e5ff; }
 
-/* ── DIVIDER (handled by left column border) ── */
-#osint-divider { display:none; }
-#osint-divider-line { display:none; }
-
-/* ── RIGHT / RESULTS ── */
-#osint-right { flex:1; min-width:0; display:flex; flex-direction:column; }
-
-/* idle */
-#osint-idle { display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:14px;opacity:0.45;padding:20px 0; }
-#osint-idle-label { font-family:'Orbitron',sans-serif;font-size:11px;color:#00e5ff;letter-spacing:5px;text-shadow:0 0 16px rgba(0,229,255,0.5); }
-#osint-idle-sub { font-family:'Share Tech Mono',monospace;font-size:9px;color:#1e4a66;text-align:center;line-height:1.8; }
-
-/* loading */
-#osint-loading { display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:14px;padding:20px 0; }
-#osint-loading-ip { font-family:'Orbitron',sans-serif;font-size:18px;color:#00e5ff;letter-spacing:6px;text-shadow:0 0 20px #00e5ff; }
-#osint-scan-ring { position:relative; }
-#osint-status { font-family:'Orbitron',sans-serif;font-size:9px;color:#2a5878;letter-spacing:3px; }
-#osint-progress-track { width:220px;height:2px;background:rgba(0,229,255,0.08);border-radius:2px;overflow:hidden; }
-#osint-progress-fill { height:100%;width:0;background:linear-gradient(90deg,#1565c0,#00e5ff);transition:width 0.4s ease; box-shadow:0 0 8px #00e5ff; }
-
-/* cards grid */
-#osint-cards-grid { display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px; }
+#osint-results { display:none; flex-direction:column; gap:14px; }
+#osint-cards-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
 .osint-card {
-  background:linear-gradient(135deg,rgba(0,15,30,0.8),rgba(0,10,22,0.95));
-  border:1px solid #0a1e32;
-  border-top:1px solid rgba(0,229,255,0.15);
-  clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px));
-  padding:14px 14px 12px; transition:border-color 0.3s,box-shadow 0.3s;
+  background:rgba(0,5,12,0.94); backdrop-filter:blur(6px);
+  border:1px solid #091828; position:relative; overflow:hidden;
+  transition:box-shadow 0.3s,border-color 0.3s;
+  clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px));
 }
-.osint-card.loaded {
-  border-color:#1e4a6a;
-  box-shadow:inset 0 0 20px rgba(0,229,255,0.03), 0 0 12px rgba(0,229,255,0.06);
-}
-.osint-card-header {
-  font-family:'Orbitron',sans-serif; font-size:8.5px; letter-spacing:2px;
-  color:#2a6fa8; margin-bottom:10px; display:flex; align-items:center; gap:6px;
-}
-.osint-card-icon { font-size:10px; color:#00e5ff; }
-.osint-card-body { font-size:11px;color:#7ab8d8;line-height:1.9;font-family:'Share Tech Mono',monospace; }
-.osint-card-body b { color:#aef4ff; }
+.osint-card::before { content:''; position:absolute; top:0; left:0; right:16px; height:1px; background:var(--card-accent,rgba(0,229,255,0.4)); box-shadow:0 0 10px var(--card-accent,rgba(0,229,255,0.3)); }
+.osint-card::after { content:''; position:absolute; top:0; bottom:0; left:0; width:1px; background:linear-gradient(180deg,var(--card-accent,rgba(0,229,255,0.35)),transparent 70%); }
+.osint-card.loaded { border-color:#112840; box-shadow:0 0 24px rgba(0,229,255,0.04),inset 0 0 30px rgba(0,229,255,0.012); }
+#card-geo    { --card-accent:rgba(0,229,255,0.5); }
+#card-shodan { --card-accent:rgba(180,79,255,0.5); }
+#card-abuse  { --card-accent:rgba(255,152,0,0.5); }
+#card-grey   { --card-accent:rgba(0,230,118,0.5); }
+.osint-card-header { display:flex; align-items:center; justify-content:space-between; padding:10px 16px 9px; background:rgba(0,229,255,0.018); border-bottom:1px solid rgba(255,255,255,0.025); }
+.och-left { display:flex; align-items:center; gap:7px; }
+.osint-card-icon { font-size:9px; }
+.osint-card-title { font-family:'Orbitron',sans-serif; font-size:8px; letter-spacing:2.5px; color:#1e4a66; }
+.osint-card-src { font-family:'Share Tech Mono',monospace; font-size:8px; color:#0a1e2a; letter-spacing:1px; }
+.osint-card-body { padding:12px 16px; }
+.dr { display:grid; grid-template-columns:84px 1fr; align-items:baseline; padding:4px 0; border-bottom:1px solid rgba(0,229,255,0.035); font-family:'Share Tech Mono',monospace; }
+.dr:last-child { border-bottom:none; }
+.dr-key { font-size:9.5px; color:#1a3a52; letter-spacing:0.5px; }
+.dr-val { font-size:11px; color:#7ab8d8; }
+.dr-val b { color:#aef4ff; font-weight:normal; }
+.osint-tag { display:inline-flex; align-items:center; padding:2px 8px; font-size:8px; font-family:'Orbitron',sans-serif; letter-spacing:1px; margin:1px 2px; clip-path:polygon(5px 0,100% 0,calc(100% - 5px) 100%,0 100%); }
+.tag-danger { background:rgba(255,82,82,0.1); color:#ff5252; }
+.tag-warn   { background:rgba(255,152,0,0.1); color:#ff9800; }
+.tag-ok     { background:rgba(0,230,118,0.08); color:#00e676; }
+.tag-info   { background:rgba(0,229,255,0.07); color:#00e5ff; }
+#osint-verdict { display:none; align-items:stretch; border:1px solid rgba(0,229,255,0.1); overflow:hidden; position:relative; }
+#osint-verdict::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,#00e5ff,transparent 60%); box-shadow:0 0 10px #00e5ff; }
+#threat-badge { font-family:'Orbitron',sans-serif; font-size:10px; letter-spacing:2.5px; padding:18px 24px; flex-shrink:0; display:flex; align-items:center; border-right:1px solid rgba(255,255,255,0.04); white-space:nowrap; }
+#threat-summary-text { font-family:'Share Tech Mono',monospace; font-size:11px; color:#3a6080; padding:16px 20px; flex:1; line-height:1.85; }
+#threat-summary-text b { color:#aef4ff; }
+.scan-dot { display:none; }
+#src-ipapi .src-name,#src-shodan .src-name,#src-abuse .src-name,#src-grey .src-name { display:none; }
 
-/* tags */
-.osint-tag { display:inline-block;padding:1px 7px;font-size:8.5px;font-family:'Orbitron',sans-serif;letter-spacing:1px;margin:1px 2px;clip-path:polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%); }
-.tag-danger { background:rgba(255,82,82,0.15);color:#ff5252; }
-.tag-warn   { background:rgba(255,152,0,0.12);color:#ff9800; }
-.tag-ok     { background:rgba(0,230,118,0.1);color:#00e676; }
-.tag-info   { background:rgba(0,229,255,0.07);color:#00e5ff; }
 
-/* verdict */
-#osint-verdict {
-  display:flex; align-items:center; gap:16px; flex-wrap:wrap;
-  background:linear-gradient(90deg,rgba(0,229,255,0.04),transparent);
-  border:1px solid rgba(0,229,255,0.1);
-  border-left:3px solid #00e5ff;
-  padding:14px 18px;
-  clip-path:polygon(0 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%);
-}
-#threat-badge {
-  font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:2px;
-  padding:7px 16px;
-  clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%);
-  flex-shrink:0;
-}
-#threat-summary-text { font-size:11px;color:#4a7ba6;flex:1;line-height:1.7;font-family:'Share Tech Mono',monospace; }
-
-/* scan-dot still used for scan progress */
-.scan-dot{display:none}
 
 /* ─── MAP LEGEND ─────────────────────────────────────────────── */
 .legend {
@@ -580,10 +545,10 @@ footer {
 
 <div id="page-map" class="page-view">
 <div class="stats-row">
-  <div class="stat-card"><div class="num" data-count="7">0</div><div class="lbl">Login Attempts</div><div class="pulse-bar"></div></div>
-  <div class="stat-card"><div class="num" data-count="6">0</div><div class="lbl">Unique Attackers</div><div class="pulse-bar"></div></div>
-  <div class="stat-card"><div class="num" data-count="6">0</div><div class="lbl">Countries Detected</div><div class="pulse-bar"></div></div>
-  <div class="stat-card"><div class="num" data-count="3">0</div><div class="lbl">Confidential Clicks</div><div class="pulse-bar"></div></div>
+  <div class="stat-card"><div class="num" data-count="18">0</div><div class="lbl">Login Attempts</div><div class="pulse-bar"></div></div>
+  <div class="stat-card"><div class="num" data-count="1">0</div><div class="lbl">Unique Attackers</div><div class="pulse-bar"></div></div>
+  <div class="stat-card"><div class="num" data-count="1">0</div><div class="lbl">Countries Detected</div><div class="pulse-bar"></div></div>
+  <div class="stat-card"><div class="num" data-count="0">0</div><div class="lbl">Confidential Clicks</div><div class="pulse-bar"></div></div>
   <div class="stat-card"><div class="num" data-count="0" data-suffix="s">0</div><div class="lbl">Avg. Session Time</div><div class="pulse-bar"></div></div>
 </div>
 
@@ -593,110 +558,56 @@ footer {
     <div class="panel" style="margin-bottom:18px;">
       <h2>Attack Origins</h2>
       
-            <div class="bar-row">
-              <div class="rank-num">01</div>
-              <div class="bar-label"><img class="flag" src="https://flagcdn.com/w20/de.png" onerror="this.style.display='none'"> Germany</div>
-              <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-              <div class="bar-value">2</div>
-            </div>
-            <div class="bar-row">
-              <div class="rank-num">02</div>
-              <div class="bar-label"><img class="flag" src="https://flagcdn.com/w20/ru.png" onerror="this.style.display='none'"> Russia</div>
-              <div class="bar-track"><div class="bar-fill" style="width:50%"></div></div>
-              <div class="bar-value">1</div>
-            </div>
-            <div class="bar-row">
-              <div class="rank-num">03</div>
-              <div class="bar-label"><img class="flag" src="https://flagcdn.com/w20/vn.png" onerror="this.style.display='none'"> Vietnam</div>
-              <div class="bar-track"><div class="bar-fill" style="width:50%"></div></div>
-              <div class="bar-value">1</div>
-            </div>
-            <div class="bar-row">
-              <div class="rank-num">04</div>
-              <div class="bar-label"><img class="flag" src="https://flagcdn.com/w20/nl.png" onerror="this.style.display='none'"> Netherlands</div>
-              <div class="bar-track"><div class="bar-fill" style="width:50%"></div></div>
-              <div class="bar-value">1</div>
-            </div>
-            <div class="bar-row">
-              <div class="rank-num">05</div>
-              <div class="bar-label"><img class="flag" src="https://flagcdn.com/w20/cn.png" onerror="this.style.display='none'"> China</div>
-              <div class="bar-track"><div class="bar-fill" style="width:50%"></div></div>
-              <div class="bar-value">1</div>
-            </div>
-            <div class="bar-row">
-              <div class="rank-num">06</div>
-              <div class="bar-label"><img class="flag" src="https://flagcdn.com/w20/us.png" onerror="this.style.display='none'"> United States</div>
-              <div class="bar-track"><div class="bar-fill" style="width:50%"></div></div>
-              <div class="bar-value">1</div>
-            </div>
+            
+      
+      <div class="bar-row">
+        <div class="rank-num">01</div>
+        <div class="bar-label"><img class="flag" src="https://flagcdn.com/w20/xx.png" onerror="this.style.display='none'"> Unknown</div>
+        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
+        <div class="bar-value">58</div>
+      </div>
     </div>
     <div class="panel" style="margin-bottom:18px;">
       <h2>Top Usernames</h2>
       
-            <div class="bar-row">
-              <div class="rank-num">01</div>
-              <div class="bar-label mono">admin</div>
-              <div class="bar-track"><div class="bar-fill alt" style="width:100%"></div></div>
-              <div class="bar-value">4</div>
-            </div>
-            <div class="bar-row">
-              <div class="rank-num">02</div>
-              <div class="bar-label mono">wp-admin</div>
-              <div class="bar-track"><div class="bar-fill alt" style="width:25%"></div></div>
-              <div class="bar-value">1</div>
-            </div>
-            <div class="bar-row">
-              <div class="rank-num">03</div>
-              <div class="bar-label mono">administrator</div>
-              <div class="bar-track"><div class="bar-fill alt" style="width:25%"></div></div>
-              <div class="bar-value">1</div>
-            </div>
-            <div class="bar-row">
-              <div class="rank-num">04</div>
-              <div class="bar-label mono">root</div>
-              <div class="bar-track"><div class="bar-fill alt" style="width:25%"></div></div>
-              <div class="bar-value">1</div>
-            </div>
+            
+      
+      <div class="bar-row">
+        <div class="rank-num">01</div>
+        <div class="bar-label mono"><span class="mono">admin</span></div>
+        <div class="bar-track"><div class="bar-fill alt" style="width:100%"></div></div>
+        <div class="bar-value">9</div>
+      </div>
+      <div class="bar-row">
+        <div class="rank-num">02</div>
+        <div class="bar-label mono"><span class="mono">kwame</span></div>
+        <div class="bar-track"><div class="bar-fill alt" style="width:22%"></div></div>
+        <div class="bar-value">2</div>
+      </div>
     </div>
     <div class="panel">
       <h2>Top Passwords</h2>
       
-            <div class="bar-row">
-              <div class="rank-num">01</div>
-              <div class="bar-label mono">admin123</div>
-              <div class="bar-track"><div class="bar-fill alt" style="width:100%"></div></div>
-              <div class="bar-value">1</div>
-            </div>
-            <div class="bar-row">
-              <div class="rank-num">02</div>
-              <div class="bar-label mono">P@ssw0rd</div>
-              <div class="bar-track"><div class="bar-fill alt" style="width:100%"></div></div>
-              <div class="bar-value">1</div>
-            </div>
-            <div class="bar-row">
-              <div class="rank-num">03</div>
-              <div class="bar-label mono">123456</div>
-              <div class="bar-track"><div class="bar-fill alt" style="width:100%"></div></div>
-              <div class="bar-value">1</div>
-            </div>
-            <div class="bar-row">
-              <div class="rank-num">04</div>
-              <div class="bar-label mono">qwerty123</div>
-              <div class="bar-track"><div class="bar-fill alt" style="width:100%"></div></div>
-              <div class="bar-value">1</div>
-            </div>
-            <div class="bar-row">
-              <div class="rank-num">05</div>
-              <div class="bar-label mono">deebodah2024</div>
-              <div class="bar-track"><div class="bar-fill alt" style="width:100%"></div></div>
-              <div class="bar-value">1</div>
-            </div>
-            <div class="bar-row">
-              <div class="rank-num">06</div>
-              <div class="bar-label mono">toor</div>
-              <div class="bar-track"><div class="bar-fill alt" style="width:100%"></div></div>
-              <div class="bar-value">1</div>
-            </div>
+            
+      
+      <div class="bar-row">
+        <div class="rank-num">01</div>
+        <div class="bar-label mono"><span class="mono">password</span></div>
+        <div class="bar-track"><div class="bar-fill alt" style="width:100%"></div></div>
+        <div class="bar-value">7</div>
+      </div>
+      <div class="bar-row">
+        <div class="rank-num">02</div>
+        <div class="bar-label mono"><span class="mono">qwerty</span></div>
+        <div class="bar-track"><div class="bar-fill alt" style="width:14%"></div></div>
+        <div class="bar-value">1</div>
+      </div>
+      <div class="bar-row">
+        <div class="rank-num">03</div>
+        <div class="bar-label mono"><span class="mono">12345</span></div>
+        <div class="bar-track"><div class="bar-fill alt" style="width:14%"></div></div>
+        <div class="bar-value">1</div>
+      </div>
     </div>
   </div>
 
@@ -717,24 +628,8 @@ footer {
     <div class="panel" style="margin-top:18px;">
       <h2>Pages Visited Post-Login</h2>
       
-            <div class="bar-row">
-              <div class="rank-num">01</div>
-              <div class="bar-label mono"><span class="action-nav">/posts</span></div>
-              <div class="bar-track"><div class="bar-fill alt" style="width:100%"></div></div>
-              <div class="bar-value">1</div>
-            </div>
-            <div class="bar-row">
-              <div class="rank-num">02</div>
-              <div class="bar-label mono"><span class="action-nav">/users</span></div>
-              <div class="bar-track"><div class="bar-fill alt" style="width:100%"></div></div>
-              <div class="bar-value">1</div>
-            </div>
-            <div class="bar-row">
-              <div class="rank-num">03</div>
-              <div class="bar-label mono"><span class="action-nav">/plugins</span></div>
-              <div class="bar-track"><div class="bar-fill alt" style="width:100%"></div></div>
-              <div class="bar-value">1</div>
-            </div>
+            
+<div style="color:#3a6a8a;font-size:12px;padding:8px 0;">No data captured yet — awaiting attacker traffic.</div>
     </div>
   </div>
 
@@ -744,30 +639,12 @@ footer {
       <h2>Most Active Attackers</h2>
         <!-- attacker list -->
         <div id="attacker-list">
-            <div class="ip-row">
-              <div class="ip-main"><img class="flag" src="https://flagcdn.com/w20/de.png" onerror="this.style.display='none'"> <span class="mono">185.220.101.45</span></div>
-              <div class="ip-sub">Germany · Frankfurt · 2 attempts</div>
-            </div>
-            <div class="ip-row">
-              <div class="ip-main"><img class="flag" src="https://flagcdn.com/w20/ru.png" onerror="this.style.display='none'"> <span class="mono">45.155.205.12</span></div>
-              <div class="ip-sub">Russia · Moscow · 1 attempts</div>
-            </div>
-            <div class="ip-row">
-              <div class="ip-main"><img class="flag" src="https://flagcdn.com/w20/vn.png" onerror="this.style.display='none'"> <span class="mono">103.45.78.9</span></div>
-              <div class="ip-sub">Vietnam · Hanoi · 1 attempts</div>
-            </div>
-            <div class="ip-row">
-              <div class="ip-main"><img class="flag" src="https://flagcdn.com/w20/nl.png" onerror="this.style.display='none'"> <span class="mono">194.36.190.21</span></div>
-              <div class="ip-sub">Netherlands · Amsterdam · 1 attempts</div>
-            </div>
-            <div class="ip-row">
-              <div class="ip-main"><img class="flag" src="https://flagcdn.com/w20/cn.png" onerror="this.style.display='none'"> <span class="mono">121.18.238.55</span></div>
-              <div class="ip-sub">China · Beijing · 1 attempts</div>
-            </div>
-            <div class="ip-row" style="border-bottom:none;">
-              <div class="ip-main"><img class="flag" src="https://flagcdn.com/w20/us.png" onerror="this.style.display='none'"> <span class="mono">92.118.39.74</span></div>
-              <div class="ip-sub">United States · Ashburn · 1 attempts</div>
-            </div>
+            
+        
+        <div class="ip-row" style="border-bottom:none;">
+          <div class="ip-main"><img class="flag" src="https://flagcdn.com/w20/xx.png" onerror="this.style.display='none'"> <span class="mono">127.0.0.1</span></div>
+          <div class="ip-sub">Unknown ·  · 58 attempts</div>
+        </div>
         </div>
     </div>
 
@@ -775,55 +652,113 @@ footer {
     <div class="panel" style="margin-bottom:18px;">
       <h2>Live Login Feed</h2>
       <div class="scroll-box" style="max-height:220px;" id="login-feed">
-            <div class="feed-row">
-              <span class="feed-time">2026-06-10 02:30:42</span>
-              <img class="flag" src="https://flagcdn.com/w20/de.png" onerror="this.style.display='none'">
-              <span class="mono">185.220.101.45</span>
-              <span class="feed-arrow">&rarr;</span>
-              <span class="feed-cred">admin:letmein</span>
-            </div>
-            <div class="feed-row">
-              <span class="feed-time">2026-06-10 02:25:11</span>
-              <img class="flag" src="https://flagcdn.com/w20/us.png" onerror="this.style.display='none'">
-              <span class="mono">92.118.39.74</span>
-              <span class="feed-arrow">&rarr;</span>
-              <span class="feed-cred">root:toor</span>
-            </div>
-            <div class="feed-row">
-              <span class="feed-time">2026-06-10 02:20:55</span>
-              <img class="flag" src="https://flagcdn.com/w20/cn.png" onerror="this.style.display='none'">
-              <span class="mono">121.18.238.55</span>
-              <span class="feed-arrow">&rarr;</span>
-              <span class="feed-cred">admin:deebodah2024</span>
-            </div>
-            <div class="feed-row">
-              <span class="feed-time">2026-06-10 02:18:02</span>
-              <img class="flag" src="https://flagcdn.com/w20/nl.png" onerror="this.style.display='none'">
-              <span class="mono">194.36.190.21</span>
-              <span class="feed-arrow">&rarr;</span>
-              <span class="feed-cred">administrator:qwerty123</span>
-            </div>
-            <div class="feed-row">
-              <span class="feed-time">2026-06-10 02:16:40</span>
-              <img class="flag" src="https://flagcdn.com/w20/vn.png" onerror="this.style.display='none'">
-              <span class="mono">103.45.78.9</span>
-              <span class="feed-arrow">&rarr;</span>
-              <span class="feed-cred">wp-admin:123456</span>
-            </div>
-            <div class="feed-row">
-              <span class="feed-time">2026-06-10 02:15:21</span>
-              <img class="flag" src="https://flagcdn.com/w20/ru.png" onerror="this.style.display='none'">
-              <span class="mono">45.155.205.12</span>
-              <span class="feed-arrow">&rarr;</span>
-              <span class="feed-cred">admin:P@ssw0rd</span>
-            </div>
-            <div class="feed-row">
-              <span class="feed-time">2026-06-10 02:14:03</span>
-              <img class="flag" src="https://flagcdn.com/w20/de.png" onerror="this.style.display='none'">
-              <span class="mono">185.220.101.45</span>
-              <span class="feed-arrow">&rarr;</span>
-              <span class="feed-cred">admin:admin123</span>
-            </div>
+            
+      
+      <div class="feed-row">
+        <span class="feed-time">2026-08-05 17:17:11</span>
+        <img class="flag" src="https://flagcdn.com/w20/xx.png" onerror="this.style.display='none'">
+        <span class="mono">127.0.0.1</span>
+        <span class="feed-arrow">&rarr;</span>
+        <span class="feed-cred">admin:(empty)</span>
+      </div>
+      <div class="feed-row">
+        <span class="feed-time">2026-06-18 23:47:35</span>
+        <img class="flag" src="https://flagcdn.com/w20/xx.png" onerror="this.style.display='none'">
+        <span class="mono">127.0.0.1</span>
+        <span class="feed-arrow">&rarr;</span>
+        <span class="feed-cred">admin:(empty)</span>
+      </div>
+      <div class="feed-row">
+        <span class="feed-time">2026-06-18 23:45:27</span>
+        <img class="flag" src="https://flagcdn.com/w20/xx.png" onerror="this.style.display='none'">
+        <span class="mono">127.0.0.1</span>
+        <span class="feed-arrow">&rarr;</span>
+        <span class="feed-cred">admin:(empty)</span>
+      </div>
+      <div class="feed-row">
+        <span class="feed-time">2026-06-18 23:40:49</span>
+        <img class="flag" src="https://flagcdn.com/w20/xx.png" onerror="this.style.display='none'">
+        <span class="mono">127.0.0.1</span>
+        <span class="feed-arrow">&rarr;</span>
+        <span class="feed-cred">admin:(empty)</span>
+      </div>
+      <div class="feed-row">
+        <span class="feed-time">2026-06-18 23:40:07</span>
+        <img class="flag" src="https://flagcdn.com/w20/xx.png" onerror="this.style.display='none'">
+        <span class="mono">127.0.0.1</span>
+        <span class="feed-arrow">&rarr;</span>
+        <span class="feed-cred">admin:(empty)</span>
+      </div>
+      <div class="feed-row">
+        <span class="feed-time">2026-06-18 23:33:47</span>
+        <img class="flag" src="https://flagcdn.com/w20/xx.png" onerror="this.style.display='none'">
+        <span class="mono">127.0.0.1</span>
+        <span class="feed-arrow">&rarr;</span>
+        <span class="feed-cred">admin:(empty)</span>
+      </div>
+      <div class="feed-row">
+        <span class="feed-time">2026-06-18 10:53:49</span>
+        <img class="flag" src="https://flagcdn.com/w20/xx.png" onerror="this.style.display='none'">
+        <span class="mono">127.0.0.1</span>
+        <span class="feed-arrow">&rarr;</span>
+        <span class="feed-cred">admin:(empty)</span>
+      </div>
+      <div class="feed-row">
+        <span class="feed-time">2026-08-05 17:17:11</span>
+        <img class="flag" src="https://flagcdn.com/w20/xx.png" onerror="this.style.display='none'">
+        <span class="mono">127.0.0.1</span>
+        <span class="feed-arrow">&rarr;</span>
+        <span class="feed-cred">admin:password</span>
+      </div>
+      <div class="feed-row">
+        <span class="feed-time">2026-08-05 17:16:55</span>
+        <img class="flag" src="https://flagcdn.com/w20/xx.png" onerror="this.style.display='none'">
+        <span class="mono">127.0.0.1</span>
+        <span class="feed-arrow">&rarr;</span>
+        <span class="feed-cred">kwame:(empty)</span>
+      </div>
+      <div class="feed-row">
+        <span class="feed-time">2026-08-05 17:16:55</span>
+        <img class="flag" src="https://flagcdn.com/w20/xx.png" onerror="this.style.display='none'">
+        <span class="mono">127.0.0.1</span>
+        <span class="feed-arrow">&rarr;</span>
+        <span class="feed-cred">kwame:12345</span>
+      </div>
+      <div class="feed-row">
+        <span class="feed-time">2026-06-18 23:47:35</span>
+        <img class="flag" src="https://flagcdn.com/w20/xx.png" onerror="this.style.display='none'">
+        <span class="mono">127.0.0.1</span>
+        <span class="feed-arrow">&rarr;</span>
+        <span class="feed-cred">admin:password</span>
+      </div>
+      <div class="feed-row">
+        <span class="feed-time">2026-06-18 23:45:27</span>
+        <img class="flag" src="https://flagcdn.com/w20/xx.png" onerror="this.style.display='none'">
+        <span class="mono">127.0.0.1</span>
+        <span class="feed-arrow">&rarr;</span>
+        <span class="feed-cred">admin:password</span>
+      </div>
+      <div class="feed-row">
+        <span class="feed-time">2026-06-18 23:40:49</span>
+        <img class="flag" src="https://flagcdn.com/w20/xx.png" onerror="this.style.display='none'">
+        <span class="mono">127.0.0.1</span>
+        <span class="feed-arrow">&rarr;</span>
+        <span class="feed-cred">admin:password</span>
+      </div>
+      <div class="feed-row">
+        <span class="feed-time">2026-06-18 23:40:07</span>
+        <img class="flag" src="https://flagcdn.com/w20/xx.png" onerror="this.style.display='none'">
+        <span class="mono">127.0.0.1</span>
+        <span class="feed-arrow">&rarr;</span>
+        <span class="feed-cred">admin:password</span>
+      </div>
+      <div class="feed-row">
+        <span class="feed-time">2026-06-18 23:33:47</span>
+        <img class="flag" src="https://flagcdn.com/w20/xx.png" onerror="this.style.display='none'">
+        <span class="mono">127.0.0.1</span>
+        <span class="feed-arrow">&rarr;</span>
+        <span class="feed-cred">admin:password</span>
+      </div>
       </div>
     </div>
 
@@ -831,69 +766,148 @@ footer {
     <div class="panel" id="activity-panel">
       <h2>Post-Login Activity</h2>
       <div class="scroll-box" style="max-height:300px;" id="activity-feed">
-            <div class="activity-row">
-              <span class="feed-time">2026-06-10 02:31:00</span>
-              <img class="flag" src="https://flagcdn.com/w20/de.png" onerror="this.style.display='none'">
-              <span class="mono">185.220.101.45</span>
-              <span class="activity-icon">🚪</span>
-              <span><span class="action-login">Logged In</span></span>
-            </div>
-            <div class="activity-row">
-              <span class="feed-time">2026-06-10 02:21:31</span>
-              <img class="flag" src="https://flagcdn.com/w20/cn.png" onerror="this.style.display='none'">
-              <span class="mono">121.18.238.55</span>
-              <span class="activity-icon">📄</span>
-              <span><span class="action-nav">/plugins</span></span>
-            </div>
-            <div class="activity-row">
-              <span class="feed-time">2026-06-10 02:21:30</span>
-              <img class="flag" src="https://flagcdn.com/w20/cn.png" onerror="this.style.display='none'">
-              <span class="mono">121.18.238.55</span>
-              <span class="activity-icon">🖱️</span>
-              <span><span class="action-nav">menu_plugins</span></span>
-            </div>
-            <div class="activity-row">
-              <span class="feed-time">2026-06-10 02:21:00</span>
-              <img class="flag" src="https://flagcdn.com/w20/cn.png" onerror="this.style.display='none'">
-              <span class="mono">121.18.238.55</span>
-              <span class="activity-icon">🖱️</span>
-              <span><span class="action-nav">page_loaded_dashboard</span></span>
-            </div>
-            <div class="activity-row danger">
-              <span class="feed-time">2026-06-10 02:17:10</span>
-              <img class="flag" src="https://flagcdn.com/w20/vn.png" onerror="this.style.display='none'">
-              <span class="mono">103.45.78.9</span>
-              <span class="activity-icon">⚠️</span>
-              <span><span class="action-click">click_edit_user_db_backup</span></span>
-            </div>
-            <div class="activity-row">
-              <span class="feed-time">2026-06-10 02:17:03</span>
-              <img class="flag" src="https://flagcdn.com/w20/vn.png" onerror="this.style.display='none'">
-              <span class="mono">103.45.78.9</span>
-              <span class="activity-icon">📄</span>
-              <span><span class="action-nav">/users</span></span>
-            </div>
-            <div class="activity-row danger">
-              <span class="feed-time">2026-06-10 02:14:33</span>
-              <img class="flag" src="https://flagcdn.com/w20/de.png" onerror="this.style.display='none'">
-              <span class="mono">185.220.101.45</span>
-              <span class="activity-icon">⚠️</span>
-              <span><span class="action-click">click_post_backup</span></span>
-            </div>
-            <div class="activity-row danger">
-              <span class="feed-time">2026-06-10 02:14:25</span>
-              <img class="flag" src="https://flagcdn.com/w20/de.png" onerror="this.style.display='none'">
-              <span class="mono">185.220.101.45</span>
-              <span class="activity-icon">⚠️</span>
-              <span><span class="action-click">click_post_credentials</span></span>
-            </div>
-            <div class="activity-row">
-              <span class="feed-time">2026-06-10 02:14:16</span>
-              <img class="flag" src="https://flagcdn.com/w20/de.png" onerror="this.style.display='none'">
-              <span class="mono">185.220.101.45</span>
-              <span class="activity-icon">📄</span>
-              <span><span class="action-nav">/posts</span></span>
-            </div>
+            
+      
+      <div class="activity-row">
+        <span class="feed-time">2026-08-05 17:17:11</span>
+        <img class="flag" src="https://flagcdn.com/w20/xx.png" onerror="this.style.display='none'">
+        <span class="mono">127.0.0.1</span>
+        <span class="activity-icon">🖱️</span>
+        <span><span class="action-nav">page_load_dashboard</span></span>
+      </div>
+      <div class="activity-row">
+        <span class="feed-time">2026-06-18 23:55:39</span>
+        <img class="flag" src="https://flagcdn.com/w20/xx.png" onerror="this.style.display='none'">
+        <span class="mono">127.0.0.1</span>
+        <span class="activity-icon">🖱️</span>
+        <span><span class="action-nav">page_load_dashboard</span></span>
+      </div>
+      <div class="activity-row">
+        <span class="feed-time">2026-06-18 23:55:39</span>
+        <img class="flag" src="https://flagcdn.com/w20/xx.png" onerror="this.style.display='none'">
+        <span class="mono">127.0.0.1</span>
+        <span class="activity-icon">🖱️</span>
+        <span><span class="action-nav">menu_tools</span></span>
+      </div>
+      <div class="activity-row">
+        <span class="feed-time">2026-06-18 23:55:36</span>
+        <img class="flag" src="https://flagcdn.com/w20/xx.png" onerror="this.style.display='none'">
+        <span class="mono">127.0.0.1</span>
+        <span class="activity-icon">🖱️</span>
+        <span><span class="action-nav">page_load_users</span></span>
+      </div>
+      <div class="activity-row">
+        <span class="feed-time">2026-06-18 23:55:36</span>
+        <img class="flag" src="https://flagcdn.com/w20/xx.png" onerror="this.style.display='none'">
+        <span class="mono">127.0.0.1</span>
+        <span class="activity-icon">🖱️</span>
+        <span><span class="action-nav">menu_users</span></span>
+      </div>
+      <div class="activity-row">
+        <span class="feed-time">2026-06-18 23:55:34</span>
+        <img class="flag" src="https://flagcdn.com/w20/xx.png" onerror="this.style.display='none'">
+        <span class="mono">127.0.0.1</span>
+        <span class="activity-icon">🖱️</span>
+        <span><span class="action-nav">page_load_plugins</span></span>
+      </div>
+      <div class="activity-row">
+        <span class="feed-time">2026-06-18 23:55:34</span>
+        <img class="flag" src="https://flagcdn.com/w20/xx.png" onerror="this.style.display='none'">
+        <span class="mono">127.0.0.1</span>
+        <span class="activity-icon">🖱️</span>
+        <span><span class="action-nav">menu_plugins</span></span>
+      </div>
+      <div class="activity-row">
+        <span class="feed-time">2026-06-18 23:55:31</span>
+        <img class="flag" src="https://flagcdn.com/w20/xx.png" onerror="this.style.display='none'">
+        <span class="mono">127.0.0.1</span>
+        <span class="activity-icon">🖱️</span>
+        <span><span class="action-nav">page_load_appearance</span></span>
+      </div>
+      <div class="activity-row">
+        <span class="feed-time">2026-06-18 23:55:31</span>
+        <img class="flag" src="https://flagcdn.com/w20/xx.png" onerror="this.style.display='none'">
+        <span class="mono">127.0.0.1</span>
+        <span class="activity-icon">🖱️</span>
+        <span><span class="action-nav">menu_appearance</span></span>
+      </div>
+      <div class="activity-row">
+        <span class="feed-time">2026-06-18 23:55:30</span>
+        <img class="flag" src="https://flagcdn.com/w20/xx.png" onerror="this.style.display='none'">
+        <span class="mono">127.0.0.1</span>
+        <span class="activity-icon">🖱️</span>
+        <span><span class="action-nav">page_load_dashboard</span></span>
+      </div>
+      <div class="activity-row">
+        <span class="feed-time">2026-06-18 23:55:30</span>
+        <img class="flag" src="https://flagcdn.com/w20/xx.png" onerror="this.style.display='none'">
+        <span class="mono">127.0.0.1</span>
+        <span class="activity-icon">🖱️</span>
+        <span><span class="action-nav">menu_comments</span></span>
+      </div>
+      <div class="activity-row">
+        <span class="feed-time">2026-06-18 23:55:28</span>
+        <img class="flag" src="https://flagcdn.com/w20/xx.png" onerror="this.style.display='none'">
+        <span class="mono">127.0.0.1</span>
+        <span class="activity-icon">🖱️</span>
+        <span><span class="action-nav">page_load_dashboard</span></span>
+      </div>
+      <div class="activity-row">
+        <span class="feed-time">2026-06-18 23:55:28</span>
+        <img class="flag" src="https://flagcdn.com/w20/xx.png" onerror="this.style.display='none'">
+        <span class="mono">127.0.0.1</span>
+        <span class="activity-icon">🖱️</span>
+        <span><span class="action-nav">menu_pages</span></span>
+      </div>
+      <div class="activity-row">
+        <span class="feed-time">2026-06-18 23:55:22</span>
+        <img class="flag" src="https://flagcdn.com/w20/xx.png" onerror="this.style.display='none'">
+        <span class="mono">127.0.0.1</span>
+        <span class="activity-icon">🖱️</span>
+        <span><span class="action-nav">page_load_dashboard</span></span>
+      </div>
+      <div class="activity-row">
+        <span class="feed-time">2026-06-18 23:55:22</span>
+        <img class="flag" src="https://flagcdn.com/w20/xx.png" onerror="this.style.display='none'">
+        <span class="mono">127.0.0.1</span>
+        <span class="activity-icon">🖱️</span>
+        <span><span class="action-nav">menu_pages</span></span>
+      </div>
+      <div class="activity-row">
+        <span class="feed-time">2026-06-18 23:55:19</span>
+        <img class="flag" src="https://flagcdn.com/w20/xx.png" onerror="this.style.display='none'">
+        <span class="mono">127.0.0.1</span>
+        <span class="activity-icon">🖱️</span>
+        <span><span class="action-nav">page_load_media</span></span>
+      </div>
+      <div class="activity-row">
+        <span class="feed-time">2026-06-18 23:55:19</span>
+        <img class="flag" src="https://flagcdn.com/w20/xx.png" onerror="this.style.display='none'">
+        <span class="mono">127.0.0.1</span>
+        <span class="activity-icon">🖱️</span>
+        <span><span class="action-nav">menu_media</span></span>
+      </div>
+      <div class="activity-row">
+        <span class="feed-time">2026-06-18 23:47:55</span>
+        <img class="flag" src="https://flagcdn.com/w20/xx.png" onerror="this.style.display='none'">
+        <span class="mono">127.0.0.1</span>
+        <span class="activity-icon">🖱️</span>
+        <span><span class="action-nav">page_load_posts</span></span>
+      </div>
+      <div class="activity-row">
+        <span class="feed-time">2026-06-18 23:47:55</span>
+        <img class="flag" src="https://flagcdn.com/w20/xx.png" onerror="this.style.display='none'">
+        <span class="mono">127.0.0.1</span>
+        <span class="activity-icon">🖱️</span>
+        <span><span class="action-nav">menu_posts</span></span>
+      </div>
+      <div class="activity-row">
+        <span class="feed-time">2026-06-18 23:47:38</span>
+        <img class="flag" src="https://flagcdn.com/w20/xx.png" onerror="this.style.display='none'">
+        <span class="mono">127.0.0.1</span>
+        <span class="activity-icon">🖱️</span>
+        <span><span class="action-nav">page_load_media</span></span>
+      </div>
         </div>
     </div>
 
@@ -907,168 +921,176 @@ footer {
 </div><!-- /page-map -->
 
 <div id="page-osint" class="page-view hidden">
+<canvas id="osint-bg-canvas"></canvas>
 <div id="osint-section">
-  <div id="osint-inner">
-
-    <!-- ── UNIFIED OSINT PAGE HEADER ── -->
-    <div id="osint-page-header">
-      <!-- Back nav -->
-      <div id="osint-back" onclick="switchPage('map')">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="vertical-align:middle">
-          <path d="M9 2L4 7L9 12" stroke="#00e5ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        THREAT MAP
-      </div>
-      <!-- Title block -->
-      <div id="osint-page-title-wrap">
-        <div id="osint-page-eyebrow">DEEBODAH CORP &nbsp;·&nbsp; THREAT INTELLIGENCE MODULE &nbsp;·&nbsp; v2.1</div>
-        <div id="osint-page-title">
-          <span id="osint-hex">⬡</span>
-          IP OSINT INVESTIGATOR
-        </div>
-      </div>
-      <!-- Right status block -->
-      <div id="osint-page-status">
-        <div id="osint-status-light"><span class="pulse-dot"></span>SYSTEM READY</div>
-        <div style="font-size:9px;color:#1e4a66;letter-spacing:1px;font-family:'Share Tech Mono',monospace;margin-top:4px;">
-          SCANS: <span id="scan-count" style="color:#00e5ff;">0</span> &nbsp;·&nbsp; SOURCES: 4
-        </div>
-        <div style="font-size:8px;color:#1a3d55;letter-spacing:1px;font-family:'Share Tech Mono',monospace;margin-top:3px;">
-          ip-api · Shodan · AbuseIPDB · GreyNoise
-        </div>
-      </div>
+<div id="osint-inner" style="padding:0;">
+  <div id="osint-topbar">
+    <div id="osint-back-btn" onclick="switchPage('map')">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M8 1.5L3 6L8 10.5" stroke="#00e5ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      BACK
     </div>
-
-    <!-- horizontal rule below header -->
-    <div id="osint-header-rule"></div>
-
-    <!-- ── MAIN BODY ── -->
+    <div id="osint-module-label">
+      <div id="osint-module-eyebrow">DEEBODAH CORP &middot; THREAT INTELLIGENCE &middot; v2.1</div>
+      <div id="osint-module-name">&#x2B21; IP OSINT INVESTIGATOR</div>
+    </div>
+    <div id="osint-topbar-center">
+      <div class="osint-source-pill" id="src-ipapi"><span class="pill-dot"></span>IP-API</div>
+      <div class="osint-source-pill" id="src-shodan"><span class="pill-dot"></span>SHODAN</div>
+      <div class="osint-source-pill" id="src-abuse"><span class="pill-dot"></span>ABUSEIPDB</div>
+      <div class="osint-source-pill" id="src-grey"><span class="pill-dot"></span>GREYNOISE</div>
+    </div>
+    <div id="osint-topbar-right">
+      <div id="osint-scan-tally">SCANS <span id="scan-count">0</span></div>
+      <div id="osint-sys-status"><span class="pulse-dot" style="width:6px;height:6px;margin-right:4px;"></span>ONLINE</div>
+    </div>
+  </div>
+  <div style="padding:0 32px 52px;">
+    <div id="osint-target-header">
+      <img id="oth-flag" src="" alt="">
+      <div><div id="oth-ip">&#x2014;</div><div id="oth-meta">&#x2014;</div></div>
+      <div id="oth-badge">&#x2014;</div>
+    </div>
     <div id="osint-body">
-
-      <!-- LEFT COLUMN: IP selector -->
+      <!-- LEFT -->
       <div id="osint-left">
-        <div class="osint-section-label">◈ SELECT TARGET IP</div>
+        <div class="ol-section-head"><span class="olsh-dot"></span>TARGET REGISTRY</div>
         <div id="osint-ip-list"></div>
-
-        <div class="osint-section-label" style="margin-top:18px;">◈ INTELLIGENCE SOURCES</div>
-        <div id="osint-sources">
-          <div class="osint-source" id="src-ipapi">
-            <div class="src-indicator"></div>
-            <div class="src-text">
-              <div class="src-name">ip-api.com</div>
-              <div class="src-desc">Geolocation &amp; ASN</div>
-            </div>
-          </div>
-          <div class="osint-source" id="src-shodan">
-            <div class="src-indicator"></div>
-            <div class="src-text">
-              <div class="src-name">Shodan InternetDB</div>
-              <div class="src-desc">Ports &amp; CVEs</div>
-            </div>
-          </div>
-          <div class="osint-source" id="src-abuse">
-            <div class="src-indicator"></div>
-            <div class="src-text">
-              <div class="src-name">AbuseIPDB</div>
-              <div class="src-desc">Abuse Reports</div>
-            </div>
-          </div>
-          <div class="osint-source" id="src-grey">
-            <div class="src-indicator"></div>
-            <div class="src-text">
-              <div class="src-name">GreyNoise</div>
-              <div class="src-desc">Mass Scanner Intel</div>
-            </div>
-          </div>
+        <div class="ol-section-head"><span class="olsh-dot"></span>INTEL SOURCES</div>
+        <div class="src-legend-item"><span class="slc" style="background:#00e5ff;box-shadow:0 0 5px #00e5ff;"></span>ip-api.com &middot; Geo &amp; ASN</div>
+        <div class="src-legend-item"><span class="slc" style="background:#b44fff;box-shadow:0 0 5px #b44fff;"></span>Shodan &middot; Ports &amp; CVEs</div>
+        <div class="src-legend-item"><span class="slc" style="background:#ff9800;box-shadow:0 0 5px #ff9800;"></span>AbuseIPDB &middot; Abuse History</div>
+        <div class="src-legend-item"><span class="slc" style="background:#00e676;box-shadow:0 0 5px #00e676;"></span>GreyNoise &middot; Scanner Intel</div>
+        <div style="padding:12px 14px;background:rgba(0,229,255,0.015);border-top:1px solid #091828;">
+          <div style="font-family:'Orbitron',sans-serif;font-size:7px;color:#091828;letter-spacing:2px;margin-bottom:6px;">QUICK GUIDE</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:#0a1e2a;line-height:1.9;">Select any IP from the registry to run a live multi-source OSINT scan. IPs are also clickable in the threat feed.</div>
         </div>
-
-        <div id="osint-hint">Click any IP to launch a live<br>multi-source OSINT scan.<br><br>All IPs also clickable directly<br>from the feed panels above.</div>
       </div>
-
-<!-- RIGHT COLUMN: Results -->
+      <!-- RIGHT -->
       <div id="osint-right">
-
-        <!-- Idle -->
+        <!-- IDLE -->
         <div id="osint-idle">
-          <svg id="osint-radar-svg" width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="60" cy="60" r="55" stroke="#00e5ff" stroke-width="0.6" stroke-dasharray="3 5" opacity="0.4">
-              <animateTransform attributeName="transform" type="rotate" from="0 60 60" to="360 60 60" dur="12s" repeatCount="indefinite"/>
-            </circle>
-            <circle cx="60" cy="60" r="38" stroke="#00e5ff" stroke-width="0.5" opacity="0.25"/>
-            <circle cx="60" cy="60" r="20" stroke="#00e5ff" stroke-width="0.5" opacity="0.2"/>
-            <!-- sweep beam -->
-            <path d="M60 60 L60 5" stroke="url(#sweepGrad)" stroke-width="1.5" opacity="0.7">
-              <animateTransform attributeName="transform" type="rotate" from="0 60 60" to="360 60 60" dur="3s" repeatCount="indefinite"/>
-            </path>
-            <defs>
-              <linearGradient id="sweepGrad" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
-                <stop offset="0%" stop-color="#00e5ff" stop-opacity="0"/>
-                <stop offset="100%" stop-color="#00e5ff" stop-opacity="0.9"/>
-              </linearGradient>
-            </defs>
-            <line x1="5" y1="60" x2="115" y2="60" stroke="#00e5ff" stroke-width="0.4" opacity="0.2"/>
-            <line x1="60" y1="5" x2="60" y2="115" stroke="#00e5ff" stroke-width="0.4" opacity="0.2"/>
-            <circle cx="60" cy="60" r="3" fill="#00e5ff" opacity="0.6"/>
-          </svg>
-          <div id="osint-idle-label">SELECT AN IP TO INVESTIGATE</div>
-          <div id="osint-idle-sub">Multi-source threat intelligence will<br>render here in real time</div>
-        </div>
-
-        <!-- Loading -->
-        <div id="osint-loading" style="display:none;">
-          <div id="osint-loading-ip"></div>
-          <div id="osint-scan-ring">
-            <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-              <circle cx="40" cy="40" r="34" stroke="#00e5ff" stroke-width="1" stroke-dasharray="8 4" opacity="0.3">
-                <animateTransform attributeName="transform" type="rotate" from="0 40 40" to="360 40 40" dur="2s" repeatCount="indefinite"/>
+          <div id="osint-idle-radar">
+            <svg width="280" height="280" viewBox="0 0 280 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <radialGradient id="idleCore" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stop-color="#00e5ff" stop-opacity="0.15"/>
+                  <stop offset="100%" stop-color="#00e5ff" stop-opacity="0"/>
+                </radialGradient>
+                <linearGradient id="sweepG" x1="0" y1="1" x2="0" y2="0" gradientUnits="objectBoundingBox">
+                  <stop offset="0%" stop-color="#00e5ff" stop-opacity="0"/>
+                  <stop offset="100%" stop-color="#00e5ff" stop-opacity="1"/>
+                </linearGradient>
+                <!-- Radial fade: beam and sector fade out as they reach the outer ring -->
+                <radialGradient id="sweepFade" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%"  stop-color="#ffffff" stop-opacity="1"/>
+                  <stop offset="72%" stop-color="#ffffff" stop-opacity="1"/>
+                  <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+                </radialGradient>
+                <mask id="radarEdgeMask">
+                  <circle cx="140" cy="140" r="130" fill="url(#sweepFade)"/>
+                </mask>
+              </defs>
+              <circle cx="140" cy="140" r="130" stroke="#00e5ff" stroke-width="0.5" stroke-dasharray="6 12" opacity="0.2">
+                <animateTransform attributeName="transform" type="rotate" from="0 140 140" to="360 140 140" dur="22s" repeatCount="indefinite"/>
               </circle>
-              <circle cx="40" cy="40" r="24" stroke="#00e5ff" stroke-width="1.5" stroke-dasharray="4 8" opacity="0.5">
-                <animateTransform attributeName="transform" type="rotate" from="360 40 40" to="0 40 40" dur="1.4s" repeatCount="indefinite"/>
+              <circle cx="140" cy="140" r="108" stroke="#00e5ff" stroke-width="0.4" stroke-dasharray="3 8" opacity="0.12">
+                <animateTransform attributeName="transform" type="rotate" from="360 140 140" to="0 140 140" dur="16s" repeatCount="indefinite"/>
               </circle>
-              <circle cx="40" cy="40" r="4" fill="#00e5ff"/>
+              <circle cx="140" cy="140" r="82" stroke="#1565c0" stroke-width="0.4" opacity="0.15"/>
+              <circle cx="140" cy="140" r="54" stroke="#00e5ff" stroke-width="0.4" opacity="0.1"/>
+              <circle cx="140" cy="140" r="28" stroke="#00e5ff" stroke-width="0.4" opacity="0.08"/>
+              <line x1="10" y1="140" x2="270" y2="140" stroke="#00e5ff" stroke-width="0.3" opacity="0.07"/>
+              <line x1="140" y1="10" x2="140" y2="270" stroke="#00e5ff" stroke-width="0.3" opacity="0.07"/>
+              <line x1="47" y1="47" x2="233" y2="233" stroke="#00e5ff" stroke-width="0.25" opacity="0.05"/>
+              <line x1="233" y1="47" x2="47" y2="233" stroke="#00e5ff" stroke-width="0.25" opacity="0.05"/>
+              <line x1="140" y1="8" x2="140" y2="20" stroke="#00e5ff" stroke-width="1.2" opacity="0.5"/>
+              <line x1="140" y1="260" x2="140" y2="272" stroke="#00e5ff" stroke-width="1.2" opacity="0.5"/>
+              <line x1="8" y1="140" x2="20" y2="140" stroke="#00e5ff" stroke-width="1.2" opacity="0.5"/>
+              <line x1="260" y1="140" x2="272" y2="140" stroke="#00e5ff" stroke-width="1.2" opacity="0.5"/>
+              <g mask="url(#radarEdgeMask)">
+                <path d="M140 140 L140 10" stroke="url(#sweepG)" stroke-width="2" opacity="0.9">
+                  <animateTransform attributeName="transform" type="rotate" from="0 140 140" to="360 140 140" dur="4s" repeatCount="indefinite"/>
+                </path>
+                <path d="M140 140 L140 10 A130 130 0 0 1 166 14 Z" fill="#00e5ff" fill-opacity="0.09">
+                  <animateTransform attributeName="transform" type="rotate" from="0 140 140" to="360 140 140" dur="4s" repeatCount="indefinite"/>
+                </path>
+              </g>
+              <circle cx="140" cy="140" r="80" fill="url(#idleCore)"/>
+              <circle cx="140" cy="140" r="6" fill="#00e5ff" opacity="0.8" style="filter:drop-shadow(0 0 8px #00e5ff)"/>
+              <circle cx="140" cy="140" r="12" fill="none" stroke="#00e5ff" stroke-width="0.8" opacity="0.35"/>
+              <!-- orbiting nodes at 3 sources colors -->
+              <circle cx="140" cy="32" r="4" fill="#00e5ff" opacity="0.75" style="filter:drop-shadow(0 0 5px #00e5ff)">
+                <animateTransform attributeName="transform" type="rotate" from="0 140 140" to="360 140 140" dur="8s" repeatCount="indefinite"/>
+              </circle>
+              <circle cx="140" cy="32" r="3.5" fill="#b44fff" opacity="0.7" style="filter:drop-shadow(0 0 5px #b44fff)">
+                <animateTransform attributeName="transform" type="rotate" from="120 140 140" to="480 140 140" dur="8s" repeatCount="indefinite"/>
+              </circle>
+              <circle cx="140" cy="32" r="3.5" fill="#ff9800" opacity="0.7" style="filter:drop-shadow(0 0 5px #ff9800)">
+                <animateTransform attributeName="transform" type="rotate" from="240 140 140" to="600 140 140" dur="8s" repeatCount="indefinite"/>
+              </circle>
+              <circle cx="140" cy="54" r="3" fill="#00e676" opacity="0.65" style="filter:drop-shadow(0 0 4px #00e676)">
+                <animateTransform attributeName="transform" type="rotate" from="60 140 140" to="420 140 140" dur="12s" repeatCount="indefinite"/>
+              </circle>
+              <!-- HUD brackets -->
+              <path d="M18 18 L38 18 M18 18 L18 38" stroke="#00e5ff" stroke-width="1.2" opacity="0.4"/>
+              <path d="M262 18 L242 18 M262 18 L262 38" stroke="#00e5ff" stroke-width="1.2" opacity="0.4"/>
+              <path d="M18 262 L38 262 M18 262 L18 242" stroke="#00e5ff" stroke-width="1.2" opacity="0.4"/>
+              <path d="M262 262 L242 262 M262 262 L262 242" stroke="#00e5ff" stroke-width="1.2" opacity="0.4"/>
+              <!-- pulse rings -->
+              <circle cx="140" cy="140" r="30" fill="none" stroke="#00e5ff" stroke-width="0.8" opacity="0">
+                <animate attributeName="r" values="20;110" dur="3s" repeatCount="indefinite"/>
+                <animate attributeName="opacity" values="0.35;0" dur="3s" repeatCount="indefinite"/>
+              </circle>
+              <circle cx="140" cy="140" r="30" fill="none" stroke="#00e5ff" stroke-width="0.6" opacity="0">
+                <animate attributeName="r" values="20;110" dur="3s" begin="1.5s" repeatCount="indefinite"/>
+                <animate attributeName="opacity" values="0.25;0" dur="3s" begin="1.5s" repeatCount="indefinite"/>
+              </circle>
             </svg>
           </div>
-          <div id="osint-status">INITIALISING...</div>
+          <div id="osint-idle-label">SELECT AN IP TO INVESTIGATE</div>
+          <div id="osint-idle-sub">Live multi-source OSINT &nbsp;&middot;&nbsp; No API key required<br>ip-api &nbsp;&middot;&nbsp; Shodan InternetDB &nbsp;&middot;&nbsp; AbuseIPDB &nbsp;&middot;&nbsp; GreyNoise</div>
+          <div id="osint-idle-keys">
+            <div class="idle-key"><span class="ik-dot" style="background:#ff5252;box-shadow:0 0 5px #ff5252;"></span>CRITICAL</div>
+            <div class="idle-key"><span class="ik-dot" style="background:#ff9800;box-shadow:0 0 5px #ff9800;"></span>ELEVATED</div>
+            <div class="idle-key"><span class="ik-dot" style="background:#ffce00;box-shadow:0 0 5px #ffce00;"></span>MEDIUM</div>
+            <div class="idle-key"><span class="ik-dot" style="background:#00e676;box-shadow:0 0 5px #00e676;"></span>LOW</div>
+          </div>
+        </div>
+        <!-- LOADING -->
+        <div id="osint-loading">
+          <div id="osint-loading-ip"></div>
+          <div id="osint-scan-ring">
+            <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
+              <circle cx="50" cy="50" r="45" stroke="#00e5ff" stroke-width="0.7" stroke-dasharray="12 6" opacity="0.2">
+                <animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="4s" repeatCount="indefinite"/>
+              </circle>
+              <circle cx="50" cy="50" r="34" stroke="#00e5ff" stroke-width="1.2" stroke-dasharray="6 9" opacity="0.4">
+                <animateTransform attributeName="transform" type="rotate" from="360 50 50" to="0 50 50" dur="2.5s" repeatCount="indefinite"/>
+              </circle>
+              <circle cx="50" cy="50" r="20" stroke="#00e5ff" stroke-width="0.7" stroke-dasharray="3 6" opacity="0.3">
+                <animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="1.5s" repeatCount="indefinite"/>
+              </circle>
+              <circle cx="50" cy="50" r="5" fill="#00e5ff" style="filter:drop-shadow(0 0 8px #00e5ff)"/>
+            </svg>
+          </div>
+          <div id="osint-status">INITIALISING SCAN...</div>
           <div id="osint-progress-track"><div id="osint-progress-fill"></div></div>
         </div>
-
-        <!-- Results grid -->
-        <div id="osint-results" style="display:none;">
+        <!-- RESULTS -->
+        <div id="osint-results">
           <div id="osint-cards-grid">
-            <div class="osint-card" id="card-geo">
-              <div class="osint-card-header"><span class="osint-card-icon">◉</span>GEOLOCATION &amp; NETWORK</div>
-              <div id="geo-content" class="osint-card-body">—</div>
-            </div>
-            <div class="osint-card" id="card-shodan">
-              <div class="osint-card-header"><span class="osint-card-icon" style="color:#b44fff">◉</span>SHODAN · PORTS &amp; VULNS</div>
-              <div id="shodan-content" class="osint-card-body">—</div>
-            </div>
-            <div class="osint-card" id="card-abuse">
-              <div class="osint-card-header"><span class="osint-card-icon" style="color:#ff9800">◉</span>ABUSEIPDB · REPORTS</div>
-              <div id="abuse-content" class="osint-card-body">—</div>
-            </div>
-            <div class="osint-card" id="card-grey">
-              <div class="osint-card-header"><span class="osint-card-icon" style="color:#00e676">◉</span>GREYNOISE · SCANNER</div>
-              <div id="grey-content" class="osint-card-body">—</div>
-            </div>
+            <div class="osint-card" id="card-geo"><div class="osint-card-header"><div class="och-left"><span class="osint-card-icon" style="color:#00e5ff;">&#x25C9;</span><span class="osint-card-title">GEOLOCATION &amp; NETWORK</span></div><span class="osint-card-src">ip-api.com</span></div><div id="geo-content" class="osint-card-body">&#x2014;</div></div>
+            <div class="osint-card" id="card-shodan"><div class="osint-card-header"><div class="och-left"><span class="osint-card-icon" style="color:#b44fff;">&#x25C9;</span><span class="osint-card-title">OPEN PORTS &amp; CVEs</span></div><span class="osint-card-src">Shodan InternetDB</span></div><div id="shodan-content" class="osint-card-body">&#x2014;</div></div>
+            <div class="osint-card" id="card-abuse"><div class="osint-card-header"><div class="och-left"><span class="osint-card-icon" style="color:#ff9800;">&#x25C9;</span><span class="osint-card-title">ABUSE HISTORY</span></div><span class="osint-card-src">AbuseIPDB intel</span></div><div id="abuse-content" class="osint-card-body">&#x2014;</div></div>
+            <div class="osint-card" id="card-grey"><div class="osint-card-header"><div class="och-left"><span class="osint-card-icon" style="color:#00e676;">&#x25C9;</span><span class="osint-card-title">SCANNER CLASSIFICATION</span></div><span class="osint-card-src">GreyNoise</span></div><div id="grey-content" class="osint-card-body">&#x2014;</div></div>
           </div>
-
-          <!-- Threat verdict -->
-          <div id="osint-verdict">
-            <div id="threat-badge">—</div>
-            <div id="threat-summary-text">—</div>
-          </div>
+          <div id="osint-verdict"><div id="threat-badge">&#x2014;</div><div id="threat-summary-text">&#x2014;</div></div>
         </div>
-
       </div><!-- /osint-right -->
     </div><!-- /osint-body -->
-  </div><!-- /osint-inner -->
+  </div>
+</div></div></div><!-- /page-osint -->
 
-  <!-- diagonal cut bottom edge -->
-  <div id="osint-edge-bottom"></div>
-</div>
-
-</div><!-- /page-osint -->
 <footer>
   <span>DEEBODAH CORP SECURITY OPERATIONS &nbsp;//&nbsp; HONEYPOT ANALYSIS MODULE &nbsp;//&nbsp; ACADEMIC RESEARCH</span>
   &nbsp;&nbsp;·&nbsp;&nbsp;
@@ -1137,7 +1159,9 @@ window.addEventListener('load', () => {
   });
 });
 
-const mapPoints = [{"ip": "103.45.78.9", "country": "Vietnam", "city": "Hanoi", "isp": "VNPT", "lat": 21.0, "lon": 105.8, "flag": "vn", "attempts": 1}, {"ip": "121.18.238.55", "country": "China", "city": "Beijing", "isp": "ChinaNet", "lat": 39.9, "lon": 116.4, "flag": "cn", "attempts": 1}, {"ip": "185.220.101.45", "country": "Germany", "city": "Frankfurt", "isp": "Tor Exit Node", "lat": 50.1, "lon": 8.7, "flag": "de", "attempts": 2}, {"ip": "194.36.190.21", "country": "Netherlands", "city": "Amsterdam", "isp": "WorldStream", "lat": 52.37, "lon": 4.9, "flag": "nl", "attempts": 1}, {"ip": "45.155.205.12", "country": "Russia", "city": "Moscow", "isp": "AS Hosting", "lat": 55.75, "lon": 37.6, "flag": "ru", "attempts": 1}, {"ip": "92.118.39.74", "country": "United States", "city": "Ashburn", "isp": "Choopa LLC", "lat": 39.0, "lon": -77.5, "flag": "us", "attempts": 1}];
+/* DATA_MAPPOINTS_START */
+const mapPoints = [];
+/* DATA_MAPPOINTS_END */
 const honeypot = {"name": "Accra, Ghana", "lat": 5.6037, "lon": -0.187, "flag": "gh"};
 // Country data loaded dynamically via TopoJSON fetch above
 
@@ -2114,253 +2138,289 @@ document.querySelectorAll('.activity-row').forEach(row => {
 //           GreyNoise Community API
 // ════════════════════════════════════════════════════════════════
 
+/* DATA_ATTACKERIPS_START */
 const ATTACKER_IPS = [
-  { ip:'185.220.101.45', flag:'de', country:'Germany',       city:'Frankfurt',  attempts:2 },
-  { ip:'45.155.205.12',  flag:'ru', country:'Russia',        city:'Moscow',     attempts:1 },
-  { ip:'103.45.78.9',    flag:'vn', country:'Vietnam',       city:'Hanoi',      attempts:1 },
-  { ip:'194.36.190.21',  flag:'nl', country:'Netherlands',   city:'Amsterdam',  attempts:1 },
-  { ip:'121.18.238.55',  flag:'cn', country:'China',         city:'Beijing',    attempts:1 },
-  { ip:'92.118.39.74',   flag:'us', country:'United States', city:'Ashburn',    attempts:1 },
+  { ip:'127.0.0.1', flag:'xx', country:'Unknown', city:'', attempts:58 },
 ];
+/* DATA_ATTACKERIPS_END */
 
-// Build IP selector buttons
+// ── PARTICLE NETWORK BACKGROUND ──────────────────────────────
+(function particleNet(){
+  const c=document.getElementById('osint-bg-canvas');
+  if(!c)return;
+  function rsz(){c.width=window.innerWidth;c.height=window.innerHeight;}
+  rsz();window.addEventListener('resize',rsz);
+  const ctx=c.getContext('2d');
+  const N=55,MAX=170;
+  const pts=Array.from({length:N},()=>({
+    x:Math.random()*window.innerWidth,y:Math.random()*window.innerHeight,
+    vx:(Math.random()-0.5)*0.12,vy:(Math.random()-0.5)*0.12,
+    r:Math.random()<0.15?2.2:1,glow:Math.random()<0.15
+  }));
+  function draw(){
+    ctx.clearRect(0,0,c.width,c.height);
+    for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){
+      const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);
+      if(d<MAX){ctx.beginPath();ctx.strokeStyle=`rgba(0,229,255,${(1-d/MAX)*0.11})`;ctx.lineWidth=0.5;ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.stroke();}
+    }
+    pts.forEach(p=>{
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=p.glow?'rgba(0,229,255,0.65)':'rgba(0,229,255,0.28)';ctx.fill();
+      if(p.glow){ctx.beginPath();ctx.arc(p.x,p.y,p.r+3,0,Math.PI*2);ctx.fillStyle='rgba(0,229,255,0.06)';ctx.fill();}
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0||p.x>c.width)p.vx*=-1;
+      if(p.y<0||p.y>c.height)p.vy*=-1;
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ── BUILD IP BUTTONS ──────────────────────────────────────────
 const ipList = document.getElementById('osint-ip-list');
 ATTACKER_IPS.forEach(a => {
   const btn = document.createElement('div');
   btn.className = 'osint-ip-btn';
-  btn.innerHTML = `<img class="ip-flag" src="https://flagcdn.com/w20/${a.flag}.png" onerror="this.style.display='none'"><span>${a.ip}</span><span class="ip-country">${a.country.split(' ')[0].toUpperCase()}</span><span class="ip-attempts">${a.attempts}×</span>`;
+  btn.innerHTML =
+    `<img class="ip-flag" src="https://flagcdn.com/w20/${a.flag}.png" onerror="this.style.visibility='hidden'">` +
+    `<div class="oib-info"><div class="oib-addr">${a.ip}</div><div class="oib-country">${a.country}</div></div>` +
+    `<div class="oib-badge">${a.attempts}×</div>`;
   btn.addEventListener('click', () => runOSINT(a, btn));
   ipList.appendChild(btn);
 });
 
-// Make every .mono IP in the dashboard clickable
+// Make .mono IPs clickable
 document.querySelectorAll('.mono').forEach(el => {
   const ip = el.textContent.trim();
   const match = ATTACKER_IPS.find(a => a.ip === ip);
-  if (!match) return;
-  el.style.cursor = 'pointer';
-  el.style.textDecoration = 'underline dotted rgba(0,229,255,0.4)';
-  el.title = 'Click to investigate in OSINT panel';
-  el.addEventListener('click', () => {
-    // Switch to OSINT page first
+  if(!match) return;
+  el.style.cursor='pointer';
+  el.style.textDecoration='underline dotted rgba(0,229,255,0.4)';
+  el.title='Investigate with OSINT';
+  el.addEventListener('click', ()=>{
     switchPage('osint');
-    // Then find the matching button and trigger investigation
-    setTimeout(() => {
-      const btns = ipList.querySelectorAll('.osint-ip-btn');
-      btns.forEach(b => { if (b.querySelector('span').textContent === ip) b.click(); });
-    }, 100);
+    setTimeout(()=>{
+      ipList.querySelectorAll('.osint-ip-btn').forEach(b=>{
+        if(b.querySelector('.oib-addr')?.textContent===ip) b.click();
+      });
+    }, 150);
   });
 });
 
-// ── UI helpers ────────────────────────────────────────────────
-function setSource(id, state, label) {
+// ── HELPERS ──────────────────────────────────────────────────
+function setSource(id, state) {
   const el = document.getElementById(id);
-  el.className = 'osint-source ' + state;
-  const nameEl = el.querySelector('.src-name');
-  if (nameEl) nameEl.textContent = label || nameEl.textContent;
+  if(el) el.className = 'osint-source-pill ' + state;
 }
-
 let scanProgress = 0;
 function advanceProgress() {
-  scanProgress = Math.min(scanProgress + 25, 100);
-  const fill = document.getElementById('osint-progress-fill');
-  if (fill) fill.style.width = scanProgress + '%';
+  scanProgress = Math.min(scanProgress+25,100);
+  const f = document.getElementById('osint-progress-fill');
+  if(f) f.style.width = scanProgress+'%';
 }
-function setCard(id, contentId, html) {
-  document.getElementById(id).classList.add('loaded');
-  document.getElementById(contentId).innerHTML = html;
+function setCard(cid, did, html) {
+  document.getElementById(cid)?.classList.add('loaded');
+  const d = document.getElementById(did);
+  if(d) d.innerHTML = html;
+}
+function dr(key, val) {
+  return `<div class="dr"><span class="dr-key">${key}</span><span class="dr-val">${val}</span></div>`;
 }
 
-// ── MAIN OSINT RUNNER ────────────────────────────────────────
+// ── MAIN RUNNER ───────────────────────────────────────────────
 async function runOSINT(attacker, activeBtn) {
-  // Update active button
-  ipList.querySelectorAll('.osint-ip-btn').forEach(b => b.classList.remove('active'));
+  ipList.querySelectorAll('.osint-ip-btn').forEach(b=>b.classList.remove('active'));
   activeBtn.classList.add('active');
 
-  // Reset progress bar and scan counter
-  scanProgress = 0;
-  const pf = document.getElementById('osint-progress-fill');
-  if (pf) pf.style.width = '0%';
-  const sc = document.getElementById('scan-count');
-  if (sc) sc.textContent = parseInt(sc.textContent||0) + 1;
+  scanProgress=0;
+  const pf=document.getElementById('osint-progress-fill');
+  if(pf) pf.style.width='0%';
+  const sc=document.getElementById('scan-count');
+  if(sc) sc.textContent=parseInt(sc.textContent||0)+1;
 
-  // Reset source indicators
-  ['src-ipapi','src-shodan','src-abuse','src-grey'].forEach(id => setSource(id,'loading', document.getElementById(id).textContent.slice(2)));
-  setSource('src-ipapi', 'loading', 'ip-api.com');
-  setSource('src-shodan','loading', 'Shodan InternetDB');
-  setSource('src-abuse', 'loading', 'AbuseIPDB');
-  setSource('src-grey',  'loading', 'GreyNoise');
+  ['src-ipapi','src-shodan','src-abuse','src-grey'].forEach(id=>setSource(id,'active'));
 
-  // Show loading state
-  document.getElementById('osint-idle').style.display = 'none'; document.getElementById('osint-idle').style.flex = '0';
-  document.getElementById('osint-results').style.display = 'none';
-  const loading = document.getElementById('osint-loading');
-  loading.style.display = 'flex'; loading.style.flex = '1';
-  document.getElementById('osint-loading-ip').textContent = attacker.ip;
-  document.getElementById('osint-status').textContent = 'QUERYING SOURCES...';
+  document.getElementById('osint-idle').style.display='none';
+  document.getElementById('osint-results').style.display='none';
+  document.getElementById('osint-verdict').style.display='none';
+  document.getElementById('osint-target-header').style.display='none';
+  const loading=document.getElementById('osint-loading');
+  loading.style.display='flex';
+  document.getElementById('osint-loading-ip').textContent=attacker.ip;
+  document.getElementById('osint-status').textContent='QUERYING SOURCES...';
+  ['card-geo','card-shodan','card-abuse','card-grey'].forEach(id=>document.getElementById(id)?.classList.remove('loaded'));
 
-  // Reset cards
-  ['card-geo','card-shodan','card-abuse','card-grey'].forEach(id => {
-    document.getElementById(id).classList.remove('loaded');
-  });
+  const ip=attacker.ip; const results={};
 
-  const ip = attacker.ip;
-  const results = {};
-
-  // ── 1. ip-api.com — free, no key, CORS-friendly ──────────
-  document.getElementById('osint-status').textContent = 'QUERYING IP-API.COM...';
+  // 1. ip-api.com — with localhost special-case and robust flag handling
+  document.getElementById('osint-status').textContent='QUERYING IP-API.COM...';
+  const isLocalhost = (ip==='127.0.0.1'||ip==='::1'||ip==='localhost');
   try {
-    const r = await fetch(`https://ip-api.com/json/${ip}?fields=status,message,country,countryCode,regionName,city,zip,lat,lon,timezone,isp,org,as,hosting,proxy,mobile`);
-    const d = await r.json();
-    results.geo = d;
-    const proxyTag = d.proxy ? `<span class="osint-tag tag-warn">PROXY/VPN</span>` : '<span class="osint-tag tag-ok">NOT PROXY</span>';
-    const hostTag  = d.hosting ? `<span class="osint-tag tag-warn">DATACENTER</span>` : '<span class="osint-tag tag-ok">RESIDENTIAL</span>';
+    let d;
+    if(isLocalhost){
+      // For localhost: query our own public IP to show the honeypot server's location
+      const selfR = await fetch('https://ip-api.com/json/?fields=status,country,countryCode,regionName,city,lat,lon,timezone,isp,org,as,hosting,proxy,mobile');
+      d = await selfR.json();
+      // Override to reflect the honeypot context
+      d._isLocalhost = true;
+    } else {
+      const r=await fetch(`https://ip-api.com/json/${ip}?fields=status,country,countryCode,regionName,city,lat,lon,timezone,isp,org,as,hosting,proxy,mobile`);
+      d=await r.json();
+    }
+    results.geo=d;
+    const pTag=d.proxy?`<span class="osint-tag tag-warn">PROXY / VPN</span>`:`<span class="osint-tag tag-ok">DIRECT</span>`;
+    const hTag=d.hosting?`<span class="osint-tag tag-warn">DATACENTER</span>`:`<span class="osint-tag tag-ok">RESIDENTIAL</span>`;
+    const locNote = d._isLocalhost ? `<div style="margin-top:8px;font-size:9px;color:#1e5a8a;">&#x1F4CD; Localhost — showing honeypot server location</div>` : '';
     setCard('card-geo','geo-content',
-      `<b>IP:</b> ${ip}<br>` +
-      `<b>Location:</b> ${d.city}, ${d.regionName}, ${d.country}<br>` +
-      `<b>Coords:</b> ${d.lat?.toFixed(4)}, ${d.lon?.toFixed(4)}<br>` +
-      `<b>Timezone:</b> ${d.timezone}<br>` +
-      `<b>ISP:</b> ${d.isp}<br>` +
-      `<b>Org:</b> ${d.org}<br>` +
-      `<b>ASN:</b> ${d.as}<br>` +
-      `<br>${proxyTag} ${hostTag}`
+      dr('Country',  `<b>${d.country||'—'}</b> (${d.countryCode||'—'})`) +
+      dr('Region',   `${d.city||'—'}, ${d.regionName||'—'}`) +
+      dr('Coords',   `${d.lat?.toFixed(3)||'—'}, ${d.lon?.toFixed(3)||'—'}`) +
+      dr('Timezone', d.timezone||'—') +
+      dr('ISP',      `<b>${d.isp||'—'}</b>`) +
+      dr('Org',      d.org||'—') +
+      dr('ASN',      d.as||'—') +
+      `<div style="margin-top:10px;">${pTag} ${hTag}</div>${locNote}`
     );
-    setSource('src-ipapi','done','ip-api.com'); advanceProgress();
+    setSource('src-ipapi','done');
+    // Set flag — works for every real country code
+    const cc = (d.countryCode||'').toLowerCase();
+    const flagEl = document.getElementById('oth-flag');
+    if(cc && cc !== 'xx'){
+      flagEl.src = `https://flagcdn.com/w80/${cc}.png`;
+      flagEl.onerror = () => { flagEl.style.display='none'; };
+      flagEl.style.display = 'block';
+    } else {
+      flagEl.style.display = 'none';
+    }
+    document.getElementById('oth-meta').textContent =
+      d._isLocalhost
+        ? `Honeypot Server · ${d.city}, ${d.country} · ${d.isp}`
+        : `${d.city||'—'}, ${d.country||'—'} · ${d.isp||'—'}`;
   } catch(e) {
-    setCard('card-geo','geo-content',`<span style="color:#ff5252">API unreachable. Try disabling an ad blocker.</span>`);
-    setSource('src-ipapi','error','ip-api.com'); advanceProgress();
-    results.geo = null;
+    setCard('card-geo','geo-content','<span style="color:#ff5252;">ip-api.com unreachable. Ensure internet access and no adblocker is blocking the request.</span>');
+    setSource('src-ipapi','error'); results.geo=null;
   }
+  advanceProgress();
 
-  // ── 2. Shodan InternetDB — free, no key ──────────────────
-  document.getElementById('osint-status').textContent = 'QUERYING SHODAN INTERNETDB...';
+  // 2. Shodan
+  document.getElementById('osint-status').textContent='QUERYING SHODAN INTERNETDB...';
   try {
-    const r = await fetch(`https://internetdb.shodan.io/${ip}`);
-    const d = await r.json();
-    results.shodan = d;
-    const ports  = d.ports?.length  ? d.ports.join(', ')  : 'None detected';
-    const vulns  = d.vulns?.length  ? d.vulns.map(v=>`<span class="osint-tag tag-danger">${v}</span>`).join(' ') : '<span class="osint-tag tag-ok">No CVEs</span>';
-    const tags   = d.tags?.length   ? d.tags.map(t=>`<span class="osint-tag tag-info">${t}</span>`).join(' ')   : '—';
-    const hosts  = d.hostnames?.length ? d.hostnames.slice(0,3).join('<br>') : 'None';
+    if(isLocalhost) throw new Error('localhost');
+    const r=await fetch(`https://internetdb.shodan.io/${ip}`);
+    const d=await r.json(); results.shodan=d;
+    const ports=d.ports?.length?d.ports.join(', '):'None detected';
+    const vulns=d.vulns?.length?d.vulns.map(v=>`<span class="osint-tag tag-danger">${v}</span>`).join(' '):`<span class="osint-tag tag-ok">No CVEs</span>`;
+    const tags=d.tags?.length?d.tags.map(t=>`<span class="osint-tag tag-info">${t}</span>`).join(' '):'—';
+    const hosts=d.hostnames?.length?d.hostnames.slice(0,3).join('<br>'):'None';
     setCard('card-shodan','shodan-content',
-      `<b>Open Ports:</b> ${ports}<br>` +
-      `<b>Hostnames:</b> ${hosts}<br>` +
-      `<b>Tags:</b> ${tags}<br>` +
-      `<b>CVEs:</b><br>${vulns}`
+      dr('Open Ports', `<b>${ports}</b>`) +
+      dr('Hostnames',  hosts) +
+      dr('Tags',       tags) +
+      `<div style="margin-top:8px;">${vulns}</div>`
     );
-    setSource('src-shodan','done','Shodan InternetDB'); advanceProgress();
+    setSource('src-shodan','done');
   } catch(e) {
-    setCard('card-shodan','shodan-content',`<span style="color:#4a7ba6">No data found in Shodan InternetDB.<br>IP may be unlisted or scan data unavailable.</span>`);
-    setSource('src-shodan','error','Shodan InternetDB'); advanceProgress();
-    results.shodan = null;
+    const shodanMsg = isLocalhost
+      ? '<span style="color:#1e5a8a;">Localhost is not indexed by Shodan — it is a private loopback address. When running against real attacker IPs, Shodan will return open ports, CVEs, and service banners.</span>'
+      : '<span style="color:#3a6080;">No record in Shodan InternetDB. IP may be behind NAT, a firewall, or was not internet-scanned.</span>';
+    setCard('card-shodan','shodan-content', shodanMsg);
+    setSource('src-shodan', isLocalhost ? 'done' : 'error'); results.shodan=null;
   }
+  advanceProgress();
 
-  // ── 3. AbuseIPDB public check (via proxy-free endpoint) ───
-  document.getElementById('osint-status').textContent = 'QUERYING ABUSEIPDB...';
+  // 3. AbuseIPDB
+  document.getElementById('osint-status').textContent='QUERYING ABUSEIPDB...';
   try {
-    // AbuseIPDB requires an API key for the JSON API.
-    // We use their public URL and enrich with known intelligence.
-    // For a live key-based integration, your backend can proxy this.
-    const knownAbuse = {
-      '185.220.101.45': { score: 100, reports: 1247, lastSeen: '2026-06-10', categories: ['SSH Brute Force','Web App Attack','Tor Exit Node'], isTor: true  },
-      '45.155.205.12':  { score: 87,  reports: 312,  lastSeen: '2026-06-09', categories: ['Brute Force','Hacking'],                           isTor: false },
-      '103.45.78.9':    { score: 72,  reports: 88,   lastSeen: '2026-06-10', categories: ['Web App Attack','SSH'],                            isTor: false },
-      '194.36.190.21':  { score: 95,  reports: 634,  lastSeen: '2026-06-10', categories: ['Brute Force','Bulletproof Host','Web App Attack'], isTor: false },
-      '121.18.238.55':  { score: 81,  reports: 421,  lastSeen: '2026-06-08', categories: ['SSH','Web App Attack','Scanning'],                 isTor: false },
-      '92.118.39.74':   { score: 45,  reports: 23,   lastSeen: '2026-06-07', categories: ['Web App Attack'],                                  isTor: false },
-    };
-    const d = knownAbuse[ip] || { score:0, reports:0, lastSeen:'—', categories:[], isTor:false };
-    const scoreColor = d.score >= 80 ? '#ff5252' : d.score >= 50 ? '#ff9800' : '#00e676';
-    const scoreTag   = d.score >= 80 ? 'tag-danger' : d.score >= 50 ? 'tag-warn' : 'tag-ok';
-    const cats = d.categories.map(c=>`<span class="osint-tag tag-warn">${c}</span>`).join(' ');
-    const torTag = d.isTor ? '<span class="osint-tag tag-danger">TOR EXIT NODE</span>' : '';
+    const K={'185.220.101.45':{score:100,reports:1247,lastSeen:'2026-06-10',categories:['SSH Brute Force','Web App Attack','Tor Exit Node'],isTor:true},'45.155.205.12':{score:87,reports:312,lastSeen:'2026-06-09',categories:['Brute Force','Hacking'],isTor:false},'103.45.78.9':{score:72,reports:88,lastSeen:'2026-06-10',categories:['Web App Attack','SSH'],isTor:false},'194.36.190.21':{score:95,reports:634,lastSeen:'2026-06-10',categories:['Brute Force','Bulletproof Host'],isTor:false},'121.18.238.55':{score:81,reports:421,lastSeen:'2026-06-08',categories:['SSH','Web App Attack','Scanning'],isTor:false},'92.118.39.74':{score:45,reports:23,lastSeen:'2026-06-07',categories:['Web App Attack'],isTor:false},'127.0.0.1':{score:0,reports:0,lastSeen:'—',categories:['Localhost'],isTor:false}};
+    const d=K[ip]||{score:0,reports:0,lastSeen:'—',categories:[],isTor:false}; results.abuse=d;
+    const sc2=d.score>=80?'tag-danger':d.score>=50?'tag-warn':'tag-ok';
+    const sl=d.score>=80?'HIGH RISK':d.score>=50?'MEDIUM':'LOW';
+    const scol=d.score>=80?'#ff5252':d.score>=50?'#ff9800':'#00e676';
+    const cats=d.categories.map(c=>`<span class="osint-tag tag-warn">${c}</span>`).join(' ');
+    const torT=d.isTor?`<span class="osint-tag tag-danger">TOR EXIT</span>`:'';
+    const abuseNote = d._note
+      ? `<div style="margin-top:9px;font-size:10px;color:#1e5a8a;font-family:'Share Tech Mono',monospace;">${d._note}</div>`
+      : `<div style="margin-top:7px;font-size:9px;color:#0e2a40;">Enriched intel · Add API key in backend for fully live data</div>`;
     setCard('card-abuse','abuse-content',
-      `<b>Confidence Score:</b> <span style="color:${scoreColor};font-weight:bold;">${d.score}%</span> <span class="osint-tag ${scoreTag}">${d.score>=80?'HIGH RISK':d.score>=50?'MEDIUM':'LOW'}</span><br>` +
-      `<b>Total Reports:</b> ${d.reports.toLocaleString()}<br>` +
-      `<b>Last Seen:</b> ${d.lastSeen}<br>` +
-      `<b>Categories:</b><br>${cats} ${torTag}<br>` +
-      `<span style="color:#2a5878;font-size:10px;">Source: AbuseIPDB threat database<br>(Live key integration: set API key in backend)</span>`
+      dr('Confidence',`<b style="color:${scol};font-size:13px;">${d.score}%</b> <span class="osint-tag ${sc2}">${sl}</span>`) +
+      dr('Reports',`<b>${d.reports.toLocaleString()}</b>`) +
+      dr('Last Seen',d.lastSeen) +
+      `<div style="margin-top:9px;">${cats}${torT?` ${torT}`:''}</div>` +
+      abuseNote
     );
-    setSource('src-abuse','done','AbuseIPDB'); advanceProgress();
-    results.abuse = d;
+    setSource('src-abuse','done');
   } catch(e) {
-    setCard('card-abuse','abuse-content',`<span style="color:#ff5252">Query failed.</span>`);
-    setSource('src-abuse','error','AbuseIPDB'); advanceProgress();
-    results.abuse = null;
+    setCard('card-abuse','abuse-content','<span style="color:#ff5252;">Query failed.</span>');
+    setSource('src-abuse','error'); results.abuse=null;
   }
+  advanceProgress();
 
-  // ── 4. GreyNoise Community API ────────────────────────────
-  document.getElementById('osint-status').textContent = 'QUERYING GREYNOISE...';
+  // 4. GreyNoise
+  document.getElementById('osint-status').textContent='QUERYING GREYNOISE...';
   try {
-    const r = await fetch(`https://api.greynoise.io/v3/community/${ip}`);
-    const d = await r.json();
-    results.grey = d;
-    const noise  = d.noise  ? '<span class="osint-tag tag-danger">MASS SCANNER</span>' : '<span class="osint-tag tag-ok">NOT MASS SCANNER</span>';
-    const riot   = d.riot   ? '<span class="osint-tag tag-info">KNOWN BENIGN</span>'   : '<span class="osint-tag tag-warn">NOT WHITELISTED</span>';
-    const classif = d.classification ? `<span class="osint-tag tag-${d.classification==='malicious'?'danger':d.classification==='benign'?'ok':'warn'}">${d.classification.toUpperCase()}</span>` : '—';
+    const r=await fetch(`https://api.greynoise.io/v3/community/${ip}`);
+    const d=await r.json(); results.grey=d;
+    const cl=d.classification||'unknown';
+    const ct=`<span class="osint-tag tag-${cl==='malicious'?'danger':cl==='benign'?'ok':'warn'}">${cl.toUpperCase()}</span>`;
+    const ns=d.noise?`<span class="osint-tag tag-danger">MASS SCANNER</span>`:`<span class="osint-tag tag-ok">NOT MASS SCANNER</span>`;
+    const rt=d.riot?`<span class="osint-tag tag-info">KNOWN BENIGN</span>`:`<span class="osint-tag tag-warn">NOT WHITELISTED</span>`;
     setCard('card-grey','grey-content',
-      `<b>Classification:</b> ${classif}<br>` +
-      `<b>Mass Scanner:</b> ${noise}<br>` +
-      `<b>RIOT (benign):</b> ${riot}<br>` +
-      `<b>Name:</b> ${d.name || '—'}<br>` +
-      `<b>Last Seen:</b> ${d.last_seen || '—'}<br>` +
-      `<b>Message:</b> ${d.message || '—'}`
+      dr('Classification',ct)+dr('Mass Scanner',ns)+dr('RIOT',rt)+dr('Name',d.name||'—')+dr('Last Seen',d.last_seen||'—')
     );
-    setSource('src-grey','done','GreyNoise'); advanceProgress();
+    setSource('src-grey','done');
   } catch(e) {
-    // GreyNoise community may block CORS — show enriched static intel
-    const gnKnown = {
-      '185.220.101.45': { classification:'malicious', noise:true,  riot:false, name:'Tor Exit Node', last_seen:'2026-06-10' },
-      '45.155.205.12':  { classification:'malicious', noise:true,  riot:false, name:'Credential Stuffing Bot', last_seen:'2026-06-09' },
-      '103.45.78.9':    { classification:'malicious', noise:false, riot:false, name:'Web Scanner', last_seen:'2026-06-10' },
-      '194.36.190.21':  { classification:'malicious', noise:true,  riot:false, name:'Bulletproof VPS', last_seen:'2026-06-10' },
-      '121.18.238.55':  { classification:'malicious', noise:true,  riot:false, name:'Chinese Scanning Cluster', last_seen:'2026-06-08' },
-      '92.118.39.74':   { classification:'unknown',   noise:false, riot:false, name:'GCP Instance', last_seen:'2026-06-07' },
-    };
-    const d = gnKnown[ip] || { classification:'unknown', noise:false, riot:false, name:'—', last_seen:'—' };
-    const noise  = d.noise  ? '<span class="osint-tag tag-danger">MASS SCANNER</span>' : '<span class="osint-tag tag-ok">NOT MASS SCANNER</span>';
-    const riot   = d.riot   ? '<span class="osint-tag tag-info">KNOWN BENIGN</span>'   : '<span class="osint-tag tag-warn">NOT WHITELISTED</span>';
-    const classif = `<span class="osint-tag tag-${d.classification==='malicious'?'danger':d.classification==='benign'?'ok':'warn'}">${d.classification.toUpperCase()}</span>`;
+    const G={'185.220.101.45':{classification:'malicious',noise:true,riot:false,name:'Tor Exit Node',last_seen:'2026-06-10'},'45.155.205.12':{classification:'malicious',noise:true,riot:false,name:'Credential Stuffing Bot',last_seen:'2026-06-09'},'103.45.78.9':{classification:'malicious',noise:false,riot:false,name:'Web Scanner',last_seen:'2026-06-10'},'194.36.190.21':{classification:'malicious',noise:true,riot:false,name:'Bulletproof VPS',last_seen:'2026-06-10'},'121.18.238.55':{classification:'malicious',noise:true,riot:false,name:'Chinese Scanning Cluster',last_seen:'2026-06-08'},'92.118.39.74':{classification:'unknown',noise:false,riot:false,name:'GCP Instance',last_seen:'2026-06-07'},'127.0.0.1':{classification:'benign',noise:false,riot:true,name:'Localhost',last_seen:'—'}};
+    const d=G[ip]||{classification:'unknown',noise:false,riot:false,name:'—',last_seen:'—'}; results.grey=d;
+    const cl=d.classification;
+    const ct=`<span class="osint-tag tag-${cl==='malicious'?'danger':cl==='benign'?'ok':'warn'}">${cl.toUpperCase()}</span>`;
+    const ns=d.noise?`<span class="osint-tag tag-danger">MASS SCANNER</span>`:`<span class="osint-tag tag-ok">NOT MASS SCANNER</span>`;
+    const rt=d.riot?`<span class="osint-tag tag-info">KNOWN BENIGN</span>`:`<span class="osint-tag tag-warn">NOT WHITELISTED</span>`;
     setCard('card-grey','grey-content',
-      `<b>Classification:</b> ${classif}<br>` +
-      `<b>Mass Scanner:</b> ${noise}<br>` +
-      `<b>RIOT (benign):</b> ${riot}<br>` +
-      `<b>Name:</b> ${d.name}<br>` +
-      `<b>Last Seen:</b> ${d.last_seen}<br>` +
-      `<span style="color:#2a5878;font-size:10px;">(Enriched from GreyNoise threat intel — live API may need CORS proxy)</span>`
+      dr('Classification',ct)+dr('Mass Scanner',ns)+dr('RIOT',rt)+dr('Name',`<b>${d.name}</b>`)+dr('Last Seen',d.last_seen)+
+      `<div style="margin-top:7px;font-size:9px;color:#0e2a40;">CORS proxy needed for live data</div>`
     );
-    setSource('src-grey','done','GreyNoise'); advanceProgress();
-    results.grey = d;
+    setSource('src-grey','done');
   }
+  advanceProgress();
 
-  // ── THREAT SUMMARY ────────────────────────────────────────
-  document.getElementById('osint-status').textContent = 'ANALYSIS COMPLETE';
-  loading.style.display = 'none'; loading.style.flex = '0';
-  document.getElementById('osint-results').style.display = 'flex'; document.getElementById('osint-results').style.flexDirection = 'column'; document.getElementById('osint-results').style.flex = '1';
+  // SHOW RESULTS
+  loading.style.display='none';
+  document.getElementById('osint-results').style.display='flex';
 
-  const abuseScore = results.abuse?.score || 0;
-  const isScanner  = results.grey?.noise  || false;
-  const isTor      = results.abuse?.isTor || false;
-  const hasCVEs    = results.shodan?.vulns?.length > 0;
+  const abuseScore=results.abuse?.score||0;
+  const isScanner=results.grey?.noise||false;
+  const isTor=results.abuse?.isTor||false;
+  const hasCVEs=results.shodan?.vulns?.length>0;
 
-  let level, color, bg, summary;
-  if (abuseScore >= 80 || isTor || hasCVEs) {
-    level='🔴 CRITICAL THREAT'; color='#ff5252'; bg='rgba(255,82,82,0.08)';
-    summary = `This IP has a <b>high abuse confidence score (${abuseScore}%)</b> with ${results.abuse?.reports?.toLocaleString()||'multiple'} recorded reports. ${isTor?'Confirmed <b>Tor exit node</b> — attacker is deliberately anonymizing their origin. ':''}${hasCVEs?'<b>Known CVEs</b> found on open ports. ':''}Treat as a confirmed malicious actor. Recommend firewall block + incident report.`;
-  } else if (abuseScore >= 50 || isScanner) {
-    level='🟠 ELEVATED THREAT'; color='#ff9800'; bg='rgba(255,152,0,0.07)';
-    summary = `This IP shows <b>elevated risk indicators</b>. Abuse score ${abuseScore}%. ${isScanner?'Tagged as a <b>mass internet scanner</b> by GreyNoise — likely automated tooling. ':''}Datacenter-hosted. Consistent with opportunistic scanning campaigns. Monitor closely.`;
+  let level,color,bg,summary;
+  if(abuseScore>=80||isTor||hasCVEs){
+    level='⬡ CRITICAL THREAT'; color='#ff5252'; bg='rgba(255,82,82,0.09)';
+    summary=`High abuse confidence (<b>${abuseScore}%</b>) · <b>${results.abuse?.reports?.toLocaleString()||'multiple'}</b> recorded reports. ${isTor?'<b>Tor exit node</b> confirmed — origin deliberately anonymized. ':''}${hasCVEs?'<b>Known CVEs</b> on exposed ports. ':''}Recommended: <b>firewall block + incident report</b>.`;
+  } else if(abuseScore>=50||isScanner){
+    level='⬡ ELEVATED THREAT'; color='#ff9800'; bg='rgba(255,152,0,0.07)';
+    summary=`Elevated risk. Abuse score <b>${abuseScore}%</b>. ${isScanner?'<b>Mass internet scanner</b> (GreyNoise) — automated tooling. ':''}Datacenter-hosted. Consistent with opportunistic scanning. <b>Monitor and consider block.</b>`;
   } else {
-    level='🟡 LOW-MEDIUM THREAT'; color='#ffce00'; bg='rgba(255,206,0,0.06)';
-    summary = `Limited threat intelligence available for this IP. Abuse score ${abuseScore}%. The attack attempt still constitutes an unauthorized access attempt against your honeypot. Log and monitor.`;
+    level='⬡ LOW / MEDIUM'; color='#ffce00'; bg='rgba(255,206,0,0.06)';
+    summary=`Limited threat intelligence. Abuse score <b>${abuseScore}%</b>. Unauthorized access attempt logged. <b>Continue monitoring.</b>`;
   }
 
-  const badge = document.getElementById('threat-badge');
-  badge.textContent = level;
-  badge.style.color = color; badge.style.background = bg;
-  badge.style.textShadow = `0 0 12px ${color}`;
-  badge.style.boxShadow = `0 0 16px ${color}44`;
-  document.getElementById('threat-summary-text').innerHTML = summary;
+  const badge=document.getElementById('threat-badge');
+  badge.textContent=level; badge.style.color=color; badge.style.background=bg;
+  badge.style.textShadow=`0 0 16px ${color}`; badge.style.boxShadow=`inset 0 0 24px ${color}18`;
+  document.getElementById('threat-summary-text').innerHTML=summary;
+  document.getElementById('osint-verdict').style.display='flex';
+
+  // Target header
+  const th=document.getElementById('osint-target-header');
+  th.style.display='flex';
+  document.getElementById('oth-ip').textContent = isLocalhost ? ip + ' (HONEYPOT SERVER)' : ip;
+  const oth=document.getElementById('oth-badge');
+  const lvlShort=abuseScore>=80||isTor||hasCVEs?'CRITICAL':abuseScore>=50||isScanner?'ELEVATED':'LOW';
+  oth.textContent=lvlShort; oth.style.color=color; oth.style.background=bg;
+  oth.style.textShadow=`0 0 12px ${color}`; oth.style.boxShadow=`inset 0 0 18px ${color}18`;
+  oth.style.clipPath='polygon(12px 0,100% 0,calc(100% - 12px) 100%,0 100%)';
+  oth.style.padding='10px 28px'; oth.style.fontFamily="'Orbitron',sans-serif";
+  oth.style.fontSize='10px'; oth.style.letterSpacing='3px';
 }
 </script>
 </body>

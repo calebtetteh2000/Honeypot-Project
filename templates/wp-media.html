@@ -145,7 +145,10 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 let _st=Date.now();
-window.addEventListener('beforeunload',()=>{ navigator.sendBeacon('/track?action=exit&sec='+Math.round((Date.now()-_st)/1000)); });
+let _sessionSent=false;
+function _sendSession(){ if(_sessionSent) return; _sessionSent=true; navigator.sendBeacon('/track?action=exit&sec='+Math.round((Date.now()-_st)/1000)); }
+document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden') _sendSession(); });
+window.addEventListener('pagehide', _sendSession);
 
 document.addEventListener('DOMContentLoaded',()=>track('page_load_media'));
 </script>

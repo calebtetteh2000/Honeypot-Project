@@ -196,7 +196,7 @@ body::after{
     <div>GENERATED: <span id="gen-time">2026-06-20 09:36:16</span></div>
     <div class="live">● <span class="blink">MONITORING ACTIVE</span></div>
     <div style="display:flex;align-items:center;justify-content:flex-end;gap:5px;">
-      <img class="flagimg" src="https://flagcdn.com/w20/gh.png" alt="GH" onerror="this.style.display='none'"> SERVER: Accra, Ghana
+      <svg class="flagimg" width="20" height="13" viewBox="0 0 24 16" style="vertical-align:middle;margin-right:5px;border:1px solid rgba(0,255,102,0.25);"><rect width="24" height="5.33" fill="#ce1126"/><rect y="5.33" width="24" height="5.33" fill="#fcd116"/><rect y="10.67" width="24" height="5.33" fill="#006b3f"/><path d="M12.00,5.60 L12.56,7.23 L14.28,7.26 L12.90,8.29 L13.41,9.94 L12.00,8.95 L10.59,9.94 L11.10,8.29 L9.72,7.26 L11.44,7.23 Z" fill="#000"/></svg> SERVER: Accra, Ghana
     </div>
   </div>
 </div>
@@ -319,7 +319,6 @@ body::after{
 <!-- PAGE 3: IP OSINT -->
 <!-- ============================================================ -->
 <div class="page" id="page-osint" style="background:#010906;position:relative;">
-  <canvas id="matrix-rain" style="position:absolute;inset:0;width:100%;height:100%;opacity:0.16;pointer-events:none;z-index:0;"></canvas>
 
   <div id="osint-boot" style="position:absolute;inset:0;background:#010906;z-index:50;display:none;
       align-items:center;justify-content:center;flex-direction:column;font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--c-prime);">
@@ -355,13 +354,122 @@ body::after{
 
     <!-- RESULTS -->
     <div class="panel scrollbox" id="osint-results" style="padding:24px 30px;">
-      <div id="osint-empty" style="color:var(--c-text-dim);font-size:11px;line-height:2;padding:60px 0;text-align:center;">
-        <div style="font-size:34px;margin-bottom:14px;opacity:.5;">◎</div>
-        SELECT A TARGET FROM THE REGISTRY TO BEGIN<br>
-        <span style="font-size:9.5px;">geolocation · open ports &amp; CVEs · abuse history · scanner classification → synthesized risk score</span>
+
+      <div id="osint-empty" style="padding:22px 0 10px;text-align:center;position:relative;z-index:1;">
+        <div class="osint-scene">
+          <div class="osint-nebula neb-1"></div>
+          <div class="osint-nebula neb-2"></div>
+
+          <svg class="osint-starfield-full" viewBox="0 0 540 320" preserveAspectRatio="xMidYMid slice">
+            <circle cx="344.2" cy="11.8" r="1.3" fill="#eaffef" opacity="0.29" style="animation-delay:0.7s;animation-duration:2.76s;" class="twinkle"/>
+            <circle cx="398.0" cy="174.2" r="1.7" fill="var(--c-prime)" opacity="0.21" style="animation-delay:0.47s;animation-duration:3.08s;" class="twinkle"/>
+            <circle cx="377.1" cy="134.9" r="1.7" fill="var(--c-prime)" opacity="0.41" style="animation-delay:4.05s;animation-duration:2.52s;" class="twinkle"/>
+            <circle cx="432.7" cy="221.8" r="1.3" fill="var(--c-prime)" opacity="0.3" style="animation-delay:1.08s;animation-duration:4.41s;" class="twinkle"/>
+            <circle cx="58.4" cy="122.5" r="1.3" fill="var(--c-prime)" opacity="0.5" style="animation-delay:3.02s;animation-duration:4.52s;" class="twinkle"/>
+            <circle cx="392.2" cy="171.3" r="1.7" fill="var(--c-prime)" opacity="0.23" style="animation-delay:1.47s;animation-duration:4.07s;" class="twinkle"/>
+            <circle cx="475.1" cy="116.8" r="1" fill="var(--c-cyan)" opacity="0.45" style="animation-delay:0.23s;animation-duration:3.07s;" class="twinkle"/>
+            <circle cx="158.0" cy="28.9" r="1" fill="var(--c-prime)" opacity="0.5" style="animation-delay:1.9s;animation-duration:3.63s;" class="twinkle"/>
+            <circle cx="447.7" cy="54.7" r="1.3" fill="var(--c-prime)" opacity="0.27" style="animation-delay:1.33s;animation-duration:4.84s;" class="twinkle"/>
+            <circle cx="348.8" cy="194.0" r="1" fill="var(--c-prime)" opacity="0.26" style="animation-delay:1.9s;animation-duration:4.97s;" class="twinkle"/>
+            <circle cx="452.4" cy="246.1" r="1" fill="var(--c-prime)" opacity="0.49" style="animation-delay:4.03s;animation-duration:3.5s;" class="twinkle"/>
+            <circle cx="39.2" cy="288.9" r="1.3" fill="#eaffef" opacity="0.27" style="animation-delay:2.5s;animation-duration:4.71s;" class="twinkle"/>
+            <circle cx="346.0" cy="48.6" r="1" fill="var(--c-cyan)" opacity="0.29" style="animation-delay:2.81s;animation-duration:3.16s;" class="twinkle"/>
+            <circle cx="315.0" cy="284.1" r="1.7" fill="var(--c-prime)" opacity="0.33" style="animation-delay:4.99s;animation-duration:2.85s;" class="twinkle"/>
+            <circle cx="85.3" cy="53.9" r="1.7" fill="var(--c-prime)" opacity="0.41" style="animation-delay:1.92s;animation-duration:3.99s;" class="twinkle"/>
+            <circle cx="253.0" cy="82.4" r="0.7" fill="var(--c-prime)" opacity="0.44" style="animation-delay:0.57s;animation-duration:4.71s;" class="twinkle"/>
+            <circle cx="403.5" cy="243.8" r="1.3" fill="var(--c-prime)" opacity="0.24" style="animation-delay:2.17s;animation-duration:3.63s;" class="twinkle"/>
+            <circle cx="511.4" cy="277.3" r="1.3" fill="var(--c-prime)" opacity="0.54" style="animation-delay:3.81s;animation-duration:3.77s;" class="twinkle"/>
+            <circle cx="60.6" cy="199.1" r="1" fill="var(--c-cyan)" opacity="0.25" style="animation-delay:3.81s;animation-duration:3.85s;" class="twinkle"/>
+            <circle cx="418.2" cy="169.5" r="0.7" fill="var(--c-prime)" opacity="0.41" style="animation-delay:2.44s;animation-duration:2.78s;" class="twinkle"/>
+            <circle cx="197.1" cy="311.4" r="1.3" fill="var(--c-prime)" opacity="0.28" style="animation-delay:1.2s;animation-duration:3.92s;" class="twinkle"/>
+            <circle cx="45.9" cy="232.4" r="0.7" fill="var(--c-prime)" opacity="0.54" style="animation-delay:2.66s;animation-duration:2.81s;" class="twinkle"/>
+            <circle cx="355.0" cy="299.4" r="1" fill="#eaffef" opacity="0.29" style="animation-delay:4.36s;animation-duration:3.56s;" class="twinkle"/>
+            <circle cx="116.7" cy="172.3" r="1" fill="var(--c-prime)" opacity="0.45" style="animation-delay:1.99s;animation-duration:4.18s;" class="twinkle"/>
+            <circle cx="202.7" cy="284.7" r="1.7" fill="var(--c-cyan)" opacity="0.24" style="animation-delay:1.12s;animation-duration:3.35s;" class="twinkle"/>
+            <circle cx="317.0" cy="75.8" r="1" fill="var(--c-prime)" opacity="0.2" style="animation-delay:3.54s;animation-duration:2.65s;" class="twinkle"/>
+            <circle cx="39.9" cy="13.8" r="1.3" fill="var(--c-prime)" opacity="0.22" style="animation-delay:1.19s;animation-duration:4.17s;" class="twinkle"/>
+            <circle cx="118.0" cy="45.3" r="1.7" fill="var(--c-prime)" opacity="0.29" style="animation-delay:2.36s;animation-duration:3.52s;" class="twinkle"/>
+            <circle cx="54.2" cy="209.6" r="1.3" fill="var(--c-prime)" opacity="0.35" style="animation-delay:2.34s;animation-duration:4.32s;" class="twinkle"/>
+            <circle cx="362.2" cy="311.1" r="0.7" fill="var(--c-prime)" opacity="0.22" style="animation-delay:3.64s;animation-duration:4.5s;" class="twinkle"/>
+            <circle cx="62.1" cy="63.8" r="1.7" fill="var(--c-cyan)" opacity="0.25" style="animation-delay:0.92s;animation-duration:3.66s;" class="twinkle"/>
+            <circle cx="469.2" cy="27.5" r="0.7" fill="var(--c-prime)" opacity="0.22" style="animation-delay:5.0s;animation-duration:4.59s;" class="twinkle"/>
+            <circle cx="519.5" cy="293.0" r="1" fill="var(--c-prime)" opacity="0.26" style="animation-delay:2.43s;animation-duration:3.03s;" class="twinkle"/>
+            <circle cx="217.4" cy="22.3" r="1.7" fill="#eaffef" opacity="0.2" style="animation-delay:1.95s;animation-duration:4.82s;" class="twinkle"/>
+            <circle cx="421.7" cy="93.0" r="1.7" fill="var(--c-prime)" opacity="0.25" style="animation-delay:1.48s;animation-duration:4.92s;" class="twinkle"/>
+            <circle cx="34.4" cy="186.3" r="1" fill="var(--c-prime)" opacity="0.22" style="animation-delay:2.54s;animation-duration:4.63s;" class="twinkle"/>
+            <circle cx="40.5" cy="25.2" r="1" fill="var(--c-cyan)" opacity="0.34" style="animation-delay:4.71s;animation-duration:3.92s;" class="twinkle"/>
+            <circle cx="312.0" cy="16.4" r="0.7" fill="var(--c-prime)" opacity="0.35" style="animation-delay:2.92s;animation-duration:3.81s;" class="twinkle"/>
+            <circle cx="501.3" cy="67.7" r="1.3" fill="var(--c-prime)" opacity="0.28" style="animation-delay:1.98s;animation-duration:4.18s;" class="twinkle"/>
+            <circle cx="163.6" cy="102.6" r="0.7" fill="var(--c-prime)" opacity="0.2" style="animation-delay:3.11s;animation-duration:3.91s;" class="twinkle"/>
+            <circle cx="57.2" cy="171.7" r="1.3" fill="var(--c-prime)" opacity="0.25" style="animation-delay:1.75s;animation-duration:2.67s;" class="twinkle"/>
+            <circle cx="134.0" cy="92.9" r="1.7" fill="var(--c-prime)" opacity="0.49" style="animation-delay:3.52s;animation-duration:4.03s;" class="twinkle"/>
+            <circle cx="529.2" cy="208.0" r="0.7" fill="var(--c-cyan)" opacity="0.43" style="animation-delay:2.77s;animation-duration:4.83s;" class="twinkle"/>
+            <circle cx="59.1" cy="278.0" r="1.3" fill="var(--c-prime)" opacity="0.24" style="animation-delay:0.54s;animation-duration:3.88s;" class="twinkle"/>
+            <circle cx="148.9" cy="192.7" r="1.3" fill="#eaffef" opacity="0.27" style="animation-delay:3.17s;animation-duration:3.16s;" class="twinkle"/>
+          </svg>
+
+          <div class="osint-ambient-glow"></div>
+          <svg id="osint-globe-svg" viewBox="0 0 540 320" preserveAspectRatio="xMidYMid meet"></svg>
+
+          <svg id="osint-moon-svg" class="osint-moon" viewBox="0 0 40 40"></svg>
+
+          <svg class="osint-asteroid ast-1" viewBox="0 0 24 24">
+            <defs><linearGradient id="astShade1" x1="18%" y1="12%" x2="82%" y2="88%">
+              <stop offset="0%" stop-color="#a8ffc8"/><stop offset="42%" stop-color="#1f9a4d"/><stop offset="100%" stop-color="#031209"/>
+            </linearGradient></defs>
+            <path d="M20.1,12.8 L15.3,17.4 L8.6,17.9 L5.5,11.4 L8.2,5.5 L16.3,6.2 Z"
+              fill="url(#astShade1)" stroke="#03170d" stroke-width="0.7"/>
+            <path d="M9,10 L12,9 L13,12" fill="none" stroke="#031209" stroke-width="0.4" opacity="0.5"/>
+          </svg>
+          <svg class="osint-asteroid ast-2" viewBox="0 0 24 24">
+            <defs><linearGradient id="astShade2" x1="22%" y1="15%" x2="78%" y2="85%">
+              <stop offset="0%" stop-color="#a8ffc8"/><stop offset="42%" stop-color="#1a8a45"/><stop offset="100%" stop-color="#031209"/>
+            </linearGradient></defs>
+            <path d="M20.4,11.1 L16.1,16.8 L12.0,19.0 L5.9,17.6 L6.5,12.7 L7.6,6.6 L12.4,6.6 L17.6,6.3 Z"
+              fill="url(#astShade2)" stroke="#03170d" stroke-width="0.7"/>
+            <path d="M14,10 L17,11" fill="none" stroke="#031209" stroke-width="0.4" opacity="0.5"/>
+          </svg>
+          <svg class="osint-asteroid ast-3" viewBox="0 0 24 24">
+            <defs><linearGradient id="astShade3" x1="14%" y1="18%" x2="86%" y2="82%">
+              <stop offset="0%" stop-color="#a8ffc8"/><stop offset="42%" stop-color="#249a52"/><stop offset="100%" stop-color="#031209"/>
+            </linearGradient></defs>
+            <path d="M20.7,13.2 L15.5,16.5 L7.3,18.5 L5.5,11.7 L8.4,5.3 L15.1,6.9 Z"
+              fill="url(#astShade3)" stroke="#03170d" stroke-width="0.7"/>
+          </svg>
+          <svg class="osint-asteroid ast-4" viewBox="0 0 24 24">
+            <defs><linearGradient id="astShade4" x1="26%" y1="12%" x2="74%" y2="88%">
+              <stop offset="0%" stop-color="#a8ffc8"/><stop offset="42%" stop-color="#1c8f49"/><stop offset="100%" stop-color="#031209"/>
+            </linearGradient></defs>
+            <path d="M19.3,11.4 L17.6,17.1 L11.8,17.6 L7.0,18.8 L5.8,12.5 L7.8,6.3 L12.7,4.9 L16.4,8.0 Z"
+              fill="url(#astShade4)" stroke="#03170d" stroke-width="0.7"/>
+            <path d="M10,15 L13,14" fill="none" stroke="#031209" stroke-width="0.4" opacity="0.5"/>
+          </svg>
+          <svg class="osint-asteroid ast-5" viewBox="0 0 24 24">
+            <defs><linearGradient id="astShade5" x1="18%" y1="16%" x2="82%" y2="84%">
+              <stop offset="0%" stop-color="#a8ffc8"/><stop offset="42%" stop-color="#1f9a4d"/><stop offset="100%" stop-color="#031209"/>
+            </linearGradient></defs>
+            <path d="M20.1,12.8 L15.3,17.4 L8.6,17.9 L5.5,11.4 L8.2,5.5 L16.3,6.2 Z"
+              fill="url(#astShade5)" stroke="#03170d" stroke-width="0.7"/>
+          </svg>
+
+          <svg class="osint-shooting-star ss-1" viewBox="0 0 60 4"><line x1="0" y1="2" x2="60" y2="2" stroke="var(--c-prime)" stroke-width="1.2"/></svg>
+          <svg class="osint-shooting-star ss-2" viewBox="0 0 60 4"><line x1="0" y1="2" x2="60" y2="2" stroke="var(--c-prime)" stroke-width="1.2"/></svg>
+        </div>
+
+        <div class="scope-readout">
+          <div class="scope-prompt">&gt; <b>AWAITING TARGET SELECTION</b><span class="blink">_</span></div>
+          <div class="scope-sub">Select an IP from the registry to run a live multi-source OSINT scan</div>
+          <div class="scope-chips">
+            <span class="scope-chip">GEOLOCATION</span>
+            <span class="scope-chip">OPEN PORTS &amp; CVEs</span>
+            <span class="scope-chip">ABUSE HISTORY</span>
+            <span class="scope-chip">RISK SCORE</span>
+          </div>
+        </div>
       </div>
 
-      <div id="osint-loading" style="display:none;text-align:center;padding:30px 0;">
+
+      <div id="osint-loading" style="display:none;text-align:center;padding:30px 0;position:relative;z-index:1;">
         <div class="radar-wrap">
           <div class="radar-ring r1"></div><div class="radar-ring r2"></div><div class="radar-ring r3"></div>
           <div class="radar-sweep"></div><div class="radar-dot"></div>
@@ -370,7 +478,7 @@ body::after{
         <div class="prog-track"><div id="osint-progress"></div></div>
       </div>
 
-      <div id="osint-card" style="display:none;position:relative;">
+      <div id="osint-card" style="display:none;position:relative;z-index:1;">
         <div class="osint-hero" style="position:relative;z-index:1;flex-direction:column;border-bottom:none;padding-bottom:0;">
 
           <div style="display:flex;gap:40px;align-items:flex-start;width:100%;">
@@ -382,7 +490,7 @@ body::after{
                 <circle class="gauge-fill" id="gauge-fill" cx="80" cy="80" r="70"></circle>
               </svg>
               <div class="osint-gauge-center">
-                <img id="osint-flag" src="" alt="" style="width:24px;height:17px;margin-bottom:5px;border:1px solid var(--c-line);">
+                <span id="osint-flag" style="font-size:22px;display:inline-block;margin-bottom:5px;"></span>
                 <div id="osint-risk-pct">--</div>
                 <div id="osint-risk-lbl">RISK SCORE</div>
               </div>
@@ -394,16 +502,26 @@ body::after{
               <div id="osint-ip-sub"></div>
               <div id="osint-verdict-badge"></div>
               <div id="osint-badges"></div>
+              <div id="osint-quickstats" class="osint-quickstats"></div>
             </div>
           </div>
 
           <div class="hero-bottom-row">
             <div class="osint-minimap-wrap" id="osint-minimap-wrap">
+              <div class="hud-bar"></div>
+              <div class="hud-corner tl"></div><div class="hud-corner tr"></div>
+              <div class="hud-corner bl"></div><div class="hud-corner br"></div>
               <svg id="osint-minimap" viewBox="0 0 170 94" width="170" height="94"></svg>
               <div class="minimap-label">◈ COORDINATE LOCK</div>
             </div>
             <div class="osint-fingerprint-wrap">
-              <canvas id="osint-identicon" width="64" height="64"></canvas>
+              <div class="hud-bar"></div>
+              <div class="hud-corner tl"></div><div class="hud-corner tr"></div>
+              <div class="hud-corner bl"></div><div class="hud-corner br"></div>
+              <div class="fp-canvas-wrap">
+                <canvas id="osint-identicon" width="64" height="64"></canvas>
+                <div class="fp-scanline"></div>
+              </div>
               <div class="osint-fingerprint-lbl">NETWORK<br>FINGERPRINT</div>
             </div>
           </div>
@@ -518,6 +636,67 @@ body::after{
 .prog-track{width:230px;height:2px;background:var(--c-line);margin:16px auto 0;border-radius:2px;overflow:hidden;}
 #osint-progress{width:0%;height:100%;background:var(--c-prime);box-shadow:0 0 8px var(--c-prime);transition:width .3s;}
 
+/* ---- OSINT idle: real globe (rendered from actual map data) + floating data widgets ---- */
+.osint-scene{position:relative;width:100%;max-width:540px;height:320px;margin:0 auto 10px;}
+.osint-starfield-full{position:absolute;inset:0;width:100%;height:100%;z-index:0;}
+#osint-globe-svg{position:absolute;inset:0;width:100%;height:100%;z-index:1;overflow:hidden;
+  filter:drop-shadow(0 0 10px var(--c-prime-glow));}
+.globe-land{animation:landFade .6s ease;}
+@keyframes landFade{from{fill-opacity:0;}to{fill-opacity:.32;}}
+.sat-blink{animation:satBlink 1.6s step-end infinite;}
+@keyframes satBlink{0%,45%{opacity:1;}50%,100%{opacity:.15;}}
+.osint-ambient-glow{position:absolute;left:50%;top:59%;width:70%;aspect-ratio:1;
+  transform:translate(-50%,-50%);border-radius:50%;z-index:0;pointer-events:none;
+  background:radial-gradient(circle, rgba(0,255,102,0.16) 0%, rgba(0,255,102,0.05) 45%, transparent 72%);}
+.twinkle{animation-name:twinkle;animation-timing-function:ease-in-out;animation-iteration-count:infinite;}
+@keyframes twinkle{0%,100%{opacity:.15;}50%{opacity:.75;}}
+.osint-nebula{position:absolute;border-radius:50%;pointer-events:none;z-index:0;filter:blur(6px);}
+.neb-1{width:220px;height:160px;left:-40px;top:-30px;
+  background:radial-gradient(ellipse, rgba(0,255,102,0.11) 0%, transparent 70%);
+  animation:nebDrift 18s ease-in-out infinite;}
+.neb-2{width:210px;height:190px;right:-50px;bottom:-40px;
+  background:radial-gradient(ellipse, rgba(25,232,214,0.09) 0%, transparent 70%);
+  animation:nebDrift 22s ease-in-out infinite reverse;}
+@keyframes nebDrift{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(14px,-10px) scale(1.08);}}
+.osint-moon{position:absolute;width:44px;height:44px;right:6%;top:8%;z-index:0;opacity:.95;
+  filter:drop-shadow(0 0 2px rgba(0,255,102,0.35));animation:moonDrift 40s ease-in-out infinite;}
+@keyframes moonDrift{0%,100%{transform:translate(0,0);}50%{transform:translate(-8px,10px);}}
+.osint-asteroid{position:absolute;width:22px;height:22px;z-index:0;opacity:.95;
+  filter:drop-shadow(0 0 1.5px rgba(0,255,102,0.3));}
+.ast-1{width:26px;height:26px;animation:astDrift1 32s ease-in-out infinite, astSpin1 14s linear infinite, astTumble 14s ease-in-out infinite;}
+.ast-2{width:16px;height:16px;animation:astDrift2 38s ease-in-out infinite, astSpin2 19s linear infinite reverse, astTumble 19s ease-in-out infinite;}
+.ast-3{width:20px;height:20px;animation:astDrift3 27s ease-in-out infinite, astSpin1 11s linear infinite reverse, astTumble 11s ease-in-out infinite;}
+.ast-4{width:14px;height:14px;animation:astDrift4 44s ease-in-out infinite, astSpin2 22s linear infinite, astTumble 22s ease-in-out infinite;}
+.ast-5{width:18px;height:18px;animation:astDrift5 35s ease-in-out infinite, astSpin1 16s linear infinite, astTumble 16s ease-in-out infinite;}
+@keyframes astSpin1{from{rotate:0deg;}to{rotate:360deg;}}
+@keyframes astSpin2{from{rotate:0deg;}to{rotate:-360deg;}}
+@keyframes astTumble{0%,50%,100%{scale:1 1;}25%{scale:0.35 1;}75%{scale:0.35 1;}}
+@keyframes astDrift1{0%,100%{left:4%;top:14%;}50%{left:12%;top:22%;}}
+@keyframes astDrift2{0%,100%{left:90%;top:20%;}50%{left:82%;top:30%;}}
+@keyframes astDrift3{0%,100%{left:8%;top:78%;}50%{left:16%;top:70%;}}
+@keyframes astDrift4{0%,100%{left:92%;top:74%;}50%{left:85%;top:82%;}}
+@keyframes astDrift5{0%,100%{left:6%;top:46%;}50%{left:14%;top:52%;}}
+.osint-shooting-star{position:absolute;width:60px;height:4px;opacity:0;z-index:1;}
+.ss-1{top:12%;left:8%;animation:shoot 8s ease-in infinite;animation-delay:1.5s;}
+.ss-2{top:58%;left:55%;animation:shoot 11s ease-in infinite;animation-delay:5.5s;}
+@keyframes shoot{
+  0%{opacity:0;transform:translate(0,0) rotate(25deg);}
+  2%{opacity:.9;}
+  16%{opacity:0;transform:translate(130px,65px) rotate(25deg);}
+  100%{opacity:0;}
+}
+.scope-readout{position:relative;z-index:1;}
+.scope-prompt{font-family:'Share Tech Mono',monospace;font-size:13px;letter-spacing:2px;
+  color:var(--c-text-mid);margin-bottom:8px;}
+.scope-prompt b{color:var(--c-prime);font-weight:400;}
+.scope-sub{font-size:10px;color:var(--c-text-dim);letter-spacing:.5px;margin-bottom:24px;max-width:360px;
+  margin-left:auto;margin-right:auto;line-height:1.7;}
+.scope-chips{display:flex;flex-wrap:wrap;gap:0;justify-content:center;align-items:center;}
+.scope-chip{font-family:'Share Tech Mono',monospace;font-size:9.5px;letter-spacing:1.5px;
+  color:var(--c-text-dim);padding:0 14px;position:relative;}
+.scope-chip:not(:last-child)::after{content:"";position:absolute;right:0;top:1px;bottom:1px;
+  width:1px;background:var(--c-line);}
+
 /* ---- hero gauge ---- */
 .osint-hero{display:flex;gap:30px;align-items:center;padding-bottom:20px;margin-bottom:6px;
   border-bottom:1px dashed var(--c-line);animation:fadeUp .35s ease;}
@@ -565,11 +744,26 @@ body::after{
 @keyframes spinReverse{to{transform:rotate(-360deg);}}
 
 /* ---- network fingerprint identicon ---- */
-.osint-fingerprint-wrap{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:6px;
+.osint-fingerprint-wrap{position:relative;overflow:hidden;flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:6px;
   padding:10px;background:#020f08;border:1px solid var(--c-line);}
 #osint-identicon{width:64px;height:64px;image-rendering:pixelated;border:1px solid var(--c-line);background:#010a06;}
 .osint-fingerprint-lbl{font-family:'Orbitron',monospace;font-size:6.5px;letter-spacing:1.5px;
   color:var(--c-text-dim);text-align:center;line-height:1.5;}
+.fp-canvas-wrap{position:relative;width:64px;height:64px;overflow:hidden;}
+.fp-scanline{position:absolute;left:0;right:0;height:2px;
+  background:linear-gradient(90deg, transparent, var(--c-prime), transparent);
+  opacity:.8;box-shadow:0 0 5px var(--c-prime-glow);pointer-events:none;
+  animation:fpScan 2.6s ease-in-out infinite;}
+@keyframes fpScan{0%,100%{top:0;}50%{top:62px;}}
+
+/* ---- shared HUD corner-bracket + top-bar framing (matches quickstat tiles) ---- */
+.hud-bar{position:absolute;top:0;left:0;height:2px;width:100%;background:var(--c-prime);
+  opacity:.5;box-shadow:0 0 6px var(--c-prime-glow);}
+.hud-corner{position:absolute;width:7px;height:7px;border:1.4px solid var(--c-prime);opacity:.8;}
+.hud-corner.tl{top:0;left:0;border-right:none;border-bottom:none;}
+.hud-corner.tr{top:0;right:0;border-left:none;border-bottom:none;}
+.hud-corner.bl{bottom:0;left:0;border-right:none;border-top:none;}
+.hud-corner.br{bottom:0;right:0;border-left:none;border-top:none;}
 
 /* ---- case ID stamp ---- */
 #osint-case-id{display:inline-block;font-family:'Orbitron',monospace;font-size:8.5px;letter-spacing:2px;
@@ -579,6 +773,24 @@ body::after{
 
 /* ---- threat badges row ---- */
 #osint-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;}
+.osint-quickstats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:16px;max-width:490px;}
+.qstat{position:relative;padding:12px 10px 10px;border:1px solid var(--c-line);
+  border-radius:2px;background:linear-gradient(160deg, rgba(0,255,102,0.05), rgba(0,255,102,0.01));
+  min-width:0;overflow:hidden;animation:fadeUp .35s ease both;transition:border-color .2s,transform .2s;}
+.qstat:hover{border-color:var(--qc,var(--c-prime));transform:translateY(-2px);}
+.qstat.critical{animation:fadeUp .35s ease both, tilePulse 2.2s ease-in-out infinite .4s;}
+@keyframes tilePulse{0%,100%{box-shadow:0 0 0 rgba(0,0,0,0);}50%{box-shadow:0 0 14px var(--qc);}}
+.qstat-corner{position:absolute;width:7px;height:7px;border:1.4px solid var(--qc,var(--c-prime));opacity:.8;}
+.qstat-corner.tl{top:0;left:0;border-right:none;border-bottom:none;}
+.qstat-corner.br{bottom:0;right:0;border-left:none;border-top:none;}
+.qstat-bar{position:absolute;top:0;left:0;height:2px;width:100%;background:var(--qc,var(--c-prime));
+  opacity:.55;box-shadow:0 0 6px var(--qc,var(--c-prime-glow));}
+.qstat-icon{width:14px;height:14px;stroke:var(--qc,var(--c-prime));fill:none;stroke-width:1.7;opacity:.9;margin-bottom:7px;display:block;
+  filter:drop-shadow(0 0 3px var(--qc,var(--c-prime-glow)));}
+.qstat-v{font-family:'Orbitron',sans-serif;font-size:15px;color:var(--qc,var(--c-prime));
+  text-shadow:0 0 7px var(--qc,var(--c-prime-glow));white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.qstat-l{font-family:'Share Tech Mono',monospace;font-size:7px;letter-spacing:.8px;
+  color:var(--c-text-dim);margin-top:3px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .threat-badge{display:inline-flex;align-items:center;gap:4px;padding:4px 9px;font-family:'Orbitron',monospace;
   font-size:7.5px;font-weight:700;letter-spacing:1px;border:1px solid currentColor;
   background:rgba(255,255,255,0.03);animation:fadeUp .3s ease both;}
@@ -885,6 +1097,153 @@ const osintIPs = attackersData;
 /* ============================================================
    PAGE SWITCHING
    ============================================================ */
+let _osintGlobeRendered = false;
+let _osintMoonRendered = false;
+function initOsintMoon(){
+  if(_osintMoonRendered) return;
+  const svg = d3.select('#osint-moon-svg');
+  if(svg.empty()) return;
+  _osintMoonRendered = true;
+
+  const proj = d3.geoOrthographic().scale(17).translate([20,20]).clipAngle(90);
+  const gpath = d3.geoPath().projection(proj);
+
+  const defs = svg.append('defs');
+  const f = defs.append('filter').attr('id','moonRimGlow')
+    .attr('x','-40%').attr('y','-40%').attr('width','180%').attr('height','180%');
+  f.append('feGaussianBlur').attr('stdDeviation',0.6).attr('result','blur');
+  const m = f.append('feMerge');
+  m.append('feMergeNode').attr('in','blur');
+  m.append('feMergeNode').attr('in','SourceGraphic');
+
+  // directional shading — light source upper-left, bright highlight fading
+  // through mid-green to a dark shadow limb, entirely within the theme's
+  // own green/black palette (not a foreign lighting scheme)
+  const shade = defs.append('radialGradient').attr('id','moonShade')
+    .attr('cx','32%').attr('cy','28%').attr('r','85%');
+  shade.append('stop').attr('offset','0%').attr('stop-color','#bdffd4');
+  shade.append('stop').attr('offset','40%').attr('stop-color','#00ff66');
+  shade.append('stop').attr('offset','75%').attr('stop-color','#0e4a26');
+  shade.append('stop').attr('offset','100%').attr('stop-color','#03130a');
+
+  const sphere = svg.append('path').datum({type:'Sphere'}).attr('d',gpath)
+    .attr('fill','url(#moonShade)').attr('stroke','#03170d')
+    .attr('stroke-width',0.8).attr('filter','url(#moonRimGlow)');
+
+  // synthetic craters, defined as small circles on the sphere's surface in
+  // lon/lat — exactly like real geographic features, so they properly
+  // foreshorten near the limb and disappear on the far side as it rotates
+  const craterLonLat = [[10,20],[-35,15],[50,-20],[-55,-35],[75,30],[-10,-55],[25,50],[-70,5]];
+  const craterFeatures = craterLonLat.map(([lon,lat]) => d3.geoCircle().center([lon,lat]).radius(9)());
+  const craters = svg.selectAll('.moon-crater').data(craterFeatures).join('path')
+    .attr('class','moon-crater').attr('d',gpath)
+    .attr('fill','#020c07').attr('fill-opacity',0.55)
+    .attr('stroke','#0e4a26').attr('stroke-width',0.4).attr('stroke-opacity',0.6);
+
+  let rot = 0;
+  d3.timer(function(){
+    if(!document.getElementById('page-osint').classList.contains('active')) return;
+    rot += 0.09;
+    proj.rotate([rot, -15, 0]);
+    sphere.attr('d',gpath);
+    craters.attr('d',gpath);
+  });
+}
+function initOsintGlobe(){
+  if(_osintGlobeRendered) return;
+  const svg = d3.select('#osint-globe-svg');
+  if(svg.empty()) return;
+  (function tryRender(){
+    if(!window._worldFeatures){ setTimeout(tryRender, 150); return; }
+    _osintGlobeRendered = true;
+    const W=540;
+    const proj = d3.geoOrthographic().scale(105).translate([W/2, 190]).clipAngle(90);
+    const gpath = d3.geoPath().projection(proj);
+
+    const defs = svg.append('defs');
+    const f = defs.append('filter').attr('id','globeRimGlow')
+      .attr('x','-60%').attr('y','-60%').attr('width','220%').attr('height','220%');
+    f.append('feGaussianBlur').attr('stdDeviation',3.2).attr('result','blur');
+    const m = f.append('feMerge');
+    m.append('feMergeNode').attr('in','blur');
+    m.append('feMergeNode').attr('in','SourceGraphic');
+
+    const sphere = svg.append('path').datum({type:'Sphere'}).attr('d',gpath)
+      .attr('fill','rgba(0,255,102,0.05)').attr('stroke','var(--c-prime)')
+      .attr('stroke-width',1.6).attr('filter','url(#globeRimGlow)');
+
+    const grat = svg.append('path').datum(d3.geoGraticule().step([20,20])()).attr('d',gpath)
+      .attr('fill','none').attr('stroke','var(--c-prime)')
+      .attr('stroke-width',0.3).attr('stroke-opacity',0.2);
+
+    const land = svg.selectAll('.globe-land').data(window._worldFeatures).join('path')
+      .attr('class','globe-land').attr('d',gpath)
+      .attr('fill','var(--c-prime)').attr('fill-opacity',0.32)
+      .attr('stroke','var(--c-prime)').attr('stroke-width',0.4).attr('stroke-opacity',0.75);
+
+    const cx=270, cy=190, globeR=105;
+
+    function buildSatShip(){
+      const g = svg.append('g').attr('filter','url(#globeRimGlow)');
+      g.append('line').attr('x1',0).attr('y1',0).attr('x2',0).attr('y2',-8)
+        .attr('stroke','var(--c-prime)').attr('stroke-width',0.6);
+      g.append('circle').attr('cx',0).attr('cy',-9).attr('r',0.9).attr('fill','var(--c-prime)');
+      g.append('rect').attr('x',-4).attr('y',-2).attr('width',8).attr('height',5).attr('rx',0.8)
+        .attr('fill','var(--c-bg2)').attr('stroke','var(--c-prime)').attr('stroke-width',0.7);
+      g.append('rect').attr('x',-18).attr('y',-1.5).attr('width',12).attr('height',4)
+        .attr('fill','none').attr('stroke','var(--c-prime)').attr('stroke-width',0.6);
+      g.append('rect').attr('x',6).attr('y',-1.5).attr('width',12).attr('height',4)
+        .attr('fill','none').attr('stroke','var(--c-prime)').attr('stroke-width',0.6);
+      return g;
+    }
+
+    // Each orbit is a real circle in 3D, tilted by `incl` radians from the
+    // view plane. Depth (z) determines whether the object is on the near
+    // half (in front, fully visible) or the far half — and only fades out
+    // when the far half also falls inside the globe's on-screen silhouette,
+    // exactly like a satellite actually passing behind the planet.
+    const orbits = [
+      {r:118, incl:0.55, speed:0.020, phase:0.0,  kind:'dot'},
+      {r:132, incl:1.15, speed:-0.015,phase:2.3,  kind:'dot'},
+      {r:108, incl:0.95, speed:0.017, phase:4.6,  kind:'dot'},
+      {r:150, incl:0.95, speed:0.011, phase:1.0,  kind:'ship'},
+      {r:165, incl:1.30, speed:-0.009,phase:4.0,  kind:'ship'}
+    ];
+    const objs = orbits.map(o => o.kind==='dot'
+      ? svg.append('circle').attr('r',3).attr('fill','var(--c-prime)').attr('filter','url(#globeRimGlow)')
+      : buildSatShip());
+
+    let rot = -15, t = 0;
+    d3.timer(function(){
+      if(!document.getElementById('page-osint').classList.contains('active')) return;
+      rot += 0.2;
+      proj.rotate([rot, -32, 0]);
+      sphere.attr('d',gpath); grat.attr('d',gpath); land.attr('d',gpath);
+      t += 1;
+      orbits.forEach((o,i)=>{
+        const a = o.phase + t*o.speed;
+        const X = o.r*Math.cos(a);
+        const Y = o.r*Math.sin(a)*Math.cos(o.incl);
+        const Z = o.r*Math.sin(a)*Math.sin(o.incl);
+        const sx = cx+X, sy = cy+Y;
+        const behindGlobe = Z < 0 && Math.hypot(X,Y) < globeR;
+        const op = behindGlobe ? 0.06 : (Z > 0 ? 1 : 0.45);
+        const el = objs[i];
+        if(o.kind==='dot'){
+          const scale = 1 + Z/(o.r*3.2);
+          el.attr('cx',sx).attr('cy',sy).attr('r',3*scale).style('opacity',op);
+        } else {
+          const dX = -o.r*Math.sin(a);
+          const dY = o.r*Math.cos(a)*Math.cos(o.incl);
+          const heading = Math.atan2(dY,dX)*180/Math.PI + 90;
+          const scale = 1 + Z/(o.r*3.2);
+          el.attr('transform', `translate(${sx},${sy}) rotate(${heading}) scale(${scale})`)
+            .style('opacity', op*0.8);
+        }
+      });
+    });
+  })();
+}
 function switchPage(name){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
@@ -893,11 +1252,11 @@ function switchPage(name){
   location.hash = name;
   if(name==='map') setTimeout(fitMap,30);
   if(name==='osint'){
-    startMatrixRain();
     startTicker();
+    initOsintGlobe();
+    initOsintMoon();
     if(!window.osintBooted){ window.osintBooted=true; runOsintBoot(); }
   } else {
-    stopMatrixRain();
     stopTicker();
   }
 }
@@ -937,10 +1296,31 @@ animateCounters();
    A future generator script can instead inject the inner
    HTML directly between the marker comments in the page.
    ============================================================ */
+const FLAG_SVGS = {
+  ru:'<rect width="24" height="5.33" fill="#fff"/><rect y="5.33" width="24" height="5.33" fill="#0057b7"/><rect y="10.67" width="24" height="5.33" fill="#d52b1e"/>',
+  nl:'<rect width="24" height="5.33" fill="#ae1c28"/><rect y="5.33" width="24" height="5.33" fill="#fff"/><rect y="10.67" width="24" height="5.33" fill="#21468b"/>',
+  de:'<rect width="24" height="5.33" fill="#000"/><rect y="5.33" width="24" height="5.33" fill="#dd0000"/><rect y="10.67" width="24" height="5.33" fill="#ffce00"/>',
+  ua:'<rect width="24" height="8" fill="#0057b7"/><rect y="8" width="24" height="8" fill="#ffd700"/>',
+  ng:'<rect width="24" height="16" fill="#008751"/><rect x="8" width="8" height="16" fill="#fff"/>',
+  gh:'<rect width="24" height="5.33" fill="#ce1126"/><rect y="5.33" width="24" height="5.33" fill="#fcd116"/><rect y="10.67" width="24" height="5.33" fill="#006b3f"/><path d="M12.00,5.60 L12.56,7.23 L14.28,7.26 L12.90,8.29 L13.41,9.94 L12.00,8.95 L10.59,9.94 L11.10,8.29 L9.72,7.26 L11.44,7.23 Z" fill="#000"/>',
+  cn:'<rect width="24" height="16" fill="#de2910"/><path d="M6.00,2.80 L6.50,4.31 L8.09,4.32 L6.81,5.26 L7.29,6.78 L6.00,5.85 L4.71,6.78 L5.19,5.26 L3.91,4.32 L5.50,4.31 Z" fill="#ffde00"/><path d="M9.50,2.60 L9.64,3.01 L10.07,3.01 L9.73,3.27 L9.85,3.69 L9.50,3.44 L9.15,3.69 L9.27,3.27 L8.93,3.01 L9.36,3.01 Z" fill="#ffde00"/><path d="M10.30,4.40 L10.44,4.81 L10.87,4.81 L10.53,5.07 L10.65,5.49 L10.30,5.24 L9.95,5.49 L10.07,5.07 L9.73,4.81 L10.16,4.81 Z" fill="#ffde00"/><path d="M9.70,6.40 L9.84,6.81 L10.27,6.81 L9.93,7.07 L10.05,7.49 L9.70,7.24 L9.35,7.49 L9.47,7.07 L9.13,6.81 L9.56,6.81 Z" fill="#ffde00"/><path d="M8.20,7.70 L8.34,8.11 L8.77,8.11 L8.43,8.37 L8.55,8.79 L8.20,8.54 L7.85,8.79 L7.97,8.37 L7.63,8.11 L8.06,8.11 Z" fill="#ffde00"/>',
+  vn:'<rect width="24" height="16" fill="#da251d"/><path d="M12.00,4.80 L12.73,6.99 L15.04,7.01 L13.19,8.39 L13.88,10.59 L12.00,9.25 L10.12,10.59 L10.81,8.39 L8.96,7.01 L11.27,6.99 Z" fill="#ffde00"/>',
+  tn:'<rect width="24" height="16" fill="#e70013"/><circle cx="12" cy="8" r="3.6" fill="#fff"/><circle cx="13" cy="8" r="2.9" fill="#e70013"/><circle cx="12.2" cy="8" r="2.9" fill="#fff"/><path d="M13.60,6.70 L13.89,7.60 L14.84,7.60 L14.08,8.15 L14.36,9.05 L13.60,8.50 L12.84,9.05 L13.12,8.15 L12.36,7.60 L13.31,7.60 Z" fill="#e70013"/>',
+  tw:'<rect width="24" height="16" fill="#fe0000"/><rect width="12" height="8" fill="#000095"/><circle cx="6" cy="4" r="1.7" fill="#000095" stroke="#fff" stroke-width="0.4"/><line x1="6.90" y1="4.00" x2="7.60" y2="4.00" stroke="#fff" stroke-width="0.4"/><line x1="6.78" y1="4.45" x2="7.39" y2="4.80" stroke="#fff" stroke-width="0.4"/><line x1="6.45" y1="4.78" x2="6.80" y2="5.39" stroke="#fff" stroke-width="0.4"/><line x1="6.00" y1="4.90" x2="6.00" y2="5.60" stroke="#fff" stroke-width="0.4"/><line x1="5.55" y1="4.78" x2="5.20" y2="5.39" stroke="#fff" stroke-width="0.4"/><line x1="5.22" y1="4.45" x2="4.61" y2="4.80" stroke="#fff" stroke-width="0.4"/><line x1="5.10" y1="4.00" x2="4.40" y2="4.00" stroke="#fff" stroke-width="0.4"/><line x1="5.22" y1="3.55" x2="4.61" y2="3.20" stroke="#fff" stroke-width="0.4"/><line x1="5.55" y1="3.22" x2="5.20" y2="2.61" stroke="#fff" stroke-width="0.4"/><line x1="6.00" y1="3.10" x2="6.00" y2="2.40" stroke="#fff" stroke-width="0.4"/><line x1="6.45" y1="3.22" x2="6.80" y2="2.61" stroke="#fff" stroke-width="0.4"/><line x1="6.78" y1="3.55" x2="7.39" y2="3.20" stroke="#fff" stroke-width="0.4"/>',
+  'in':'<rect width="24" height="5.33" fill="#ff9933"/><rect y="5.33" width="24" height="5.33" fill="#fff"/><rect y="10.67" width="24" height="5.33" fill="#138808"/><circle cx="12" cy="8" r="1.8" fill="none" stroke="#000080" stroke-width="0.3"/><line x1="10.30" y1="8.00" x2="13.70" y2="8.00" stroke="#000080" stroke-width="0.25"/><line x1="10.80" y1="6.80" x2="13.20" y2="9.20" stroke="#000080" stroke-width="0.25"/><line x1="12.00" y1="6.30" x2="12.00" y2="9.70" stroke="#000080" stroke-width="0.25"/><line x1="13.20" y1="6.80" x2="10.80" y2="9.20" stroke="#000080" stroke-width="0.25"/>',
+  br:'<rect width="24" height="16" fill="#009c3b"/><path d="M12,2.5 L21.5,8 L12,13.5 L2.5,8 Z" fill="#ffdf00"/><circle cx="12" cy="8" r="3.1" fill="#002776"/>',
+  us:'<rect width="24" height="16" fill="#fff"/><rect width="24" height="1.23" fill="#b22234"/><rect y="2.46" width="24" height="1.23" fill="#b22234"/><rect y="4.92" width="24" height="1.23" fill="#b22234"/><rect y="7.38" width="24" height="1.23" fill="#b22234"/><rect y="9.85" width="24" height="1.23" fill="#b22234"/><rect y="12.31" width="24" height="1.23" fill="#b22234"/><rect y="14.77" width="24" height="1.23" fill="#b22234"/><rect width="10.8" height="8.6" fill="#3c3b6e"/>',
+  xx:'<rect width="24" height="16" fill="#0a1a10"/><path d="M12,3.5 L18.5,8.5 L18.5,13 L5.5,13 L5.5,8.5 Z" fill="none" stroke="#3aa0ff" stroke-width="1.3"/><rect x="10.3" y="9.5" width="3.4" height="3.5" fill="none" stroke="#3aa0ff" stroke-width="0.8"/>',
+  un:'<rect width="24" height="16" fill="#0a1a10"/><circle cx="12" cy="8" r="4.5" fill="none" stroke="#3a6a5a" stroke-width="1.3"/><circle cx="12" cy="8" r="1.3" fill="#3a6a5a"/>'
+};
 function flagImg(code,size){
   size=size||20;
-  return `<img class="flagimg" src="https://flagcdn.com/w${size}/${code}.png" alt="${code.toUpperCase()}" onerror="this.style.display='none'">`;
+  const c=(code||'un').toLowerCase();
+  const inner = FLAG_SVGS[c] || FLAG_SVGS.un;
+  const h = Math.round(size*16/24);
+  return `<svg class="flagimg" width="${size}" height="${h}" viewBox="0 0 24 16" style="vertical-align:middle;margin-right:5px;border:1px solid rgba(0,255,102,0.25);flex-shrink:0;">${inner}</svg>`;
 }
+function flagEmoji(code){ return ''; }
 
 function renderBarList(containerId, data, opts){
   opts=opts||{};
@@ -1185,7 +1565,7 @@ fetch("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json")
           .attr("filter","url(#gR)").style("cursor","pointer")
           .on("mouseover",(e)=>{
             showTip(e,`<b>⚠ ATTACK SOURCE</b><br>`+
-              `<img src="${flagUrl(d.code)}" width="20" height="14" style="vertical-align:middle;margin-right:5px;border:1px solid #1a4d1a;" onerror="this.style.display='none'">`+
+              flagImg(d.code,20)+
               `<b style="color:#ffcf33">${d.country}</b><br>`+
               `CITY: ${d.city}<br>IP: <span style="color:#19e8d6">${d.ip}</span><br>ISP: ${d.isp}<br>`+
               `ATTEMPTS: <span style="color:#ffcf33">${d.count}</span><br>`+
@@ -1220,7 +1600,7 @@ fetch("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json")
         .attr("filter","url(#gG)").style("cursor","pointer")
         .on("mouseover",(e)=>showTip(e,
           `<b>⛁ HONEYPOT SERVER</b><br>`+
-          `${flagUrl('gh')?`<img src="${flagUrl('gh')}" width="20" height="14" style="vertical-align:middle;margin-right:5px;border:1px solid #1a4d1a;" onerror="this.style.display='none'">`:''}`+
+          flagImg('gh',20)+
           `<b style="color:#00ff66">Accra, Ghana</b><br>`+
           `STATUS: <span style="color:#00ff66">ACTIVE</span><br>PORT: 2223 (SSH, emulated)<br>`+
           `TOTAL ATTACKS: <span style="color:#ffcf33">68</span>`))
@@ -1321,45 +1701,6 @@ renderSessions('');
    IP OSINT INVESTIGATOR
    ============================================================ */
 let osintScanCount = 0;
-
-/* ---- matrix digital rain (canvas background for OSINT page) ---- */
-let matrixCtx=null, matrixCols=[], matrixRAF=null;
-const MATRIX_CHARS="アイウエオカキクケコサシスセソ01アイウエオ$#@&%*+=<>{}[]";
-function initMatrixCanvas(){
-  const cv=document.getElementById('matrix-rain');
-  const page=document.getElementById('page-osint');
-  cv.width=page.clientWidth; cv.height=page.clientHeight;
-  matrixCtx=cv.getContext('2d');
-  const fontSize=14;
-  const cols=Math.floor(cv.width/fontSize);
-  matrixCols=new Array(cols).fill(0).map(()=>Math.random()*-100);
-  return fontSize;
-}
-function startMatrixRain(){
-  if(matrixRAF) return;
-  const fontSize=initMatrixCanvas();
-  const cv=document.getElementById('matrix-rain');
-  function frame(){
-    matrixCtx.fillStyle="rgba(1,9,6,0.18)";
-    matrixCtx.fillRect(0,0,cv.width,cv.height);
-    matrixCtx.font=fontSize+"px monospace";
-    matrixCols.forEach((y,i)=>{
-      const ch=MATRIX_CHARS[Math.floor(Math.random()*MATRIX_CHARS.length)];
-      const grad = y<2 ? "#dfffe9" : "#00ff66";
-      matrixCtx.fillStyle=grad;
-      matrixCtx.fillText(ch, i*fontSize, y*fontSize);
-      matrixCols[i] = (y*fontSize>cv.height && Math.random()>0.975) ? 0 : y+0.55;
-    });
-    matrixRAF=requestAnimationFrame(frame);
-  }
-  frame();
-}
-function stopMatrixRain(){
-  if(matrixRAF){ cancelAnimationFrame(matrixRAF); matrixRAF=null; }
-}
-window.addEventListener('resize',()=>{
-  if(document.getElementById('page-osint').classList.contains('active')) initMatrixCanvas();
-});
 
 /* ---- boot sequence intro (plays once) ---- */
 function runOsintBoot(){
@@ -1505,6 +1846,40 @@ function renderMiniMap(lat, lon, color){
   if(window._worldFeatures) draw(); else window._onWorldFeaturesReady = draw;
 }
 
+/* ---- quick-glance stat tiles — same "only real data" rule as badges ---- */
+function renderQuickStats(meta, geoOk, geo, abuse, grey){
+  let ispVal = geoOk ? (geo.isp || geo.as || 'Unknown') : 'Unavailable';
+  // strip a leading "AS12345 " ASN code when a readable org name follows it —
+  // the raw ASN adds no value here and just eats space that could show the name
+  const ispClean = ispVal.replace(/^AS\d+\s+/i, '');
+  if(ispClean.trim()) ispVal = ispClean;
+
+  const abuseColor = abuse.score>80?'var(--c-danger)':abuse.score>50?'var(--c-amber)':'var(--c-prime)';
+  const greyColor = grey.classification==='malicious'?'var(--c-danger)':grey.classification==='suspicious'?'var(--c-amber)':'var(--c-prime)';
+  const count = meta.count!=null ? meta.count : 0;
+  const countColor = count>=10?'var(--c-danger)':count>=5?'var(--c-amber)':'var(--c-prime)';
+
+  const ICONS = {
+    lock:'<rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V7.5a4 4 0 0 1 8 0V11" stroke-linecap="round"/>',
+    shield:'<path d="M12 2.5 4.5 5.5v6c0 5 3.3 8.7 7.5 10 4.2-1.3 7.5-5 7.5-10v-6L12 2.5z"/><path d="M12 8v5" stroke-linecap="round"/><circle cx="12" cy="15.7" r="0.9" fill="var(--qc,var(--c-prime))" stroke="none"/>',
+    radar:'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1.3" fill="var(--qc,var(--c-prime))" stroke="none"/>',
+    server:'<rect x="3" y="4.5" width="18" height="6" rx="1.2"/><rect x="3" y="13.5" width="18" height="6" rx="1.2"/><circle cx="7.2" cy="7.5" r="0.9" fill="var(--qc,var(--c-prime))" stroke="none"/><circle cx="7.2" cy="16.5" r="0.9" fill="var(--qc,var(--c-prime))" stroke="none"/>'
+  };
+  const stats = [
+    [count, 'LOGIN ATTEMPTS', countColor, ICONS.lock],
+    [abuse.score+'%', 'ABUSE CONFIDENCE', abuseColor, ICONS.shield],
+    [grey.classification.toUpperCase(), 'GREYNOISE', greyColor, ICONS.radar],
+    [ispVal, 'ISP / ORG', 'var(--c-prime)', ICONS.server]
+  ];
+  document.getElementById('osint-quickstats').innerHTML = stats.map(([v,l,c,icon],i)=>
+    `<div class="qstat${c==='var(--c-danger)'?' critical':''}" style="--qc:${c};animation-delay:${i*0.08}s;">
+      <div class="qstat-bar"></div>
+      <div class="qstat-corner tl"></div><div class="qstat-corner br"></div>
+      <svg class="qstat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">${icon}</svg>
+      <div class="qstat-v" title="${v}">${v}</div>
+      <div class="qstat-l">${l}</div>
+    </div>`).join('');
+}
 /* ---- threat badges — only the signals actually present, nothing decorative ---- */
 function renderBadges(geoOk, geo, shodan, abuse, grey){
   const badges=[];
@@ -1679,7 +2054,7 @@ function scrambleReveal(el, finalText, duration){
 }
 
 function renderOsintCard(ip, meta, geo, shodan){
-  document.getElementById('osint-flag').src = flagUrl(meta.code);
+  document.getElementById('osint-flag').innerHTML = flagImg(meta.code,28);
   scrambleReveal(document.getElementById('osint-ip-title'), ip, 550);
   document.getElementById('osint-ip-sub').textContent =
     `${(geo&&geo.status==='success') ? geo.city+', '+geo.country : meta.country} · ${meta.count||'?'} login attempts logged`;
@@ -1752,6 +2127,7 @@ function renderOsintCard(ip, meta, geo, shodan){
   else { verdict='LOW–MEDIUM'; vcolor='#00ff66'; }
 
   renderBadges(geoOk, geo, shodan, abuse, grey);
+  renderQuickStats(meta, geoOk, geo, abuse, grey);
   renderMiniMap(mmLat, mmLon, vcolor);
 
   const vtext = `This IP shows a ${abuse.score}% AbuseIPDB confidence score across ${abuse.reports} community reports, `+

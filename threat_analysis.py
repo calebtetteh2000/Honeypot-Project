@@ -40,25 +40,42 @@ def is_dangerous(cmd):
 
 # ── LOG PARSERS ───────────────────────────────────────────────────────────────
 
-def parse_audits(path):
-    """Parse audits.log → [{timestamp, ip, username, password}]"""
-    entries = []
-    try:
+def read_rotated(path):
+    """Read a RotatingFileHandler's current file plus any .N backups,
+    oldest first, so data survives rotation instead of being silently
+    dropped once the live file rolls over."""
+    parts = []
+    n = 5
+    while n >= 1:
+        backup = f'{path}.{n}'
+        if os.path.exists(backup):
+            with open(backup, encoding='utf-8', errors='ignore') as f:
+                parts.append(f.read())
+        n -= 1
+    if os.path.exists(path):
         with open(path, encoding='utf-8', errors='ignore') as f:
-            for line in f:
-                line = line.strip()
-                if not line or '|' not in line:
-                    continue
-                parts = [p.strip() for p in line.split('|')]
-                if len(parts) >= 4:
-                    entries.append({
-                        'timestamp': parts[0],
-                        'ip':        parts[1],
-                        'username':  parts[2],
-                        'password':  parts[3],
-                    })
-    except FileNotFoundError:
-        print(f"[!] {path} not found.")
+            parts.append(f.read())
+    return '\n'.join(parts)
+
+
+def parse_audits(path):
+    """Parse audits.log (+ rotated .1, .2 ... backups) → [{timestamp, ip, username, password}]"""
+    entries = []
+    text = read_rotated(path)
+    for line in text.splitlines():
+        line = line.strip()
+        if not line or '|' not in line:
+            continue
+        parts = [p.strip() for p in line.split('|')]
+        if len(parts) >= 4:
+            entries.append({
+                'timestamp': parts[0],
+                'ip':        parts[1],
+                'username':  parts[2],
+                'password':  parts[3],
+            })
+    if not entries:
+        print(f"[!] {path} not found or empty.")
     return entries
 
 
@@ -72,49 +89,48 @@ def parse_cmd_log(path):
     """
     sessions = []
     current  = None
-    try:
-        with open(path, encoding='utf-8', errors='ignore') as f:
-            for line in f:
-                line = line.strip()
-                if not line:
-                    continue
+    text = read_rotated(path)
+    for line in text.splitlines():
+        line = line.strip()
+        if not line:
+            continue
 
-                if '|' in line:
-                    parts = [p.strip() for p in line.split('|')]
-                    # Login line: ts | ip | user | password
-                    if len(parts) == 4 and not parts[2].startswith("b'"):
-                        if current:
-                            sessions.append(current)
-                        current = {
-                            'ip':      parts[1],
-                            'start':   parts[0],
-                            'country': 'Unknown',
-                            'code':    'un',
-                            'cmds':    [],
-                        }
-                    # Command line: ts | ip | b'cmd'
-                    elif len(parts) == 3 and current:
-                        raw = parts[2].strip("b'\" ")
-                        ts  = parts[0][11:19] if len(parts[0]) > 11 else ''
-                        current['cmds'].append({
-                            'ts':     ts,
-                            'cmd':    raw,
-                            'danger': is_dangerous(raw),
-                        })
-                # Old format: Command b'ls' executed by 127.0.0.1
-                elif line.startswith('Command ') and 'executed by' in line:
-                    m = re.match(r"Command b'(.+?)' executed by .+", line)
-                    if m and current:
-                        cmd = m.group(1)
-                        current['cmds'].append({
-                            'ts':     '',
-                            'cmd':    cmd,
-                            'danger': is_dangerous(cmd),
-                        })
-        if current:
-            sessions.append(current)
-    except FileNotFoundError:
-        print(f"[!] {path} not found.")
+        if '|' in line:
+            parts = [p.strip() for p in line.split('|')]
+            # Login line: ts | ip | user | password
+            if len(parts) == 4 and not parts[2].startswith("b'"):
+                if current:
+                    sessions.append(current)
+                current = {
+                    'ip':      parts[1],
+                    'start':   parts[0],
+                    'country': 'Unknown',
+                    'code':    'un',
+                    'cmds':    [],
+                }
+            # Command line: ts | ip | b'cmd'
+            elif len(parts) == 3 and current:
+                raw = parts[2].strip("b'\" ")
+                ts  = parts[0][11:19] if len(parts[0]) > 11 else ''
+                current['cmds'].append({
+                    'ts':     ts,
+                    'cmd':    raw,
+                    'danger': is_dangerous(raw),
+                })
+        # Old format: Command b'ls' executed by 127.0.0.1
+        elif line.startswith('Command ') and 'executed by' in line:
+            m = re.match(r"Command b'(.+?)' executed by .+", line)
+            if m and current:
+                cmd = m.group(1)
+                current['cmds'].append({
+                    'ts':     '',
+                    'cmd':    cmd,
+                    'danger': is_dangerous(cmd),
+                })
+    if current:
+        sessions.append(current)
+    if not sessions:
+        print(f"[!] {path} not found or empty.")
     return sessions
 
 
@@ -275,10 +291,31 @@ def replace_js_block(html, start_marker, end_marker, new_content):
     return re.sub(pattern, replacement, html, count=1)
 
 
+FLAG_SVGS = {
+    'ru': '<rect width="24" height="5.33" fill="#fff"/><rect y="5.33" width="24" height="5.33" fill="#0057b7"/><rect y="10.67" width="24" height="5.33" fill="#d52b1e"/>',
+    'nl': '<rect width="24" height="5.33" fill="#ae1c28"/><rect y="5.33" width="24" height="5.33" fill="#fff"/><rect y="10.67" width="24" height="5.33" fill="#21468b"/>',
+    'de': '<rect width="24" height="5.33" fill="#000"/><rect y="5.33" width="24" height="5.33" fill="#dd0000"/><rect y="10.67" width="24" height="5.33" fill="#ffce00"/>',
+    'ua': '<rect width="24" height="8" fill="#0057b7"/><rect y="8" width="24" height="8" fill="#ffd700"/>',
+    'ng': '<rect width="24" height="16" fill="#008751"/><rect x="8" width="8" height="16" fill="#fff"/>',
+    'gh': '<rect width="24" height="5.33" fill="#ce1126"/><rect y="5.33" width="24" height="5.33" fill="#fcd116"/><rect y="10.67" width="24" height="5.33" fill="#006b3f"/><path d="M12.00,5.60 L12.56,7.23 L14.28,7.26 L12.90,8.29 L13.41,9.94 L12.00,8.95 L10.59,9.94 L11.10,8.29 L9.72,7.26 L11.44,7.23 Z" fill="#000"/>',
+    'cn': '<rect width="24" height="16" fill="#de2910"/><path d="M6.00,2.80 L6.50,4.31 L8.09,4.32 L6.81,5.26 L7.29,6.78 L6.00,5.85 L4.71,6.78 L5.19,5.26 L3.91,4.32 L5.50,4.31 Z" fill="#ffde00"/><path d="M9.50,2.60 L9.64,3.01 L10.07,3.01 L9.73,3.27 L9.85,3.69 L9.50,3.44 L9.15,3.69 L9.27,3.27 L8.93,3.01 L9.36,3.01 Z" fill="#ffde00"/><path d="M10.30,4.40 L10.44,4.81 L10.87,4.81 L10.53,5.07 L10.65,5.49 L10.30,5.24 L9.95,5.49 L10.07,5.07 L9.73,4.81 L10.16,4.81 Z" fill="#ffde00"/><path d="M9.70,6.40 L9.84,6.81 L10.27,6.81 L9.93,7.07 L10.05,7.49 L9.70,7.24 L9.35,7.49 L9.47,7.07 L9.13,6.81 L9.56,6.81 Z" fill="#ffde00"/><path d="M8.20,7.70 L8.34,8.11 L8.77,8.11 L8.43,8.37 L8.55,8.79 L8.20,8.54 L7.85,8.79 L7.97,8.37 L7.63,8.11 L8.06,8.11 Z" fill="#ffde00"/>',
+    'vn': '<rect width="24" height="16" fill="#da251d"/><path d="M12.00,4.80 L12.73,6.99 L15.04,7.01 L13.19,8.39 L13.88,10.59 L12.00,9.25 L10.12,10.59 L10.81,8.39 L8.96,7.01 L11.27,6.99 Z" fill="#ffde00"/>',
+    'tn': '<rect width="24" height="16" fill="#e70013"/><circle cx="12" cy="8" r="3.6" fill="#fff"/><circle cx="13" cy="8" r="2.9" fill="#e70013"/><circle cx="12.2" cy="8" r="2.9" fill="#fff"/><path d="M13.60,6.70 L13.89,7.60 L14.84,7.60 L14.08,8.15 L14.36,9.05 L13.60,8.50 L12.84,9.05 L13.12,8.15 L12.36,7.60 L13.31,7.60 Z" fill="#e70013"/>',
+    'tw': '<rect width="24" height="16" fill="#fe0000"/><rect width="12" height="8" fill="#000095"/><circle cx="6" cy="4" r="1.7" fill="#000095" stroke="#fff" stroke-width="0.4"/><line x1="6.90" y1="4.00" x2="7.60" y2="4.00" stroke="#fff" stroke-width="0.4"/><line x1="6.78" y1="4.45" x2="7.39" y2="4.80" stroke="#fff" stroke-width="0.4"/><line x1="6.45" y1="4.78" x2="6.80" y2="5.39" stroke="#fff" stroke-width="0.4"/><line x1="6.00" y1="4.90" x2="6.00" y2="5.60" stroke="#fff" stroke-width="0.4"/><line x1="5.55" y1="4.78" x2="5.20" y2="5.39" stroke="#fff" stroke-width="0.4"/><line x1="5.22" y1="4.45" x2="4.61" y2="4.80" stroke="#fff" stroke-width="0.4"/><line x1="5.10" y1="4.00" x2="4.40" y2="4.00" stroke="#fff" stroke-width="0.4"/><line x1="5.22" y1="3.55" x2="4.61" y2="3.20" stroke="#fff" stroke-width="0.4"/><line x1="5.55" y1="3.22" x2="5.20" y2="2.61" stroke="#fff" stroke-width="0.4"/><line x1="6.00" y1="3.10" x2="6.00" y2="2.40" stroke="#fff" stroke-width="0.4"/><line x1="6.45" y1="3.22" x2="6.80" y2="2.61" stroke="#fff" stroke-width="0.4"/><line x1="6.78" y1="3.55" x2="7.39" y2="3.20" stroke="#fff" stroke-width="0.4"/>',
+    'in': '<rect width="24" height="5.33" fill="#ff9933"/><rect y="5.33" width="24" height="5.33" fill="#fff"/><rect y="10.67" width="24" height="5.33" fill="#138808"/><circle cx="12" cy="8" r="1.8" fill="none" stroke="#000080" stroke-width="0.3"/><line x1="10.30" y1="8.00" x2="13.70" y2="8.00" stroke="#000080" stroke-width="0.25"/><line x1="10.80" y1="6.80" x2="13.20" y2="9.20" stroke="#000080" stroke-width="0.25"/><line x1="12.00" y1="6.30" x2="12.00" y2="9.70" stroke="#000080" stroke-width="0.25"/><line x1="13.20" y1="6.80" x2="10.80" y2="9.20" stroke="#000080" stroke-width="0.25"/>',
+    'br': '<rect width="24" height="16" fill="#009c3b"/><path d="M12,2.5 L21.5,8 L12,13.5 L2.5,8 Z" fill="#ffdf00"/><circle cx="12" cy="8" r="3.1" fill="#002776"/>',
+    'us': '<rect width="24" height="16" fill="#fff"/><rect width="24" height="1.23" fill="#b22234"/><rect y="2.46" width="24" height="1.23" fill="#b22234"/><rect y="4.92" width="24" height="1.23" fill="#b22234"/><rect y="7.38" width="24" height="1.23" fill="#b22234"/><rect y="9.85" width="24" height="1.23" fill="#b22234"/><rect y="12.31" width="24" height="1.23" fill="#b22234"/><rect y="14.77" width="24" height="1.23" fill="#b22234"/><rect width="10.8" height="8.6" fill="#3c3b6e"/>',
+    'xx': '<rect width="24" height="16" fill="#0a1a10"/><path d="M12,3.5 L18.5,8.5 L18.5,13 L5.5,13 L5.5,8.5 Z" fill="none" stroke="#3aa0ff" stroke-width="1.3"/><rect x="10.3" y="9.5" width="3.4" height="3.5" fill="none" stroke="#3aa0ff" stroke-width="0.8"/>',
+    'un': '<rect width="24" height="16" fill="#0a1a10"/><circle cx="12" cy="8" r="4.5" fill="none" stroke="#3a6a5a" stroke-width="1.3"/><circle cx="12" cy="8" r="1.3" fill="#3a6a5a"/>',
+}
+
 def flag_img(code, size=20):
-    code = (code or 'xx').lower()
-    return (f'<img class="flagimg" src="https://flagcdn.com/w{size}/{code}.png" '
-            f'alt="{code.upper()}" onerror="this.style.display=\'none\'">')
+    code = (code or 'un').lower()
+    inner = FLAG_SVGS.get(code, FLAG_SVGS['un'])
+    h = round(size * 16 / 24)
+    return (f'<svg class="flagimg" width="{size}" height="{h}" viewBox="0 0 24 16" '
+            f'style="vertical-align:middle;margin-right:5px;border:1px solid rgba(0,255,102,0.25);'
+            f'flex-shrink:0;">{inner}</svg>')
 
 
 def inject(template, stats):

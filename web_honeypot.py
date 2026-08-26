@@ -49,7 +49,7 @@ def web_honeypot(input_username="admin", input_password="password"):
             return render_template('wp-admin.html', error="Invalid credentials. Please try again.")
 
     # ── TRACKING ENDPOINT ─────────────────────────────────────────────────────
-    @app.route('/track')
+    @app.route('/track', methods=['GET', 'POST'])
     def track():
         action = request.args.get('action', 'unknown')
         time_spent = request.args.get('sec', '')
