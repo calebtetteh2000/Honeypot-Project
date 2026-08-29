@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-web_threat_analysis.py
+web_threat_analysis.pypython web_threat_analysis.py
 Reads http_audits.log and rebuilds every data-driven section of
 web_attack_dashboard_v31.html with REAL attack data — replacing
 all hardcoded sample data (stat cards, attack origins, top
@@ -356,7 +356,7 @@ def inject_into_v31(stats, geo, session_avg, logins_all, actions_all, template_p
       </div>''')
         pages_html = '\n'.join(rows)
     html = re.sub(
-        r'(<h2>Pages Visited Post-Login</h2>\s*)(?:(?:\s*<div class="bar-row">.*?</div>\s*)+|' + NODATA + r')(?=\s*</div>\s*</div>\s*<div>)',
+        r'(<h2>Pages Visited Post-Login</h2>\s*)(?:(?:\s*<div class="bar-row">.*?</div>\s*)+|' + NODATA + r')(?=(?:\s*</div>)+\s*<div>\s*<!-- ── PANEL 1)',
         rf'\g<1>\n{pages_html}\n    ', html, flags=re.DOTALL
     )
 

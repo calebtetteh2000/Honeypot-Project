@@ -414,42 +414,27 @@ body::after{
           <svg id="osint-moon-svg" class="osint-moon" viewBox="0 0 40 40"></svg>
 
           <svg class="osint-asteroid ast-1" viewBox="0 0 24 24">
-            <defs><linearGradient id="astShade1" x1="18%" y1="12%" x2="82%" y2="88%">
-              <stop offset="0%" stop-color="#a8ffc8"/><stop offset="42%" stop-color="#1f9a4d"/><stop offset="100%" stop-color="#031209"/>
-            </linearGradient></defs>
             <path d="M20.1,12.8 L15.3,17.4 L8.6,17.9 L5.5,11.4 L8.2,5.5 L16.3,6.2 Z"
-              fill="url(#astShade1)" stroke="#03170d" stroke-width="0.7"/>
-            <path d="M9,10 L12,9 L13,12" fill="none" stroke="#031209" stroke-width="0.4" opacity="0.5"/>
+              fill="var(--c-prime)" fill-opacity="0.3" stroke="var(--c-prime)" stroke-opacity="0.8" stroke-width="0.7"/>
+            <path d="M9,10 L12,9 L13,12" fill="none" stroke="var(--c-prime)" stroke-width="0.35" opacity="0.35"/>
           </svg>
           <svg class="osint-asteroid ast-2" viewBox="0 0 24 24">
-            <defs><linearGradient id="astShade2" x1="22%" y1="15%" x2="78%" y2="85%">
-              <stop offset="0%" stop-color="#a8ffc8"/><stop offset="42%" stop-color="#1a8a45"/><stop offset="100%" stop-color="#031209"/>
-            </linearGradient></defs>
             <path d="M20.4,11.1 L16.1,16.8 L12.0,19.0 L5.9,17.6 L6.5,12.7 L7.6,6.6 L12.4,6.6 L17.6,6.3 Z"
-              fill="url(#astShade2)" stroke="#03170d" stroke-width="0.7"/>
-            <path d="M14,10 L17,11" fill="none" stroke="#031209" stroke-width="0.4" opacity="0.5"/>
+              fill="var(--c-prime)" fill-opacity="0.3" stroke="var(--c-prime)" stroke-opacity="0.8" stroke-width="0.7"/>
+            <path d="M14,10 L17,11" fill="none" stroke="var(--c-prime)" stroke-width="0.35" opacity="0.35"/>
           </svg>
           <svg class="osint-asteroid ast-3" viewBox="0 0 24 24">
-            <defs><linearGradient id="astShade3" x1="14%" y1="18%" x2="86%" y2="82%">
-              <stop offset="0%" stop-color="#a8ffc8"/><stop offset="42%" stop-color="#249a52"/><stop offset="100%" stop-color="#031209"/>
-            </linearGradient></defs>
             <path d="M20.7,13.2 L15.5,16.5 L7.3,18.5 L5.5,11.7 L8.4,5.3 L15.1,6.9 Z"
-              fill="url(#astShade3)" stroke="#03170d" stroke-width="0.7"/>
+              fill="var(--c-prime)" fill-opacity="0.3" stroke="var(--c-prime)" stroke-opacity="0.8" stroke-width="0.7"/>
           </svg>
           <svg class="osint-asteroid ast-4" viewBox="0 0 24 24">
-            <defs><linearGradient id="astShade4" x1="26%" y1="12%" x2="74%" y2="88%">
-              <stop offset="0%" stop-color="#a8ffc8"/><stop offset="42%" stop-color="#1c8f49"/><stop offset="100%" stop-color="#031209"/>
-            </linearGradient></defs>
             <path d="M19.3,11.4 L17.6,17.1 L11.8,17.6 L7.0,18.8 L5.8,12.5 L7.8,6.3 L12.7,4.9 L16.4,8.0 Z"
-              fill="url(#astShade4)" stroke="#03170d" stroke-width="0.7"/>
-            <path d="M10,15 L13,14" fill="none" stroke="#031209" stroke-width="0.4" opacity="0.5"/>
+              fill="var(--c-prime)" fill-opacity="0.3" stroke="var(--c-prime)" stroke-opacity="0.8" stroke-width="0.7"/>
+            <path d="M10,15 L13,14" fill="none" stroke="var(--c-prime)" stroke-width="0.35" opacity="0.35"/>
           </svg>
           <svg class="osint-asteroid ast-5" viewBox="0 0 24 24">
-            <defs><linearGradient id="astShade5" x1="18%" y1="16%" x2="82%" y2="84%">
-              <stop offset="0%" stop-color="#a8ffc8"/><stop offset="42%" stop-color="#1f9a4d"/><stop offset="100%" stop-color="#031209"/>
-            </linearGradient></defs>
             <path d="M20.1,12.8 L15.3,17.4 L8.6,17.9 L5.5,11.4 L8.2,5.5 L16.3,6.2 Z"
-              fill="url(#astShade5)" stroke="#03170d" stroke-width="0.7"/>
+              fill="var(--c-prime)" fill-opacity="0.3" stroke="var(--c-prime)" stroke-opacity="0.8" stroke-width="0.7"/>
           </svg>
 
           <svg class="osint-shooting-star ss-1" viewBox="0 0 60 4"><line x1="0" y1="2" x2="60" y2="2" stroke="var(--c-prime)" stroke-width="1.2"/></svg>
@@ -530,6 +515,13 @@ body::after{
         <div id="osint-verdict-text" class="declass-wrap" style="position:relative;z-index:1;">
           <div id="osint-verdict-text-content"></div>
           <div id="osint-declass-bar" class="declass-bar"></div>
+        </div>
+
+        <div class="osint-signal-chain" aria-hidden="true">
+          <div class="sc-node" style="--nc:#3aa0ff;"><span class="sc-dot"></span><span class="sc-label">GEO</span></div>
+          <div class="sc-node" style="--nc:#ff9f1c;"><span class="sc-dot"></span><span class="sc-label">PORTS</span></div>
+          <div class="sc-node" style="--nc:#ff4f6b;"><span class="sc-dot"></span><span class="sc-label">ABUSE</span></div>
+          <div class="sc-node" style="--nc:#a855f7;"><span class="sc-dot"></span><span class="sc-label">GREYNOISE</span></div>
         </div>
 
         <div class="osint-frag-grid" style="position:relative;z-index:1;">
@@ -661,21 +653,13 @@ body::after{
 .osint-moon{position:absolute;width:44px;height:44px;right:6%;top:8%;z-index:0;opacity:.95;
   filter:drop-shadow(0 0 2px rgba(0,255,102,0.35));animation:moonDrift 40s ease-in-out infinite;}
 @keyframes moonDrift{0%,100%{transform:translate(0,0);}50%{transform:translate(-8px,10px);}}
-.osint-asteroid{position:absolute;width:22px;height:22px;z-index:0;opacity:.95;
-  filter:drop-shadow(0 0 1.5px rgba(0,255,102,0.3));}
-.ast-1{width:26px;height:26px;animation:astDrift1 32s ease-in-out infinite, astSpin1 14s linear infinite, astTumble 14s ease-in-out infinite;}
-.ast-2{width:16px;height:16px;animation:astDrift2 38s ease-in-out infinite, astSpin2 19s linear infinite reverse, astTumble 19s ease-in-out infinite;}
-.ast-3{width:20px;height:20px;animation:astDrift3 27s ease-in-out infinite, astSpin1 11s linear infinite reverse, astTumble 11s ease-in-out infinite;}
-.ast-4{width:14px;height:14px;animation:astDrift4 44s ease-in-out infinite, astSpin2 22s linear infinite, astTumble 22s ease-in-out infinite;}
-.ast-5{width:18px;height:18px;animation:astDrift5 35s ease-in-out infinite, astSpin1 16s linear infinite, astTumble 16s ease-in-out infinite;}
-@keyframes astSpin1{from{rotate:0deg;}to{rotate:360deg;}}
-@keyframes astSpin2{from{rotate:0deg;}to{rotate:-360deg;}}
-@keyframes astTumble{0%,50%,100%{scale:1 1;}25%{scale:0.35 1;}75%{scale:0.35 1;}}
-@keyframes astDrift1{0%,100%{left:4%;top:14%;}50%{left:12%;top:22%;}}
-@keyframes astDrift2{0%,100%{left:90%;top:20%;}50%{left:82%;top:30%;}}
-@keyframes astDrift3{0%,100%{left:8%;top:78%;}50%{left:16%;top:70%;}}
-@keyframes astDrift4{0%,100%{left:92%;top:74%;}50%{left:85%;top:82%;}}
-@keyframes astDrift5{0%,100%{left:6%;top:46%;}50%{left:14%;top:52%;}}
+.osint-asteroid{position:absolute;left:0;top:0;width:22px;height:22px;z-index:0;opacity:.95;
+  filter:drop-shadow(0 0 1.5px rgba(0,255,102,0.3));will-change:transform;}
+.ast-1{width:26px;height:26px;}
+.ast-2{width:16px;height:16px;}
+.ast-3{width:20px;height:20px;}
+.ast-4{width:14px;height:14px;}
+.ast-5{width:18px;height:18px;}
 .osint-shooting-star{position:absolute;width:60px;height:4px;opacity:0;z-index:1;}
 .ss-1{top:12%;left:8%;animation:shoot 8s ease-in infinite;animation-delay:1.5s;}
 .ss-2{top:58%;left:55%;animation:shoot 11s ease-in infinite;animation-delay:5.5s;}
@@ -817,69 +801,113 @@ body::after{
 .term-log .tl-wait{color:var(--c-text-dim);}
 
 /* ---- live intel event feed ---- */
-.tick-line{font-size:9.5px;line-height:1.5;padding:8px 10px;background:#020f08;
-  border-left:3px solid var(--tk-color,var(--c-prime-dim));
-  opacity:0;animation:fadeUp .35s ease forwards;transition:background .15s;}
-.tick-line:hover{background:#031508;}
-.tk-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;}
+.tick-line{font-size:9.5px;line-height:1.5;padding:9px 11px;
+  background:linear-gradient(90deg, color-mix(in srgb, var(--tk-color,var(--c-prime)) 8%, #020f08) 0%, #020f08 65%);
+  border-left:3px solid var(--tk-color,var(--c-prime-dim)); border-radius:0 2px 2px 0;
+  opacity:0;animation:fadeUp .35s ease forwards;
+  transition:background .18s ease, transform .18s ease, box-shadow .18s ease;}
+.tick-line:hover{background:linear-gradient(90deg, color-mix(in srgb, var(--tk-color,var(--c-prime)) 14%, #020f08) 0%, #031006 65%);
+  transform:translateX(2px); box-shadow:-2px 0 0 var(--tk-color,var(--c-prime));}
+.tk-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;}
 .tk-badge{font-family:'Orbitron',monospace;font-size:7px;font-weight:700;letter-spacing:1.2px;
-  padding:2px 6px;border:1px solid currentColor;color:var(--tk-color,var(--c-prime));
-  background:rgba(255,255,255,0.03);}
-.tk-ts{color:var(--c-text-dim);font-size:7.5px;}
-.tk-msg{color:var(--c-text-bright);font-size:9px;line-height:1.5;}
-.tk-ip{color:#3a6a4a;font-family:'Share Tech Mono',monospace;font-size:8.5px;}
+  padding:2.5px 7px;border:1px solid currentColor;color:var(--tk-color,var(--c-prime));
+  background:rgba(255,255,255,0.03); border-radius:1px;
+  text-shadow:0 0 5px currentColor;
+  box-shadow:0 0 1px currentColor, 0 0 9px -2px currentColor;}
+.tk-ts{color:var(--c-text-dim);font-size:7.5px;font-variant-numeric:tabular-nums;}
+.tk-msg{color:#f4fff8;font-size:9px;line-height:1.55;}
+.tk-ip{color:#4a8a5f;font-family:'Share Tech Mono',monospace;font-size:8.5px;letter-spacing:.2px;}
 
 /* ---- fragment scan-sweep on reveal ---- */
 @keyframes scanSweep{0%{opacity:.85;top:-14%;}100%{opacity:0;top:106%;}}
 
 /* ---- data fragments (each module has its own accent identity) ---- */
-.osint-frag-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-.osint-frag{background:linear-gradient(160deg,#020f08,#03130a 65%);
+.osint-frag-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.osint-frag{
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.09) 0%, transparent 2px) top/100% 2px no-repeat,
+    radial-gradient(circle at 100% 0%, var(--accent-soft,rgba(0,255,102,0.08)) 0%, transparent 55%),
+    repeating-linear-gradient(135deg, rgba(255,255,255,0.014) 0px, rgba(255,255,255,0.014) 1px, transparent 1px, transparent 7px),
+    linear-gradient(160deg,#020f08,#03130a 65%);
   border:1px solid var(--c-line); border-top:2px solid var(--accent,var(--c-prime));
   padding:16px 18px 18px; position:relative; overflow:hidden;
-  opacity:0; transform:translateY(10px); transition:opacity .4s ease,transform .4s ease;
-  clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px));}
+  opacity:0; transform:translateY(10px);
+  transition:opacity .4s ease, transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease, border-color .35s ease;
+  clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px));
+  box-shadow:0 10px 28px -16px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.05);}
 .osint-frag.show{opacity:1;transform:translateY(0);}
-.osint-frag::before{content:"";position:absolute;top:-46px;right:-46px;width:150px;height:150px;
-  border-radius:50%;background:radial-gradient(circle,var(--accent,var(--c-prime)) 0%,transparent 72%);
-  opacity:.1;pointer-events:none;}
+.osint-frag:hover{transform:translateY(-4px); border-color:var(--accent,var(--c-prime));
+  box-shadow:0 20px 40px -16px rgba(0,0,0,.8), 0 0 2px var(--accent,var(--c-prime)),
+    0 0 32px -6px var(--accent,var(--c-prime)), inset 0 1px 0 rgba(255,255,255,.08);}
+.osint-frag::before{content:"";position:absolute;top:-46px;right:-46px;width:170px;height:170px;
+  border-radius:50%;background:radial-gradient(circle,var(--accent,var(--c-prime)) 0%,transparent 70%);
+  opacity:.16;pointer-events:none;transition:opacity .35s ease;}
+.osint-frag:hover::before{opacity:.28;}
 .osint-frag::after{content:"";position:absolute;left:0;right:0;top:-14%;height:18px;z-index:2;pointer-events:none;
   background:linear-gradient(180deg,transparent,var(--scan-c,var(--accent,#00ff66)) 45%,transparent);opacity:0;}
 .osint-frag.show::after{animation:scanSweep .6s ease-out;}
 
-.osint-frag-h{display:flex;align-items:center;gap:9px;margin-bottom:13px;padding-bottom:10px;
-  border-bottom:1px solid var(--c-line); position:relative; z-index:1;}
+.osint-frag-h{display:flex;align-items:center;gap:10px;margin-bottom:13px;padding-bottom:10px;
+  border-bottom:1px solid transparent;
+  border-image:linear-gradient(90deg, var(--accent,var(--c-prime)) 0%, var(--c-line) 60%, transparent 100%) 1;
+  position:relative; z-index:1;}
 .frag-icon{width:17px;height:17px;flex-shrink:0;color:var(--accent,var(--c-prime));
   filter:drop-shadow(0 0 4px var(--accent,var(--c-prime)));}
-.frag-title{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:1.8px;
-  color:var(--accent,var(--c-prime)); text-shadow:0 0 8px var(--accent,var(--c-prime));}
+.frag-title{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:1.8px;font-weight:700;
+  color:var(--accent,var(--c-prime)); text-shadow:0 0 6px var(--accent,var(--c-prime));}
 .osint-frag-tag{margin-left:auto;font-family:'Share Tech Mono',monospace;font-size:8px;
-  color:var(--c-text-mid); border:1px solid var(--c-line); padding:2px 7px; border-radius:2px; letter-spacing:0;}
+  color:var(--c-text-mid); border:1px solid var(--accent,var(--c-line));
+  background:var(--accent-soft,rgba(255,255,255,0.03));
+  padding:2.5px 8px; border-radius:2px; letter-spacing:.3px;}
 
 .osint-frag-body{font-size:11.5px;line-height:1.65;color:var(--c-text-bright);position:relative;z-index:1;}
 .osint-frag-body .row{display:flex;justify-content:space-between;align-items:center;gap:10px;
-  padding:7.5px 0; border-bottom:1px dashed rgba(255,255,255,0.07);}
+  padding:7.5px 4px; margin:0 -4px; border-bottom:1px dashed rgba(255,255,255,0.07);
+  border-left:2px solid transparent; border-radius:2px;
+  transition:background .15s, border-color .15s, padding-left .15s;}
 .osint-frag-body .row:last-child{border-bottom:none;}
+.osint-frag-body .row:hover{background:var(--accent-soft,rgba(255,255,255,0.03));
+  border-left-color:var(--accent,var(--c-prime)); padding-left:9px;}
 .osint-frag-body .k{color:#8fd6ab;font-size:9.5px;letter-spacing:.7px;text-transform:uppercase;flex-shrink:0;font-weight:600;}
-.osint-frag-body .v{color:#fff7d6;font-weight:700;text-align:right;text-shadow:0 0 6px rgba(255,207,51,0.35);}
-.osint-frag-body .v.accent{color:var(--accent,var(--c-gold));text-shadow:0 0 6px var(--accent,var(--c-gold));}
+.osint-frag-body .v{color:#ffffff;font-weight:700;text-align:right;
+  font-variant-numeric:tabular-nums;letter-spacing:.2px;
+  text-shadow:0 1px 2px rgba(0,0,0,.9);}
+.osint-frag-body .v.accent{color:var(--accent,var(--c-gold));text-shadow:0 1px 2px rgba(0,0,0,.9);}
 .osint-frag-empty{color:var(--c-text-mid);font-size:10.5px;line-height:1.85;padding:4px 0;}
 
 .minibar-wrap{display:flex;align-items:center;gap:7px;justify-content:flex-end;}
-.minibar-track{width:58px;height:4px;background:#081c10;border-radius:2px;overflow:hidden;flex-shrink:0;}
-.minibar-fill{height:100%;border-radius:2px;}
+.minibar-track{width:58px;height:4px;background:#081c10;border-radius:2px;overflow:hidden;flex-shrink:0;
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.6);}
+.minibar-fill{height:100%;border-radius:2px;box-shadow:0 0 2px currentColor, 0 0 9px currentColor;}
 .osint-chip{display:inline-block;padding:3px 9px;border-radius:2px;font-size:8.5px;font-weight:700;
-  letter-spacing:.8px;border:1px solid currentColor;background:rgba(255,255,255,0.03);}
+  letter-spacing:.8px;border:1px solid currentColor;background:rgba(255,255,255,0.03);
+  text-shadow:0 0 6px currentColor;
+  box-shadow:0 0 1px currentColor, 0 0 10px -2px currentColor, inset 0 0 6px -3px currentColor;
+  animation:chipIn .4s cubic-bezier(.2,.9,.3,1.3) both;}
+@keyframes chipIn{0%{opacity:0;transform:scale(.7);filter:brightness(2.4);}
+  60%{opacity:1;transform:scale(1.06);}100%{opacity:1;transform:scale(1);filter:brightness(1);}}
+
+/* ---- signal chain: four sources queried in parallel, threaded on one live line ---- */
+.osint-signal-chain{display:flex;align-items:center;justify-content:space-between;
+  position:relative;margin:2px 6px 18px;padding:0 4px;height:20px;}
+.osint-signal-chain::before{content:"";position:absolute;left:10px;right:10px;top:50%;height:1px;
+  background:linear-gradient(90deg,#3aa0ff,#ff9f1c,#ff4f6b,#a855f7);opacity:.3;z-index:0;}
+.osint-signal-chain::after{content:"";position:absolute;top:50%;height:1px;width:22%;z-index:1;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.95),transparent);
+  filter:drop-shadow(0 0 4px #fff); animation:signalRun 3.4s linear infinite;}
+@keyframes signalRun{0%{left:10px;}100%{left:68%;}}
+.sc-node{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:4px;
+  background:#020f08;padding:0 7px;}
+.sc-dot{width:6px;height:6px;border-radius:50%;background:var(--nc);
+  box-shadow:0 0 2px var(--nc),0 0 9px var(--nc);animation:breathe 2.3s ease-in-out infinite;}
+.sc-label{font-family:'Orbitron',monospace;font-size:6.5px;font-weight:700;letter-spacing:1.3px;
+  color:var(--nc);opacity:.9;text-shadow:0 0 5px var(--nc);}
 
 /* ---- live / enriched source status dots ---- */
 .src-dot{display:inline-block;width:5px;height:5px;border-radius:50%;margin-left:4px;vertical-align:middle;}
 .src-dot.live{background:#00ff66;box-shadow:0 0 5px #00ff66;animation:breathe 1.8s ease-in-out infinite;}
 .src-dot.offline{background:#3a4a40;}
 .src-dot.enriched{background:#ff9d2e;box-shadow:0 0 4px #ff9d2e;}
-
-/* ---- row hover (terminal-cursor feel) ---- */
-.osint-frag-body .row{transition:background .15s;border-radius:2px;}
-.osint-frag-body .row:hover{background:rgba(255,255,255,0.025);padding-left:4px;}
 
 /* ---- geolocation widget — squared GPS-lock viewfinder (deliberately NOT a radar dish,
    so it reads as "coordinate lock" rather than a copy of the scanner-classification radar) ---- */
@@ -1105,6 +1133,13 @@ function initOsintMoon(){
   if(svg.empty()) return;
   _osintMoonRendered = true;
 
+  // a genuine rotating 3D sphere, same technique as the earth globe —
+  // this is what makes it read as "3D" and guarantees it's fundamentally
+  // circular (a projected sphere can't be anything else). The only
+  // deliberate roughness comes from craters that have their own thin
+  // stroke, so as one rotates through the limb it very slightly notches
+  // the rim — a little rough at the edge, not perfectly machined, but
+  // still unmistakably round.
   const proj = d3.geoOrthographic().scale(17).translate([20,20]).clipAngle(90);
   const gpath = d3.geoPath().projection(proj);
 
@@ -1116,29 +1151,18 @@ function initOsintMoon(){
   m.append('feMergeNode').attr('in','blur');
   m.append('feMergeNode').attr('in','SourceGraphic');
 
-  // directional shading — light source upper-left, bright highlight fading
-  // through mid-green to a dark shadow limb, entirely within the theme's
-  // own green/black palette (not a foreign lighting scheme)
-  const shade = defs.append('radialGradient').attr('id','moonShade')
-    .attr('cx','32%').attr('cy','28%').attr('r','85%');
-  shade.append('stop').attr('offset','0%').attr('stop-color','#bdffd4');
-  shade.append('stop').attr('offset','40%').attr('stop-color','#00ff66');
-  shade.append('stop').attr('offset','75%').attr('stop-color','#0e4a26');
-  shade.append('stop').attr('offset','100%').attr('stop-color','#03130a');
-
   const sphere = svg.append('path').datum({type:'Sphere'}).attr('d',gpath)
-    .attr('fill','url(#moonShade)').attr('stroke','#03170d')
-    .attr('stroke-width',0.8).attr('filter','url(#moonRimGlow)');
+    .attr('fill','rgba(0,255,102,0.06)').attr('stroke','var(--c-prime)')
+    .attr('stroke-width',1).attr('filter','url(#moonRimGlow)');
 
-  // synthetic craters, defined as small circles on the sphere's surface in
-  // lon/lat — exactly like real geographic features, so they properly
-  // foreshorten near the limb and disappear on the far side as it rotates
+  // craters as real lon/lat features, so they properly foreshorten near
+  // the limb and pass out of view on the far side as the sphere rotates
   const craterLonLat = [[10,20],[-35,15],[50,-20],[-55,-35],[75,30],[-10,-55],[25,50],[-70,5]];
   const craterFeatures = craterLonLat.map(([lon,lat]) => d3.geoCircle().center([lon,lat]).radius(9)());
   const craters = svg.selectAll('.moon-crater').data(craterFeatures).join('path')
     .attr('class','moon-crater').attr('d',gpath)
-    .attr('fill','#020c07').attr('fill-opacity',0.55)
-    .attr('stroke','#0e4a26').attr('stroke-width',0.4).attr('stroke-opacity',0.6);
+    .attr('fill','var(--c-prime)').attr('fill-opacity',0.16)
+    .attr('stroke','var(--c-prime)').attr('stroke-width',0.3).attr('stroke-opacity',0.35);
 
   let rot = 0;
   d3.timer(function(){
@@ -1149,6 +1173,47 @@ function initOsintMoon(){
     craters.attr('d',gpath);
   });
 }
+
+let _osintAsteroidsRendered = false;
+function initOsintAsteroids(){
+  if(_osintAsteroidsRendered) return;
+  const container = document.querySelector('#osint-empty .osint-scene');
+  if(!container) return;
+  const nodes = Array.from(container.querySelectorAll('.osint-asteroid'));
+  if(!nodes.length) return;
+  _osintAsteroidsRendered = true;
+
+  // constant-angular-velocity elliptical drift, exactly the same technique
+  // used for the satellites orbiting the globe: position is a pure function
+  // of elapsed time with no CSS easing anywhere in the chain, so there's no
+  // acceleration/deceleration to read as hesitant or shaky -- it just moves,
+  // steadily, like a real body drifting through space. Positioned in
+  // percent (left/top) with a self-centering transform, so this never
+  // depends on measuring the container's pixel size at all.
+  const orbits = [
+    {cx:0.50,cy:0.46,rx:0.44,ry:0.36,speed:0.0021, phase:0.3, spin:0.045},
+    {cx:0.46,cy:0.52,rx:0.40,ry:0.33,speed:-0.0017,phase:2.8, spin:-0.035},
+    {cx:0.54,cy:0.50,rx:0.42,ry:0.30,speed:0.0019, phase:4.5, spin:0.04},
+    {cx:0.48,cy:0.44,rx:0.38,ry:0.34,speed:-0.0015,phase:1.6, spin:-0.03},
+    {cx:0.52,cy:0.54,rx:0.41,ry:0.31,speed:0.0018, phase:5.6, spin:0.038}
+  ];
+
+  let t = 0;
+  d3.timer(function(){
+    if(!document.getElementById('page-osint').classList.contains('active')) return;
+    t += 1;
+    orbits.forEach((o,i)=>{
+      const a = o.phase + t*o.speed;
+      const px = (o.cx + o.rx*Math.cos(a)) * 100;
+      const py = (o.cy + o.ry*Math.sin(a)) * 100;
+      const deg = (t*o.spin) % 360;
+      nodes[i].style.left = px.toFixed(2) + '%';
+      nodes[i].style.top = py.toFixed(2) + '%';
+      nodes[i].style.transform = `translate(-50%,-50%) rotate(${deg.toFixed(1)}deg)`;
+    });
+  });
+}
+
 function initOsintGlobe(){
   if(_osintGlobeRendered) return;
   const svg = d3.select('#osint-globe-svg');
@@ -1255,6 +1320,7 @@ function switchPage(name){
     startTicker();
     initOsintGlobe();
     initOsintMoon();
+    initOsintAsteroids();
     if(!window.osintBooted){ window.osintBooted=true; runOsintBoot(); }
   } else {
     stopTicker();
@@ -2053,6 +2119,21 @@ function scrambleReveal(el, finalText, duration){
   },28);
 }
 
+// decrypt-cascade: once a card's body is populated, its plain-text .v values
+// (not the ones holding chip badges, which materialize on their own) resolve
+// out of hex/glyph noise one after another, like a terminal decrypting a
+// captured record row by row -- timed to fire when the card actually
+// becomes visible, not at the moment its (still-invisible) HTML is written.
+function scrambleCascade(container){
+  if(!container) return;
+  Array.from(container.querySelectorAll('.v')).forEach((el,i)=>{
+    if(el.querySelector('*')) return; // holds chip markup — skip, chipIn handles it
+    const finalText = el.textContent;
+    if(!finalText || finalText==='—') return;
+    setTimeout(()=>scrambleReveal(el, finalText, 240), i*65);
+  });
+}
+
 function renderOsintCard(ip, meta, geo, shodan){
   document.getElementById('osint-flag').innerHTML = flagImg(meta.code,28);
   scrambleReveal(document.getElementById('osint-ip-title'), ip, 550);
@@ -2159,12 +2240,16 @@ function renderOsintCard(ip, meta, geo, shodan){
   const pageTitleEl = document.getElementById('osint-page-title');
   pageTitleEl.classList.remove('glitch'); void pageTitleEl.offsetWidth; pageTitleEl.classList.add('glitch');
 
-  // staggered fragment reveal
+  // staggered fragment reveal — each card fades in, then its own values
+  // decrypt out of noise right as it becomes visible
   document.querySelectorAll('.osint-frag').forEach(f=>{
     f.classList.remove('show');
     f.style.setProperty('--scan-c', vcolor);
     const d = parseInt(f.getAttribute('data-d'),10)||0;
-    setTimeout(()=>f.classList.add('show'), 150 + d*110);
+    setTimeout(()=>{
+      f.classList.add('show');
+      scrambleCascade(document.getElementById(f.id+'-body'));
+    }, 150 + d*110);
   });
 
   // network fingerprint identicon
